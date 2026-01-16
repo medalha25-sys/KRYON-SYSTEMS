@@ -5,6 +5,7 @@ import Services from './components/Services';
 import Segments from './components/Segments';
 import TechDiff from './components/TechDiff';
 import WhyUs from './components/WhyUs';
+import Contact from './components/Contact';
 import Footer from './components/Footer';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
       <Segments />
       <TechDiff />
       <WhyUs />
+      <Contact />
       <Footer />
     </div>
   );

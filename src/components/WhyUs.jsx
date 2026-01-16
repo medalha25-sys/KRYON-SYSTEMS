@@ -87,26 +87,6 @@ const WhyUs = () => {
                     ))}
                 </div>
 
-                {/* CTA Section */}
-                <div
-                    id="contact"
-                    style={{
-                        marginTop: '5rem',
-                        background: 'linear-gradient(90deg, #1a1a2e, #16213e)',
-                        padding: '3rem',
-                        borderRadius: '20px',
-                        textAlign: 'center',
-                        border: '1px solid var(--glass-border)',
-                        position: 'relative'
-                    }}>
-                    <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>A tecnologia certa para o seu negócio</h2>
-                    <p style={{ color: '#aaa', marginBottom: '2rem' }}>
-                        Vamos conversar sobre como podemos escalar sua empresa hoje.
-                    </p>
-                    <button className="btn btn-primary" style={{ padding: '15px 40px', fontSize: '1.1rem' }}>
-                        Solicitar Demonstração
-                    </button>
-                </div>
             </div>
         </section>
     );
