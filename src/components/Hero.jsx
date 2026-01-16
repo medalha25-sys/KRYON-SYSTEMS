@@ -99,7 +99,8 @@ const Hero = () => {
                         position: 'relative'
                     }}>
                         {/* Floating Badge 1 */}
-                        <div style={{
+                        className="hero-floating-badge"
+                        style={{
                             position: 'absolute',
                             top: '-20px',
                             right: '-20px',
@@ -110,78 +111,84 @@ const Hero = () => {
                             boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '0.5rem'
+                            gap: '0.5rem',
+                            zIndex: 10
                         }}>
-                            <div style={{ background: 'var(--primary)', padding: '8px', borderRadius: '8px', color: '#000' }}>
-                                <Globe size={20} />
-                            </div>
-                            <div>
-                                <div style={{ fontSize: '0.8rem', color: '#aaa' }}>Status</div>
-                                <div style={{ fontWeight: 'bold' }}>Online Global</div>
-                            </div>
+                        <div style={{ background: 'var(--primary)', padding: '8px', borderRadius: '8px', color: '#000' }}>
+                            <Globe size={20} />
                         </div>
-
-                        {/* Main Graphic Content - Simplified Code/Dashboard Look */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
-                                <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ff5f56' }}></div>
-                                <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ffbd2e' }}></div>
-                                <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#27c93f' }}></div>
-                            </div>
-
-                            <div style={{
-                                height: '8px', width: '60%', background: 'rgba(255,255,255,0.1)', borderRadius: '4px'
-                            }}></div>
-                            <div style={{
-                                height: '8px', width: '80%', background: 'rgba(255,255,255,0.1)', borderRadius: '4px'
-                            }}></div>
-
-                            <div style={{
-                                marginTop: '1rem',
-                                display: 'grid',
-                                gridTemplateColumns: '1fr 1fr',
-                                gap: '1rem'
-                            }}>
-                                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '12px' }}>
-                                    <Database size={24} color="var(--primary)" style={{ marginBottom: '0.5rem' }} />
-                                    <div style={{ fontSize: '0.8rem', color: '#aaa' }}>Cloud Data</div>
-                                    <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>99.9%</div>
-                                </div>
-                                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '12px' }}>
-                                    <Code size={24} color="var(--secondary)" style={{ marginBottom: '0.5rem' }} />
-                                    <div style={{ fontSize: '0.8rem', color: '#aaa' }}>API Requests</div>
-                                    <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>2.5k/s</div>
-                                </div>
-                            </div>
-
-                            <div style={{
-                                marginTop: '1rem',
-                                padding: '1rem',
-                                background: 'rgba(0, 240, 255, 0.05)',
-                                borderRadius: '12px',
-                                border: '1px dashed var(--primary)',
-                                textAlign: 'center',
-                                fontSize: '0.9rem',
-                                color: 'var(--primary)'
-                            }}>
-                                System Ready
-                            </div>
+                        <div>
+                            <div style={{ fontSize: '0.8rem', color: '#aaa' }}>Status</div>
+                            <div style={{ fontWeight: 'bold' }}>Online Global</div>
                         </div>
-
                     </div>
-                </motion.div>
-            </div>
 
-            <style>{`
+                    {/* Main Graphic Content - Simplified Code/Dashboard Look */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+                            <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ff5f56' }}></div>
+                            <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ffbd2e' }}></div>
+                            <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#27c93f' }}></div>
+                        </div>
+
+                        <div style={{
+                            height: '8px', width: '60%', background: 'rgba(255,255,255,0.1)', borderRadius: '4px'
+                        }}></div>
+                        <div style={{
+                            height: '8px', width: '80%', background: 'rgba(255,255,255,0.1)', borderRadius: '4px'
+                        }}></div>
+
+                        <div style={{
+                            marginTop: '1rem',
+                            display: 'grid',
+                            gridTemplateColumns: '1fr 1fr',
+                            gap: '1rem'
+                        }}>
+                            <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '12px' }}>
+                                <Database size={24} color="var(--primary)" style={{ marginBottom: '0.5rem' }} />
+                                <div style={{ fontSize: '0.8rem', color: '#aaa' }}>Cloud Data</div>
+                                <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>99.9%</div>
+                            </div>
+                            <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '12px' }}>
+                                <Code size={24} color="var(--secondary)" style={{ marginBottom: '0.5rem' }} />
+                                <div style={{ fontSize: '0.8rem', color: '#aaa' }}>API Requests</div>
+                                <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>2.5k/s</div>
+                            </div>
+                        </div>
+
+                        <div style={{
+                            marginTop: '1rem',
+                            padding: '1rem',
+                            background: 'rgba(0, 240, 255, 0.05)',
+                            borderRadius: '12px',
+                            border: '1px dashed var(--primary)',
+                            textAlign: 'center',
+                            fontSize: '0.9rem',
+                            color: 'var(--primary)'
+                        }}>
+                            System Ready
+                        </div>
+                    </div>
+
+            </div>
+        </motion.div>
+            </div >
+
+    <style>{`
         @media (max-width: 968px) {
           .container { grid-template-columns: 1fr !important; text-align: center; }
           h1 { font-size: 2.5rem !important; }
           .subtitle { margin: 0 auto 2rem auto; }
           .btn { justify-content: center; }
           div[style*="display: flex"] { justify-content: center; }
+          .hero-floating-badge {
+             right: 0 !important;
+             top: -40px !important;
+             transform: scale(0.9);
+          }
         }
       `}</style>
-        </section>
+        </section >
     );
 };
 

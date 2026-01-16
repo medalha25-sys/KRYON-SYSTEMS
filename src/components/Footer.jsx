@@ -57,6 +57,20 @@ const Footer = () => {
                     &copy; 2026 Kryon Systems. Todos os direitos reservados.
                 </div>
             </div>
+            <style>{`
+                @media (max-width: 768px) {
+                    .container > div:first-child {
+                        flex-direction: column;
+                        align-items: center !important;
+                        text-align: center;
+                    }
+                    .container > div:first-child > div {
+                        width: 100% !important;
+                        max-width: none !important;
+                        justify-content: center;
+                    }
+                }
+            `}</style>
         </footer>
     );
 };
