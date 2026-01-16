@@ -185,9 +185,11 @@ const Hero = () => {
           .btn { justify-content: center; }
           div[style*="display: flex"] { justify-content: center; }
           .hero-floating-badge {
-             right: 0 !important;
-             top: -40px !important;
-             transform: scale(0.9);
+             right: auto !important;
+             left: 50% !important;
+             transform: translateX(-50%) scale(0.9) !important;
+             top: -30px !important;
+             width: max-content;
           }
         }
       `}</style>
