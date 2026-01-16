@@ -73,7 +73,7 @@ const Hero = () => {
                     </p>
 
                     <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                        <a href="#segments" className="btn btn-primary">
+                        <a href="#segmentos" className="btn btn-primary">
                             Conhecer Soluções <ArrowRight size={18} />
                         </a>
                         <a href="#contact" className="btn btn-outline">

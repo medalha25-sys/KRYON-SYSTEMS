@@ -32,7 +32,7 @@ const services = [
 
 const Services = () => {
     return (
-        <section className="section" id="what-we-do" style={{ background: 'var(--bg-secondary)' }}>
+        <section className="section" id="soluções" style={{ background: 'var(--bg-secondary)' }}>
             <div className="container">
                 <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
                     <h2 className="title">O Que Fazemos</h2>
