@@ -7,6 +7,7 @@ import TechDiff from './components/TechDiff';
 import WhyUs from './components/WhyUs';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+import WhatsAppButton from './components/WhatsAppButton';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
       <WhyUs />
       <Contact />
       <Footer />
+      <WhatsAppButton />
     </div>
   );
 }
