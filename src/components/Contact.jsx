@@ -83,7 +83,7 @@ const Contact = () => {
                                 </div>
                                 <div>
                                     <h4 style={{ fontSize: '1.1rem' }}>Localização</h4>
-                                    <p style={{ color: 'var(--text-muted)' }}>São Paulo, Brasil - Atendimento Global</p>
+                                    <p style={{ color: 'var(--text-muted)' }}>Minas Gerais, Brasil - Atendimento Global</p>
                                 </div>
                             </div>
                         </div>
