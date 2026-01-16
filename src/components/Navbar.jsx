@@ -14,7 +14,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav 
+    <nav
       style={{
         position: 'fixed',
         top: 0,
@@ -31,25 +31,15 @@ const Navbar = () => {
       <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         {/* Logo */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.5rem', fontWeight: 'bold' }}>
-          <div style={{ 
-            width: '32px', 
-            height: '32px', 
-            background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
-            borderRadius: '8px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#fff' }}>K</span>
-          </div>
+          <img src="/logo.png" alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '8px' }} />
           <span>Kryon <span className="gradient-text">Systems</span></span>
         </div>
 
         {/* Desktop Links */}
         <div className="desktop-menu" style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
           {['Início', 'Soluções', 'Segmentos', 'Diferenciais'].map((item) => (
-            <a 
-              key={item} 
+            <a
+              key={item}
               href={`#${item.toLowerCase()}`}
               style={{ color: '#fff', textDecoration: 'none', fontSize: '0.9rem', opacity: 0.8, transition: 'opacity 0.2s' }}
               onMouseOver={(e) => e.target.style.opacity = 1}
@@ -64,7 +54,7 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Menu Toggle */}
-        <button 
+        <button
           onClick={() => setIsOpen(!isOpen)}
           style={{ display: 'none', background: 'none', border: 'none', color: '#fff', cursor: 'pointer' }}
           className="mobile-toggle"
@@ -87,9 +77,9 @@ const Navbar = () => {
           flexDirection: 'column',
           gap: '1.5rem'
         }}>
-           {['Início', 'Soluções', 'Segmentos', 'Diferenciais'].map((item) => (
-            <a 
-              key={item} 
+          {['Início', 'Soluções', 'Segmentos', 'Diferenciais'].map((item) => (
+            <a
+              key={item}
               href={`#${item.toLowerCase()}`}
               onClick={() => setIsOpen(false)}
               style={{ color: '#fff', textDecoration: 'none', fontSize: '1.1rem' }}
