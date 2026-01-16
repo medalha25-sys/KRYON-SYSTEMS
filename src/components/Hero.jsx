@@ -166,7 +166,8 @@ const Hero = () => {
                                 border: '1px dashed var(--primary)',
                                 textAlign: 'center',
                                 fontSize: '0.9rem',
-                                color: 'var(--primary)'
+                                color: 'var(--primary)',
+                                marginBottom: '20px' // Add spacing for mobile overlap safety
                             }}>
                                 System Ready
                             </div>
