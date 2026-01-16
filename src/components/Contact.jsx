@@ -60,8 +60,10 @@ const Contact = () => {
                                     <MessageSquare size={24} color="#25D366" />
                                 </div>
                                 <div>
-                                    <h4 style={{ fontSize: '1.1rem' }}>WhatsApp Comercial</h4>
-                                    <a href="#" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>(31) 99999-9999</a>
+                                    <div>
+                                        <h4 style={{ fontSize: '1.1rem' }}>WhatsApp Comercial</h4>
+                                        <a href="https://wa.me/5538984257511" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>(38) 98425-7511</a>
+                                    </div>
                                 </div>
                             </div>
 

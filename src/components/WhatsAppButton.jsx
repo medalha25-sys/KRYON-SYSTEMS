@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 const WhatsAppButton = () => {
     return (
         <motion.a
-            href="https://wa.me/5531999999999" // Replace with actual number
+            href="https://wa.me/5538984257511" // Real number
             target="_blank"
             rel="noopener noreferrer"
             initial={{ scale: 0 }}
