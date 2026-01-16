@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Stethoscope, Dog, Smartphone, ShoppingBag, Camera } from 'lucide-react';
+import { Stethoscope, Dog, Smartphone, ShoppingBag, Camera, Armchair } from 'lucide-react';
 
 const segments = [
     {
@@ -37,6 +37,13 @@ const segments = [
         desc: "Galeria online segura com marca d'água automática e seleção de fotos sem download.",
         icon: <Camera size={28} />,
         color: "#27c93f"
+    },
+    {
+        title: "Loja de Decoração",
+        product: "Decor Manager (Em Breve)",
+        desc: "Controle de estoque, orçamentos personalizados e gestão de entregas.",
+        icon: <Armchair size={28} />,
+        color: "#ff8c00"
     }
 ];
 
