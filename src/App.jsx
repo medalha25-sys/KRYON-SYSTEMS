@@ -6,6 +6,7 @@ import WhatsAppButton from './components/WhatsAppButton';
 import Home from './pages/Home';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
+import Subscribe from './pages/Subscribe';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/termos" element={<Terms />} />
           <Route path="/privacidade" element={<Privacy />} />
+          <Route path="/assinar" element={<Subscribe />} />
         </Routes>
         <Footer />
         <WhatsAppButton />

@@ -39,19 +39,23 @@ const Navbar = () => {
 
         {/* Desktop Links */}
         <div className="desktop-menu" style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-          {['Início', 'Soluções', 'Segmentos', 'Diferenciais'].map((item) => (
+          {[
+            { name: 'Quem Somos', link: '#quem-somos' },
+            { name: 'Sistemas', link: '#sistemas' },
+            { name: 'Diferenciais', link: '#contato' } // Mapping 'Contato' or 'Diferenciais'
+          ].map((item) => (
             <a
-              key={item}
-              href={`#${item.toLowerCase()}`}
+              key={item.name}
+              href={item.link}
               style={{ color: '#fff', textDecoration: 'none', fontSize: '0.9rem', opacity: 0.8, transition: 'opacity 0.2s' }}
               onMouseOver={(e) => e.target.style.opacity = 1}
               onMouseOut={(e) => e.target.style.opacity = 0.8}
             >
-              {item}
+              {item.name}
             </a>
           ))}
-          <a href="#contact" className="btn btn-primary" style={{ padding: '8px 20px' }}>
-            Falar com Especialista
+          <a href="https://app.kryonsystems.com.br/login" style={{ color: '#fff', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 'bold', marginLeft: '20px' }}>
+            Já sou cliente
           </a>
         </div>
 
@@ -79,19 +83,21 @@ const Navbar = () => {
           flexDirection: 'column',
           gap: '1.5rem'
         }}>
-          {['Início', 'Soluções', 'Segmentos', 'Diferenciais'].map((item) => (
+          {[
+            { name: 'Quem Somos', link: '#quem-somos' },
+            { name: 'Sistemas', link: '#sistemas' },
+            { name: 'Diferenciais', link: '#contato' }
+          ].map((item) => (
             <a
-              key={item}
-              href={`#${item.toLowerCase()}`}
+              key={item.name}
+              href={item.link}
               onClick={() => setIsOpen(false)}
               style={{ color: '#fff', textDecoration: 'none', fontSize: '1.1rem' }}
             >
-              {item}
+              {item.name}
             </a>
           ))}
-          <a href="#contact" className="btn btn-primary" onClick={() => setIsOpen(false)}>
-            Falar com Especialista
-          </a>
+
         </div>
       )}
 

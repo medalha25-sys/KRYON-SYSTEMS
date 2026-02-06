@@ -1,5 +1,4 @@
-import React from 'react';
-import { ArrowRight, ChevronRight, Code, Database, Globe } from 'lucide-react';
+import { ArrowRight, ChevronRight, Code, Database, Globe, Rocket } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const Hero = () => {
@@ -73,8 +72,8 @@ const Hero = () => {
                     </p>
 
                     <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                        <a href="#segmentos" className="btn btn-primary">
-                            Conhecer Soluções <ArrowRight size={18} />
+                        <a href="https://app.kryonsystems.com.br/register" className="btn btn-primary" style={{ gap: '10px' }}>
+                            Começar Teste Grátis <Rocket size={18} />
                         </a>
                         <a href="#contact" className="btn btn-outline">
                             Falar com Especialista

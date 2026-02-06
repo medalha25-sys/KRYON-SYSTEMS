@@ -1,0 +1,169 @@
+.loginContainer {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at center, #0a0a1a 0%, #020205 100%);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+    position: relative;
+}
+
+.loginContainer::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent 48%, rgba(0, 242, 255, 0.05) 50%, transparent 52%);
+    background-size: 100px 100px;
+    animation: gridMove 20s linear infinite;
+    z-index: 0;
+}
+
+@keyframes gridMove {
+    from {
+        transform: translate(-25%, -25%);
+    }
+
+    to {
+        transform: translate(0, 0);
+    }
+}
+
+.loginCard {
+    position: relative;
+    z-index: 1;
+    background: rgba(15, 15, 35, 0.7);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 242, 255, 0.2);
+    border-radius: 20px;
+    padding: 40px;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 0 50px rgba(0, 242, 255, 0.1);
+    animation: cardFadeIn 0.8s ease-out;
+}
+
+@keyframes cardFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.logoArea {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.logoArea h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #00f2ff, #006aff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 8px;
+}
+
+.logoArea p {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+}
+
+.formGroup {
+    margin-bottom: 20px;
+}
+
+.formGroup label {
+    display: block;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.inputWrapper {
+    position: relative;
+}
+
+.inputWrapper input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 12px 15px;
+    color: #fff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.inputWrapper input:focus {
+    outline: none;
+    border-color: #00f2ff;
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+}
+
+.submitBtn {
+    width: 100%;
+    background: linear-gradient(90deg, #00f2ff, #006aff);
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.submitBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0, 242, 255, 0.4);
+}
+
+.submitBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.errorMsg {
+    background: rgba(255, 59, 48, 0.1);
+    border: 1px solid rgba(255, 59, 48, 0.3);
+    color: #ff3b30;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.footerLinks {
+    margin-top: 25px;
+    text-align: center;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.footerLinks a {
+    color: #00f2ff;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 5px;
+}
+
+.footerLinks a:hover {
+    text-decoration: underline;
+}

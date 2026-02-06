@@ -104,7 +104,7 @@ const Segments = () => {
 
                             <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>{item.desc}</p>
 
-                            <a href="#contact" style={{
+                            <a href="https://app.kryonsystems.com.br/register" style={{
                                 color: item.color,
                                 fontWeight: 'bold',
                                 textDecoration: 'none',
@@ -113,7 +113,7 @@ const Segments = () => {
                                 gap: '0.5rem',
                                 fontSize: '0.9rem'
                             }}>
-                                Saiba mais &rarr;
+                                Teste Grátis &rarr;
                             </a>
                         </motion.div>
                     ))}
