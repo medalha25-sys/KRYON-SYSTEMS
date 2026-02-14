@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { AppView } from '@/types/erp';
 import { ThemeToggle } from './ThemeToggle';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useParams } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
+import BirthdayModal from './BirthdayModal';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -23,8 +24,13 @@ interface Notification {
 const ERPLayout: React.FC<LayoutProps> = ({ children, userEmail }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const params = useParams();
+  const slug = params?.slug as string;
+  
   const [shop, setShop] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showBirthdayModal, setShowBirthdayModal] = useState(false);
   const [notifications] = useState<Notification[]>([
     { id: '1', title: 'Estoque Baixo', message: '5 produtos estão abaixo do nível mínimo.', time: '10 min atrás', type: 'warning' },
     { id: '2', title: 'Nova Venda', message: 'Venda #1254 finalizada com sucesso.', time: '1 hora atrás', type: 'success' },
@@ -33,37 +39,58 @@ const ERPLayout: React.FC<LayoutProps> = ({ children, userEmail }) => {
   const supabase = createClient();
 
   useEffect(() => {
-    async function loadShop() {
+    async function loadUserData() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data: profile } = await supabase
+      const { data: profileData } = await supabase
         .from('profiles')
-        .select('shop_id')
+        .select('*')
         .eq('id', user.id)
         .single();
 
-      if (profile?.shop_id) {
-        const { data: shopData } = await supabase
-            .from('shops')
-            .select('*')
-            .eq('id', profile.shop_id)
-            .single();
-        if (shopData) setShop(shopData);
+      if (profileData) {
+        setProfile(profileData);
+        
+        // Check if today is birthday
+        if (profileData.birth_date) {
+            const today = new Date();
+            const birthDate = new Date(profileData.birth_date);
+            if (today.getDate() === birthDate.getDate() && today.getMonth() === birthDate.getMonth()) {
+                // Only show once per session or day (simple check here, could be more robust)
+                const hasShown = sessionStorage.getItem(`birthday_shown_${user.id}_${today.toDateString()}`);
+                if (!hasShown) {
+                    setShowBirthdayModal(true);
+                    sessionStorage.setItem(`birthday_shown_${user.id}_${today.toDateString()}`, 'true');
+                }
+            }
+        }
+
+        if (profileData.shop_id) {
+          const { data: shopData } = await supabase
+              .from('shops')
+              .select('*')
+              .eq('id', profileData.shop_id)
+              .single();
+          if (shopData) setShop(shopData);
+        }
       }
     }
-    loadShop();
+    loadUserData();
   }, []);
 
+  const basePath = slug ? `/products/${slug}` : '/dashboard';
+
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: 'dashboard', href: '/dashboard' },
-    { id: 'vendas', label: 'Vendas', icon: 'shopping_cart', href: '/dashboard/vendas' },
-    { id: 'servicos', label: 'Ordens de Serviço', icon: 'build', href: '/dashboard/servicos' },
-    { id: 'estoque', label: 'Estoque', icon: 'inventory_2', href: '/dashboard/estoque' },
-    { id: 'financeiro', label: 'Financeiro', icon: 'account_balance', href: '/dashboard/financeiro' },
-    { id: 'usuarios', label: 'Usuários', icon: 'group', href: '/dashboard/usuarios' },
-    { id: 'configuracoes', label: 'Configurações', icon: 'settings', href: '/dashboard/configuracoes' },
-    { id: 'relatorios', label: 'Relatórios', icon: 'bar_chart', href: '/dashboard/relatorios' },
+    { id: 'dashboard', label: 'Dashboard', icon: 'dashboard', href: basePath },
+    { id: 'vendas', label: 'Vendas', icon: 'shopping_cart', href: `${basePath}/vendas` },
+    // Show Service Orders only for Tech Assist/Cell Phone shops
+    ...(['tech-assist', 'systems-celulares', 'assistencia-tecnica'].includes(slug) ? [{ id: 'servicos', label: 'Ordens de Serviço', icon: 'build', href: `${basePath}/servicos` }] : []),
+    { id: 'estoque', label: 'Estoque', icon: 'inventory_2', href: `${basePath}/estoque` },
+    { id: 'financeiro', label: 'Financeiro', icon: 'account_balance', href: `${basePath}/financeiro` },
+    { id: 'usuarios', label: 'Usuários', icon: 'group', href: `${basePath}/usuarios` },
+    { id: 'configuracoes', label: 'Configurações', icon: 'settings', href: `${basePath}/configuracoes` },
+    { id: 'relatorios', label: 'Relatórios', icon: 'bar_chart', href: `${basePath}/relatorios` },
   ];
 
   const currentView = navItems.find(item => pathname === item.href)?.id || 'dashboard';
@@ -85,7 +112,7 @@ const ERPLayout: React.FC<LayoutProps> = ({ children, userEmail }) => {
               </div>
               <div className="flex flex-col">
                 <h1 className="text-[#111418] dark:text-white text-base font-bold leading-tight truncate max-w-[140px]">
-                  {shop?.name || 'Loja de Celulares'}
+                  {shop?.name || 'Kryon Systems'}
                 </h1>
                 <p className="text-[#617589] dark:text-gray-400 text-xs font-medium">Sistema de Gestão</p>
               </div>
@@ -227,7 +254,7 @@ const ERPLayout: React.FC<LayoutProps> = ({ children, userEmail }) => {
               <div className="bg-primary/10 rounded-lg p-2">
                 <span className="material-symbols-outlined text-primary">smartphone</span>
               </div>
-              <h1 className="text-lg font-bold text-[#111418] dark:text-white">Loja de Celulares</h1>
+              <h1 className="text-lg font-bold text-[#111418] dark:text-white">Kryon Systems</h1>
             </div>
             <nav className="flex flex-col gap-1">
               {navItems.map((item) => (
@@ -251,6 +278,13 @@ const ERPLayout: React.FC<LayoutProps> = ({ children, userEmail }) => {
             </div>
           </div>
         </div>
+      )}
+
+      {showBirthdayModal && (
+        <BirthdayModal 
+          userName={profile?.full_name || userEmail?.split('@')[0] || 'Colega'} 
+          onClose={() => setShowBirthdayModal(false)} 
+        />
       )}
     </div>
   );

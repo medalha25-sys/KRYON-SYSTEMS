@@ -51,7 +51,7 @@ export async function updateSession(request: NextRequest) {
   if (user && !request.nextUrl.pathname.startsWith('/assinar') && !request.nextUrl.pathname.startsWith('/auth')) {
     const { data: profile } = await supabase
       .from('profiles')
-      .select('shop_id, shops(plan, trial_ate)')
+      .select('shop_id, shops(plan, trial_ate, store_type)')
       .eq('id', user.id)
       .single()
 
@@ -61,11 +61,40 @@ export async function updateSession(request: NextRequest) {
       const isTrialOver = shop.trial_ate && new Date(shop.trial_ate) < new Date()
       const isBlocked = shop.plan === 'bloqueado'
       const isTrial = shop.plan === 'trial'
+      const storeType = shop.store_type
 
       if (isBlocked || (isTrial && isTrialOver)) {
         const url = request.nextUrl.clone()
         url.pathname = '/assinar'
         return NextResponse.redirect(url)
+      }
+
+      // Route Protection: Prevent Cross-System Access
+      // 1. If Fashion Store user tries to access other systems
+      if (storeType === 'fashion_store_ai') {
+          if (request.nextUrl.pathname.startsWith('/mobile') || request.nextUrl.pathname.startsWith('/products/agenda-facil')) {
+             const url = request.nextUrl.clone()
+             url.pathname = '/fashion/dashboard'
+             return NextResponse.redirect(url)
+          }
+      }
+
+      // 2. If Mobile Store user tries to access other systems
+      if (storeType === 'mobile_store_ai') {
+          if (request.nextUrl.pathname.startsWith('/fashion') || request.nextUrl.pathname.startsWith('/products/agenda-facil')) {
+             const url = request.nextUrl.clone()
+             url.pathname = '/mobile/dashboard'
+             return NextResponse.redirect(url)
+          }
+      }
+
+      // 3. If Agenda Facil user tries to access other systems
+      if (storeType === 'agenda_facil_ai') {
+          if (request.nextUrl.pathname.startsWith('/fashion') || request.nextUrl.pathname.startsWith('/mobile')) {
+             const url = request.nextUrl.clone()
+             url.pathname = '/products/agenda-facil'
+             return NextResponse.redirect(url)
+          }
       }
     }
   }

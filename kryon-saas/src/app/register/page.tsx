@@ -21,7 +21,7 @@ export default function RegisterPage({
           <h1 className="text-2xl font-black italic tracking-tighter uppercase">
             {shopId ? 'Juntar-se à Equipe' : 'Criar Nova Conta'}
           </h1>
-          <p>{shopId ? 'Você foi convidado para colaborar' : 'Loja de Celulares | Kryon Systems'}</p>
+          <p>{shopId ? 'Você foi convidado para colaborar' : 'Kryon Systems'}</p>
         </div>
 
         {searchParams?.message && (

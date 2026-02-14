@@ -4,8 +4,10 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { StockItem, ServiceOrder } from '@/types/erp';
 import { createClient } from '@/utils/supabase/client';
+import { useProduct } from '@/components/shared/ProductContext';
 
 const ERPDashboard: React.FC = () => {
+  const { slug } = useProduct();
   const [lowStockItems, setLowStockItems] = useState<StockItem[]>([]);
   const [recentOrders, setRecentOrders] = useState<ServiceOrder[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -17,32 +19,45 @@ const ERPDashboard: React.FC = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
+        // Fetch user's shop via profiles (or direct if they are owner)
         const { data: profile } = await supabase
           .from('profiles')
           .select('shop_id')
           .eq('id', user.id)
           .single();
 
-        if (!profile?.shop_id) return;
+        let shopId = profile?.shop_id;
 
-        const shopId = profile.shop_id;
+        // If no shop in profile, maybe they are owner of a shop directly
+        if (!shopId) {
+             const { data: shop } = await supabase
+                .from('shops')
+                .select('id')
+                .eq('owner_id', user.id)
+                .single();
+             shopId = shop?.id;
+        }
 
-        // Fetch low stock items
-        const { data: products } = await supabase
-          .from('products')
+        if (!shopId) return;
+
+        // Fetch low stock items (FROM inventory_items)
+        const { data: items } = await supabase
+          .from('inventory_items')
           .select('*')
           .eq('shop_id', shopId)
           .lt('quantity', 10)
           .order('quantity', { ascending: true })
           .limit(5);
 
-        if (products) {
-          setLowStockItems(products.map(p => ({
+        if (items) {
+          setLowStockItems(items.map(p => ({
             id: p.id,
             name: p.name,
             category: p.category || 'Geral',
             remaining: p.quantity,
-            image: p.image_url || 'https://picsum.photos/seed/product/50/50'
+            image: p.image_url || 'https://picsum.photos/seed/product/50/50',
+            price: p.price,
+            shop_id: p.shop_id
           })));
         }
 
@@ -58,7 +73,7 @@ const ERPDashboard: React.FC = () => {
           setRecentOrders(orders.map(o => ({
             id: o.id,
             client: o.client_name,
-            device: `${o.device_brand} ${o.device_model}`,
+            device: `${o.device_brand || ''} ${o.device_model || ''}`,
             status: o.status as any
           })));
         }
@@ -82,8 +97,28 @@ const ERPDashboard: React.FC = () => {
         </div>
         <div className="flex items-center gap-2 text-sm text-[#617589] dark:text-gray-400 bg-white dark:bg-[#1e2730] px-3 py-1.5 rounded-full shadow-sm border border-gray-100 dark:border-gray-800">
           <span className="material-symbols-outlined notranslate text-base">calendar_today</span>
-          <span>{new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+          <span>
+            {isLoading ? '...' : new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}
+          </span>
         </div>
+      </div>
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+         <div className="p-5 bg-white dark:bg-[#1e2730] shadow-sm rounded-xl border border-gray-100 dark:border-gray-800">
+            <h3 className="text-sm font-medium text-[#617589] dark:text-gray-400">Status da Assinatura</h3>
+            <p className="mt-1 text-2xl font-bold text-green-600">Ativa</p>
+         </div>
+         
+         <div className="p-5 bg-white dark:bg-[#1e2730] shadow-sm rounded-xl border border-gray-100 dark:border-gray-800">
+            <h3 className="text-sm font-medium text-[#617589] dark:text-gray-400">Produto</h3>
+            <p className="mt-1 text-2xl font-bold text-blue-600 uppercase">{slug}</p>
+         </div>
+
+         <div className="p-5 bg-white dark:bg-[#1e2730] shadow-sm rounded-xl border border-gray-100 dark:border-gray-800">
+            <h3 className="text-sm font-medium text-[#617589] dark:text-gray-400">Próxima Fatura</h3>
+            <p className="mt-1 text-2xl font-bold text-[#111418] dark:text-white">15 dias</p>
+         </div>
       </div>
 
       {/* Quick Actions */}
@@ -94,7 +129,7 @@ const ERPDashboard: React.FC = () => {
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <Link
-            href="/dashboard/vendas"
+            href={`/products/${slug}/vendas`}
             className="col-span-2 md:col-span-1 flex flex-col items-center justify-center gap-2 p-5 bg-gradient-to-br from-primary to-primary-dark text-white rounded-xl shadow-lg shadow-blue-200 hover:translate-y-[-2px] transition-all"
           >
             <span className="material-symbols-outlined notranslate text-4xl">point_of_sale</span>
@@ -102,10 +137,10 @@ const ERPDashboard: React.FC = () => {
           </Link>
 
           {[
-            { label: 'Nova Venda', icon: 'add_shopping_cart', color: 'blue', href: '/dashboard/vendas' },
-            { label: 'Nova O.S.', icon: 'build_circle', color: 'orange', href: '/dashboard/servicos' },
-            { label: 'Novo Cliente', icon: 'person_add', color: 'green', href: '/dashboard/usuarios' },
-            { label: 'Novo Produto', icon: 'inventory', color: 'purple', href: '/dashboard/estoque' },
+            { label: 'Nova Venda', icon: 'add_shopping_cart', color: 'blue', href: `/products/${slug}/vendas` },
+            { label: 'Nova O.S.', icon: 'build_circle', color: 'orange', href: `/products/${slug}/servicos` },
+            { label: 'Novo Cliente', icon: 'person_add', color: 'green', href: `/products/${slug}/usuarios` },
+            { label: 'Novo Produto', icon: 'inventory', color: 'purple', href: `/products/${slug}/estoque` },
           ].map((action, idx) => (
             <Link
               key={idx}
@@ -131,7 +166,7 @@ const ERPDashboard: React.FC = () => {
               Estoque Baixo
             </h3>
             <Link
-              href="/dashboard/estoque"
+              href={`/products/${slug}/estoque`}
               className="text-xs text-primary font-medium hover:underline"
             >
               Ver estoque
@@ -164,6 +199,8 @@ const ERPDashboard: React.FC = () => {
         </div>
 
         {/* Service Orders */}
+        {/* Service Orders - Only for Tech Assist */}
+        {['tech-assist', 'systems-celulares', 'assistencia-tecnica'].includes(slug) && (
         <div className="bg-white dark:bg-[#1e2730] rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden transition-colors">
           <div className="p-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50">
             <h3 className="font-bold text-[#111418] dark:text-white flex items-center gap-2">
@@ -171,7 +208,7 @@ const ERPDashboard: React.FC = () => {
               Últimas O.S.
             </h3>
             <Link
-              href="/dashboard/servicos"
+              href={`/products/${slug}/servicos`}
               className="text-xs text-primary font-medium hover:underline"
             >
               Ver todas
@@ -214,6 +251,7 @@ const ERPDashboard: React.FC = () => {
             )}
           </div>
         </div>
+        )}
       </div>
     </div>
   );

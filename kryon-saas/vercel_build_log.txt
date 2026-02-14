@@ -1,0 +1,26 @@
+﻿node.exe : Vercel CLI 
+50.9.5
+No C:\Users\Wesley\App
+Data\Roaming\npm\verce
+l.ps1:24 caractere:5
++     & "node$exe"  "$
+basedir/node_modules/v
+ercel/dist/vc.js" 
+$args
++     ~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (Vercel CLI   
+  50.9.5:String) [    
+], RemoteExceptio    n
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+? No Project Settings 
+found locally. Run 
+`vercel pull` for 
+retrieving them?

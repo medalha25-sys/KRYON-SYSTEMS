@@ -18,7 +18,6 @@ const VendasPage: React.FC = () => {
             <OpenRegisterModal
                 isOpen={isRegisterModalOpen}
                 onClose={() => setIsRegisterModalOpen(false)}
-                onSuccess={(balance) => openRegister(balance)}
             />
 
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">

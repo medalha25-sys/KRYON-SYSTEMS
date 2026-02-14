@@ -61,10 +61,10 @@ const SalesTerminal: React.FC = () => {
         if (!searchTerm || !shopId) return;
 
         const { data, error } = await supabase
-            .from('products')
+            .from('fashion_products')
             .select('*')
             .eq('shop_id', shopId)
-            .or(`name.ilike.%${searchTerm}%,barcode.eq.${searchTerm}`);
+            .or(`name.ilike.%${searchTerm}%,sku.eq.${searchTerm}`);
 
         if (error) {
             console.error(error);
@@ -85,10 +85,10 @@ const SalesTerminal: React.FC = () => {
             if (searchTerm.length < 2 || !shopId) return;
 
             const { data } = await supabase
-                .from('products')
+                .from('fashion_products')
                 .select('*')
                 .eq('shop_id', shopId)
-                .or(`name.ilike.%${searchTerm}%,barcode.eq.${searchTerm}`)
+                .or(`name.ilike.%${searchTerm}%,sku.eq.${searchTerm}`)
                 .limit(5);
 
             if (data) setProducts(data);
@@ -212,7 +212,9 @@ const SalesTerminal: React.FC = () => {
                                 >
                                     <div className="flex flex-col">
                                       <span className="font-bold text-gray-800 dark:text-gray-200 group-hover/item:text-primary transition-colors">{product.name}</span>
-                                      <span className="text-[10px] text-gray-400 font-mono tracking-tighter">SKU_{product.id.slice(0,8)}</span>
+                                      <span className="text-[10px] text-gray-400 font-mono tracking-tighter">
+                                          {product.sku ? `SKU: ${product.sku}` : `ID: ${product.id.slice(0,8)}`}
+                                      </span>
                                     </div>
                                     <span className="font-black text-lg text-primary">R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
                                 </button>
@@ -241,7 +243,7 @@ const SalesTerminal: React.FC = () => {
                                 <div key={item.id} className="flex items-center p-4 border-b border-gray-50 dark:border-gray-800 last:border-none hover:bg-primary/5 dark:hover:bg-primary/10 rounded-xl transition-all group/cart-item mb-1 animate-in fade-in slide-in-from-left-2 duration-300">
                                     <div className="flex-1 flex flex-col">
                                       <span className="font-bold text-gray-800 dark:text-gray-200 transition-colors group-hover/cart-item:text-primary">{item.name}</span>
-                                      <span className="text-[10px] text-gray-400 font-mono italic">Original Item</span>
+                                      <span className="text-[10px] text-gray-400 font-mono italic">Item Original</span>
                                     </div>
                                     <span className="w-24 text-center text-gray-500 font-black">{item.quantity}un</span>
                                     <span className="w-24 text-right text-gray-500 font-medium">R$ {item.price.toFixed(2)}</span>

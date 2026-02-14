@@ -1,0 +1,130 @@
+﻿
+> kryon-saas@0.1.0 build
+> next build
+
+node.exe : ÔÜá 
+Warning: Next.js 
+inferred your 
+workspace root, but 
+it may not be correct.
+No linha:1 caractere:1
++ & "C:\Program Files\
+nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo 
+...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (ÔÜá Warnin   
+ g: Ne...not be co    
+rrect.:String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+ We detected multiple 
+lockfiles and 
+selected the 
+directory of 
+D:\DOCUMENTOS\kryon 
+systems landing page\p
+ackage-lock.json as 
+the root directory.
+ To silence this 
+warning, set 
+`turbopack.root` in 
+your Next.js config, 
+or consider removing 
+one of the lockfiles 
+if it's not needed.
+   See https://nextjs.
+org/docs/app/api-refer
+ence/config/next-confi
+g-js/turbopack#root-di
+rectory for more 
+information.
+ Detected additional 
+lockfiles: 
+   * 
+D:\DOCUMENTOS\kryon 
+systems landing page\k
+ryon-saas\package-lock
+.json
+
+Ôû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+ÔÜá The "middleware" 
+file convention is 
+deprecated. Please 
+use "proxy" instead. 
+Learn more: https://ne
+xtjs.org/docs/messages
+/middleware-to-proxy
+  Creating an optimized production build ...
+Ô£ô Compiled successfully in 4.0s
+  Running TypeScript ...
+Failed to compile.
+
+./src/app/products/ges
+tao-pet/agendamentos/a
+ctions.ts:40:12
+Type error: 
+Conversion of type '{ 
+id: any; name: any; 
+owner_id: any; 
+pet_owners: { name: 
+any; }[]; }[]' to 
+type 'Pet[]' may be a 
+mistake because 
+neither type 
+sufficiently overlaps 
+with the other. If 
+this was intentional, 
+convert the 
+expression to 
+'unknown' first.
+  Type '{ id: any; 
+name: any; owner_id: 
+any; pet_owners: { 
+name: any; }[]; }' is 
+missing the following 
+properties from type 
+'Pet': tenant_id, 
+product_slug
+
+[0m [90m 38 |[39m  
+       [33m.[39meq(
+[32m'product_slug'[39
+m[33m,[39m [32m'ges
+tao-pet'[39m)
+ [90m 39 |[39m      
+   [33m.[39morder([
+32m'name'[39m)
+[31m[1m>[22m[39m[
+90m 40 |[39m     
+[36mreturn[39m 
+(data [33m||[39m 
+[]) [36mas[39m 
+[33mPet[39m[]
+ [90m    |[39m      
+      
+[31m[1m^[22m[39m
+ [90m 41 |[39m }
+ [90m 42 |[39m
+ [90m 43 |[39m 
+[36mexport[39m 
+[36masync[39m 
+[36mfunction[39m cre
+atePetAppointmentActio
+n(formData[33m:[39m 
+[33mFormData[39m) 
+{[0m
+Next.js build worker 
+exited with code: 1 
+and signal: null

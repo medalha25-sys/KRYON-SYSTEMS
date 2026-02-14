@@ -1,131 +1,87 @@
 'use client';
 
 import React, { useState } from 'react';
-import { createClient } from '@/utils/supabase/client';
+import { useCashRegister } from './CashRegisterContext';
+import { toast } from 'sonner';
 
 interface OpenRegisterModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSuccess: (openingBalance: number) => void;
 }
 
-const OpenRegisterModal: React.FC<OpenRegisterModalProps> = ({ isOpen, onClose, onSuccess }) => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+export default function OpenRegisterModal({ isOpen, onClose }: OpenRegisterModalProps) {
+    const { openRegister } = useCashRegister();
     const [openingBalance, setOpeningBalance] = useState('');
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
-    const supabase = createClient();
 
-    if (!isOpen) return null;
-
-    const handleLogin = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        setError('');
-
         try {
-            // Confirming identity/permissions before opening register
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email,
-                password,
-            });
-
-            if (error) throw error;
-
-            if (data.user) {
-                const balance = parseFloat(openingBalance.replace(',', '.')) || 0;
-                onSuccess(balance);
-                onClose();
-            }
-        } catch (err: any) {
-            setError('Credenciais inválidas. Tente novamente.');
+            const balance = parseFloat(openingBalance.replace(',', '.')) || 0;
+            await openRegister(balance);
+            toast.success('Caixa aberto com sucesso!');
+            onClose();
+        } catch (error) {
+            console.error(error);
+            toast.error('Erro ao abrir caixa.');
         } finally {
             setLoading(false);
         }
     };
 
+    if (!isOpen) return null;
+
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-            <div className="bg-white dark:bg-[#1e2730] w-full max-w-md rounded-xl shadow-2xl p-8">
-                <div className="flex flex-col items-center gap-4 mb-6">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                        <span className="material-symbols-outlined text-primary text-3xl">point_of_sale</span>
-                    </div>
-                    <div className="text-center">
-                        <h2 className="text-xl font-bold text-[#111418] dark:text-white">Abrir Caixa</h2>
-                        <p className="text-sm text-gray-500">Confirme seus dados para iniciar o expediente</p>
-                    </div>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+            <div className="bg-white dark:bg-slate-800 rounded-xl w-full max-w-md shadow-xl p-6 border border-slate-200 dark:border-slate-700">
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-xl font-bold text-slate-900 dark:text-white">Abrir Caixa</h2>
+                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                        <span className="material-symbols-outlined">close</span>
+                    </button>
                 </div>
 
-                {error && (
-                    <div className="mb-4 p-3 bg-red-100 border border-red-200 text-red-700 rounded-lg text-sm text-center">
-                        {error}
-                    </div>
-                )}
-
-                <form onSubmit={handleLogin} className="flex flex-col gap-4">
+                <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
-                        <label className="block text-xs font-semibold text-gray-500 mb-1">E-mail de Operador</label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="w-full h-11 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 text-sm focus:border-primary focus:outline-none dark:text-white"
-                            placeholder="seu@email.com"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-xs font-semibold text-gray-500 mb-1">Senha</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="w-full h-11 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 text-sm focus:border-primary focus:outline-none dark:text-white"
-                            placeholder="••••••••"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-xs font-semibold text-gray-500 mb-1">Troco Inicial (R$)</label>
-                        <input
-                            type="number"
-                            step="0.01"
-                            value={openingBalance}
-                            onChange={(e) => setOpeningBalance(e.target.value)}
-                            className="w-full h-11 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 text-sm focus:border-primary focus:outline-none dark:text-white"
-                            placeholder="0,00"
-                        />
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            Suprimento Inicial / Fundo de Troco
+                        </label>
+                        <div className="relative">
+                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-medium">R$</span>
+                            <input
+                                type="number"
+                                step="0.01"
+                                value={openingBalance}
+                                onChange={(e) => setOpeningBalance(e.target.value)}
+                                className="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-500 text-lg font-bold text-slate-900 dark:text-white"
+                                placeholder="0.00"
+                                required
+                            />
+                        </div>
+                        <p className="text-xs text-slate-500 mt-2">
+                            Informe o valor em dinheiro disponível na gaveta para troco.
+                        </p>
                     </div>
 
-                    <div className="flex gap-3 mt-4">
+                    <div className="flex gap-3 pt-2">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 py-2.5 rounded-lg text-sm font-bold text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                            className="flex-1 py-3 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition font-medium"
                         >
                             Cancelar
                         </button>
                         <button
                             type="submit"
                             disabled={loading}
-                            className="flex-1 py-2.5 rounded-lg text-sm font-bold text-white bg-primary hover:bg-primary-dark transition-colors disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
+                            className="flex-1 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition font-bold shadow-lg shadow-purple-500/20 disabled:opacity-70 flex items-center justify-center gap-2"
                         >
-                            {loading ? (
-                                <span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
-                            ) : (
-                                <>
-                                    <span className="material-symbols-outlined text-[18px]">lock_open</span>
-                                    Abrir Caixa
-                                </>
-                            )}
+                            {loading ? 'Abrindo...' : 'Abrir Caixa'}
                         </button>
                     </div>
                 </form>
             </div>
         </div>
     );
-};
-
-export default OpenRegisterModal;
+}

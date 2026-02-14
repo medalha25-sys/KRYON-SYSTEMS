@@ -18,9 +18,12 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Loja de Celulares | Kryon Systems",
-  description: "Plataforma de gestão integrada Kryon Systems para Loja de Celulares.",
+  title: "Kryon Systems",
+  description: "Plataforma de gestão integrada Kryon Systems.",
 };
+
+import { Toaster } from 'sonner'
+import { ThemeProvider } from '@/components/ThemeContext';
 
 export default function RootLayout({
   children,
@@ -37,8 +40,12 @@ export default function RootLayout({
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}
+        suppressHydrationWarning
       >
-        {children}
+        <ThemeProvider>
+          {children}
+          <Toaster position="top-right" richColors />
+        </ThemeProvider>
       </body>
     </html>
   );

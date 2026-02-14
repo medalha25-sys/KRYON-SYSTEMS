@@ -1,0 +1,151 @@
+﻿
+> kryon-saas@0.1.0 build
+> next build
+
+node.exe : ÔÜá Warning: 
+Next.js inferred your 
+workspace root, but it may 
+not be correct.
+No linha:1 caractere:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
+    + CategoryInfo         
+     : NotSpeci    fied: 
+(ÔÜá Warnin    g: Ne...not 
+be co    rrect.:String) [] 
+   , RemoteException
+    + FullyQualifiedE    
+rrorId : NativeCo    
+mmandError
+ 
+ We detected multiple 
+lockfiles and selected the 
+directory of 
+D:\DOCUMENTOS\kryon 
+systems landing 
+page\package-lock.json as 
+the root directory.
+ To silence this warning, 
+set `turbopack.root` in 
+your Next.js config, or 
+consider removing one of 
+the lockfiles if it's not 
+needed.
+   See https://nextjs.org/d
+ocs/app/api-reference/confi
+g/next-config-js/turbopack#
+root-directory for more 
+information.
+ Detected additional 
+lockfiles: 
+   * D:\DOCUMENTOS\kryon 
+systems landing page\kryon-
+saas\package-lock.json
+
+Ôû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+ÔÜá The "middleware" file 
+convention is deprecated. 
+Please use "proxy" 
+instead. Learn more: https:
+//nextjs.org/docs/messages/
+middleware-to-proxy
+  Creating an optimized production build ...
+Ô£ô Compiled successfully in 3.5s
+  Running TypeScript ...
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/23) ...
+  Generating static pages using 15 workers (5/23) 
+  Generating static pages using 15 workers (11/23) 
+  Generating static pages using 15 workers (17/23) 
+Ô¿» useSearchParams() 
+should be wrapped in a 
+suspense boundary at page 
+"/trial". Read more: https:
+//nextjs.org/docs/messages/
+missing-suspense-with-csr-b
+ailout
+    at Q 
+(D:\DOCUMENTOS\kryon 
+systems landing page\kryon-
+saas\.next\server\chunks\ss
+r\a3a4f_next_86e79be0._.js:
+2:2111)
+    at o 
+(D:\DOCUMENTOS\kryon 
+systems landing page\kryon-
+saas\.next\server\chunks\ss
+r\a3a4f_next_86e79be0._.js:
+4:5281)
+    at i 
+(D:\DOCUMENTOS\kryon 
+systems landing page\kryon-
+saas\.next\server\chunks\ss
+r\[root-of-the-server]__660
+698de._.js:1:6601)
+    at an 
+(D:\DOCUMENTOS\kryon 
+systems landing page\kryon-
+saas\node_modules\next\dist
+\compiled\next-server\app-p
+age-turbo.runtime.prod.js:2
+:84360)
+    at ai 
+(D:\DOCUMENTOS\kryon 
+systems landing page\kryon-
+saas\node_modules\next\dist
+\compiled\next-server\app-p
+age-turbo.runtime.prod.js:2
+:86179)
+    at al 
+(D:\DOCUMENTOS\kryon 
+systems landing page\kryon-
+saas\node_modules\next\dist
+\compiled\next-server\app-p
+age-turbo.runtime.prod.js:2
+:107953)
+    at as 
+(D:\DOCUMENTOS\kryon 
+systems landing page\kryon-
+saas\node_modules\next\dist
+\compiled\next-server\app-p
+age-turbo.runtime.prod.js:2
+:105368)
+    at aa 
+(D:\DOCUMENTOS\kryon 
+systems landing page\kryon-
+saas\node_modules\next\dist
+\compiled\next-server\app-p
+age-turbo.runtime.prod.js:2
+:84712)
+    at ai 
+(D:\DOCUMENTOS\kryon 
+systems landing page\kryon-
+saas\node_modules\next\dist
+\compiled\next-server\app-p
+age-turbo.runtime.prod.js:2
+:86228)
+    at ai 
+(D:\DOCUMENTOS\kryon 
+systems landing page\kryon-
+saas\node_modules\next\dist
+\compiled\next-server\app-p
+age-turbo.runtime.prod.js:2
+:104708)
+Error occurred 
+prerendering page 
+"/trial". Read more: https:
+//nextjs.org/docs/messages/
+prerender-error
+Export encountered an 
+error on /trial/page: 
+/trial, exiting the build.
+Ô¿» Next.js build worker 
+exited with code: 1 and 
+signal: null

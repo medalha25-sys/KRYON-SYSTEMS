@@ -33,6 +33,8 @@ export interface StockItem {
   category: string;
   remaining: number;
   image: string;
+  price: number;
+  shop_id: string;
 }
 
 export interface ServiceOrder {
@@ -47,6 +49,7 @@ export interface Product {
   name: string;
   price: number;
   barcode: string;
+  sku?: string;
 }
 
 export interface CartItem extends Product {

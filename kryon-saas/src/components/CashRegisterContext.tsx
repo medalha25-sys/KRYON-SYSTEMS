@@ -64,9 +64,10 @@ export const CashRegisterProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
             setIsRegisterOpen(true);
             setSessionId(data.id);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error opening register:', error);
-            alert('Erro ao abrir caixa. Tente novamente.');
+            const msg = error.message || 'Erro desconhecido';
+            alert(`Erro ao abrir caixa: ${msg}. Verifique se a tabela 'register_sessions' existe.`);
         }
     };
 

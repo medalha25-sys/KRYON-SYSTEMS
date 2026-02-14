@@ -37,6 +37,8 @@ const CloseRegisterModal: React.FC<CloseRegisterModalProps> = ({ isOpen, onClose
     const fetchSessionData = async () => {
         setLoading(true);
         try {
+            if (!sessionId) return;
+
             const { data: sessionData, error: sessionError } = await supabase
                 .from('register_sessions')
                 .select('*')
@@ -44,22 +46,28 @@ const CloseRegisterModal: React.FC<CloseRegisterModalProps> = ({ isOpen, onClose
                 .single();
 
             if (sessionError) throw sessionError;
+            if (!sessionData) throw new Error("Sessão não encontrada");
 
+            // Fetch Sales
             const { data: salesData, error: salesError } = await supabase
                 .from('sales')
                 .select('*')
+                .eq('shop_id', sessionData.shop_id) // Filter by shop to be safe
                 .gte('created_at', sessionData.opened_at);
 
-            if (salesError) throw salesError;
+            if (salesError) {
+                console.warn("Error fetching sales:", salesError);
+                // Don't block closing if sales fetch fails, just assume 0
+            }
 
             let money = 0, credit = 0, debit = 0, pix = 0, onAccount = 0;
             let totalChange = 0;
 
-            salesData?.forEach((sale: any) => {
+            (salesData || []).forEach((sale: any) => {
                 const methods = sale.payment_methods as any[];
-                if (methods) {
+                if (methods && Array.isArray(methods)) {
                     methods.forEach(p => {
-                        const amount = p.amount || 0;
+                        const amount = parseFloat(p.amount) || 0;
                         switch (p.method) {
                             case 'money': money += amount; break;
                             case 'credit': credit += amount; break;
@@ -70,16 +78,18 @@ const CloseRegisterModal: React.FC<CloseRegisterModalProps> = ({ isOpen, onClose
                     });
                 }
 
-                const saleTotal = sale.total || 0;
-                const totalPaid = (methods || []).reduce((acc: number, p: any) => acc + (p.amount || 0), 0);
+                const saleTotal = parseFloat(sale.total) || 0;
+                const totalPaid = (methods || []).reduce((acc: number, p: any) => acc + (parseFloat(p.amount) || 0), 0);
                 if (totalPaid > saleTotal) {
                     totalChange += (totalPaid - saleTotal);
                 }
             });
 
+            // Adjusted Money (Sales - Change)
             const adjustedMoney = Math.max(0, money - totalChange);
+            
             const totalSales = adjustedMoney + credit + debit + pix + onAccount;
-            const openingBalance = sessionData.opening_balance || 0;
+            const openingBalance = parseFloat(sessionData.opening_balance) || 0;
 
             setSummary({
                 openingBalance,
@@ -92,9 +102,9 @@ const CloseRegisterModal: React.FC<CloseRegisterModalProps> = ({ isOpen, onClose
                 expectedCash: openingBalance + adjustedMoney
             });
 
-        } catch (error) {
-            console.error(error);
-            alert('Erro ao carregar dados do caixa. Por favor, tente novamente.');
+        } catch (error: any) {
+            console.error("Error fetching session/sales:", error);
+            alert(`Erro ao carregar dados do caixa: ${error.message || 'Erro desconhecido'}`);
             onClose();
         } finally {
             setLoading(false);

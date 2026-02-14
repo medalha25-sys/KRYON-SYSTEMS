@@ -1,0 +1,110 @@
+﻿
+> kryon-saas@0.1.0 build
+> next build
+
+node.exe : ÔÜá 
+Warning: Next.js 
+inferred your 
+workspace root, but 
+it may not be correct.
+No linha:1 caractere:1
++ & "C:\Program Files\
+nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo 
+...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (ÔÜá Warnin   
+ g: Ne...not be co    
+rrect.:String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+ We detected multiple 
+lockfiles and 
+selected the 
+directory of 
+D:\DOCUMENTOS\kryon 
+systems landing page\p
+ackage-lock.json as 
+the root directory.
+ To silence this 
+warning, set 
+`turbopack.root` in 
+your Next.js config, 
+or consider removing 
+one of the lockfiles 
+if it's not needed.
+   See https://nextjs.
+org/docs/app/api-refer
+ence/config/next-confi
+g-js/turbopack#root-di
+rectory for more 
+information.
+ Detected additional 
+lockfiles: 
+   * 
+D:\DOCUMENTOS\kryon 
+systems landing page\k
+ryon-saas\package-lock
+.json
+
+Ôû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+ÔÜá The "middleware" 
+file convention is 
+deprecated. Please 
+use "proxy" instead. 
+Learn more: https://ne
+xtjs.org/docs/messages
+/middleware-to-proxy
+  Creating an optimized production build ...
+Ô£ô Compiled successfully in 4.0s
+  Running TypeScript ...
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/23) ...
+  Generating static pages using 15 workers (5/23) 
+  Generating static pages using 15 workers (11/23) 
+  Generating static pages using 15 workers (17/23) 
+Ô£ô Generating static pages using 15 workers (23/23) in 366.9ms
+  Finalizing page optimization ...
+
+Route (app)
+Ôöî Ôùï /
+Ôö£ Ôùï /_not-found
+Ôö£ ãÆ /admin/finance
+Ôö£ ãÆ /api/cron
+Ôö£ Ôùï /assinar
+Ôö£ ãÆ /auth/callback
+Ôö£ Ôùï /login
+Ôö£ Ôùï /pricing
+Ôö£ Ôùï /products
+Ôö£ ãÆ /products/[slug]
+Ôö£ ãÆ /products/agenda-facil
+Ôö£ ãÆ /products/agenda-facil/clientes
+Ôö£ ãÆ /products/agenda-facil/profissionais
+Ôö£ ãÆ /products/agenda-facil/servicos
+Ôö£ ãÆ /products/gestao-pet
+Ôö£ ãÆ /products/gestao-pet/agendamentos
+Ôö£ ãÆ /products/gestao-pet/pets
+Ôö£ ãÆ /products/gestao-pet/tutores
+Ôö£ Ôùï /register
+Ôö£ Ôùï /select-system
+Ôö£ Ôùï /systems
+Ôö£ Ôùï /trial
+Ôöö Ôùï /upgrade
+
+
+ãÆ Proxy (Middleware)
+
+Ôùï  (Static)   prerendered as static content
+ãÆ  (Dynamic)  server-rendered on demand
+
