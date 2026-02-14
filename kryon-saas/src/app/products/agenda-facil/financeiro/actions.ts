@@ -182,6 +182,6 @@ export async function seedCategories() {
         
     if (count === 0) {
         await supabase.rpc('seed_financial_categories', { user_id: user.id })
-        revalidatePath('/products/agenda-facil/financeiro')
     }
 }
+
