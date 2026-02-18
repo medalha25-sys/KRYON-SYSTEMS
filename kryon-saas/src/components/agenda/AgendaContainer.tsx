@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { useState } from 'react'
 import AgendaGrid from '@/components/agenda/AgendaGrid'
 import WeeklyAgenda from '@/components/agenda/WeeklyAgenda'
 import { Appointment, Client, Professional, Service } from '@/types/agenda'
@@ -12,7 +13,8 @@ interface AgendaContainerProps {
   appointments: Appointment[] 
   services: Service[]
   clients: Client[]
-  onOpenModal: (data?: { date?: Date, time?: string, professionalId?: string }) => void
+  onOpenModal: (data?: { date?: Date, time?: string, professionalId?: string, appointment?: Appointment }) => void
+  onBlockClick?: () => void
 }
 
 export default function AgendaContainer({
@@ -23,7 +25,8 @@ export default function AgendaContainer({
   appointments,
   services,
   clients,
-  onOpenModal
+  onOpenModal,
+  onBlockClick
 }: AgendaContainerProps) {
   const router = useRouter()
 
@@ -34,9 +37,18 @@ export default function AgendaContainer({
 
   const handleViewChange = (newView: 'day' | 'week') => {
       setView(newView)
-      // Also update URL to persist state on refresh
       router.push(`/products/agenda-facil?date=${date}&view=${newView}`)
   }
+
+  const [selectedProfessionalId, setSelectedProfessionalId] = useState<string>('all')
+
+  const filteredAppointments = selectedProfessionalId === 'all' 
+    ? appointments 
+    : appointments.filter(app => app.professional_id === selectedProfessionalId)
+
+  const filteredProfessionals = selectedProfessionalId === 'all'
+    ? professionals
+    : professionals.filter(prof => prof.id === selectedProfessionalId)
 
   return (
     <div className="p-6 h-full overflow-hidden flex flex-col">
@@ -62,10 +74,28 @@ export default function AgendaContainer({
                 </button>
             </div>
 
+
+
+            {/* Professional Filter */}
+             <select 
+                value={selectedProfessionalId}
+                onChange={(e) => setSelectedProfessionalId(e.target.value)}
+                className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2"
+                style={{ maxWidth: '200px' }}
+            >
+                <option value="all">Todos os Profissionais</option>
+                {professionals.map(prof => (
+                    <option key={prof.id} value={prof.id}>{prof.name}</option>
+                ))}
+            </select>
+
             <div className="h-6 w-px bg-gray-300 dark:bg-gray-600"></div>
 
             {/* Buttons */}
-             <button className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition flex items-center gap-2">
+             <button 
+                onClick={onBlockClick}
+                className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition flex items-center gap-2"
+            >
                 <span className="material-symbols-outlined text-gray-500">block</span>
                 Bloquear horário
             </button>
@@ -84,18 +114,20 @@ export default function AgendaContainer({
         {view === 'week' ? (
             <WeeklyAgenda 
                 date={new Date(date + 'T12:00:00')}
-                professionals={professionals}
-                appointments={appointments}
+                professionals={filteredProfessionals}
+                appointments={filteredAppointments}
                 onSlotClick={(date, time, professionalId) => onOpenModal({ date, time, professionalId })}
+                onAppointmentClick={(appt) => onOpenModal({ appointment: appt })}
             />
         ) : (
              <AgendaGrid 
                 date={new Date(date + 'T12:00:00')} // Avoid timezone offset issues for display
-                professionals={professionals} 
-                appointments={appointments}
+                professionals={filteredProfessionals} 
+                appointments={filteredAppointments}
                 services={services}
                 clients={clients}
                 onSlotClick={(date, time, professionalId) => onOpenModal({ date, time, professionalId })}
+                onAppointmentClick={(appt) => onOpenModal({ appointment: appt })}
             />
         )}
       </div>

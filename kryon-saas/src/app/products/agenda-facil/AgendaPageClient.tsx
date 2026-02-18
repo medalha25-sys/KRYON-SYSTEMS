@@ -5,28 +5,26 @@ import AgendaContainer from '@/components/agenda/AgendaContainer'
 import DashboardOverview from '@/components/agenda/DashboardOverview'
 import ShareLink from '@/components/agenda/ShareLink'
 import NewAppointmentModal from '@/components/agenda/NewAppointmentModal'
+import BlockScheduleModal from '@/components/agenda/BlockScheduleModal'
 import AgendaSidebar from '@/components/agenda/AgendaSidebar'
 import ClientList from '@/components/agenda/ClientList'
 import { useRouter } from 'next/navigation'
+import { AdminDashboard } from '@/components/agenda/AdminDashboard'
+import { ProfessionalDashboard } from '@/components/agenda/ProfessionalDashboard'
+import { SettingsView } from '@/components/agenda/SettingsView'
 
 interface AgendaPageProps {
   date: string
   agendaData: any
   dashboardData: any
+  adminDashboardData?: any
+  professionalDashboardData?: any
+  organization?: any
   initialView?: 'dashboard' | 'agenda' | 'clients' | 'settings' | 'day' | 'week'
 }
 
-export default function AgendaPageClient({ date, agendaData, dashboardData, initialView }: AgendaPageProps) {
+export default function AgendaPageClient({ date, agendaData, dashboardData, adminDashboardData, professionalDashboardData, organization, initialView }: AgendaPageProps) {
   const router = useRouter()
-  
-  // Normalize initialView
-  // If 'day' or 'week' is passed (legacy), map to 'agenda' but keep internal calendar view state?
-  // AgendaContainer manages 'day'/'week' internally via props.
-  // We need mainView state ('dashboard', 'agenda', 'clients', 'finance', 'settings')
-  
-  // Logic: 
-  // If initialView is 'day' or 'week', mainView = 'agenda'. 
-  // If initialView is 'dashboard' or undefined, mainView = 'dashboard'.
   
   const resolveMainView = (v?: string): string => {
       if (v === 'day' || v === 'week' || v === 'agenda') return 'agenda'
@@ -40,31 +38,27 @@ export default function AgendaPageClient({ date, agendaData, dashboardData, init
   const [calendarView, setCalendarView] = useState<'day' | 'week'>((initialView === 'week') ? 'week' : 'day')
 
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [modalData, setModalData] = useState<{ date?: Date, time?: string, professionalId?: string }>({})
+  const [isBlockModalOpen, setIsBlockModalOpen] = useState(false)
+  const [modalData, setModalData] = useState<{ date?: Date, time?: string, professionalId?: string, appointment?: any }>({})
 
-  const handleOpenModal = (data: { date?: Date, time?: string, professionalId?: string } = {}) => {
+  const handleOpenModal = (data: { date?: Date, time?: string, professionalId?: string, appointment?: any } = {}) => {
     setModalData(data)
     setIsModalOpen(true)
   }
 
   const handleViewChange = (viewId: string) => {
       if (viewId === 'finance') {
-          // Redirect to existing finance page which is separate route for now
-          // Or render if I can. But finance is a separate page structure perhaps?
-          // Previous link was /products/agenda-facil/financeiro
           router.push('/products/agenda-facil/financeiro')
           return
       }
+      if (viewId === 'clients') {
+          router.push('/products/agenda-facil/clientes')
+          return
+      }
       setMainView(viewId)
-      // Optional: Update URL? 
-      // router.push(`/products/agenda-facil?view=${viewId}`)
+      router.push(`/products/agenda-facil?view=${viewId}`)
   }
 
-  // Determine user name from data
-  // dashboardData has userName. agendaData doesn't explicitly have it unless we fetched profile.
-  // We can pass userName from server or extract from dashboardData (which might be null if view != dashboard?)
-  // Actually getDashboardData fetches profile. getAgendaData fetches profile too for shopId.
-  // Let's rely on dashboardData?.userName or fallback.
   const userName = dashboardData?.userName || 'Dr. Silva' 
 
   return (
@@ -75,29 +69,42 @@ export default function AgendaPageClient({ date, agendaData, dashboardData, init
         currentView={mainView} 
         onChangeView={handleViewChange}
         userName={userName}
+        organizationName={organization?.name || 'Clínica Serena'}
+        organizationLogo={organization?.logo_url}
+        whiteLabelEnabled={organization?.white_label_enabled}
       />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-            {/* We don't need the top header 'Agenda Facil' anymore, Sidebar has it? 
-                Sidebar has Profile. 
-                We might want a top bar for title?
-                Design (Step 384/390) shows distinct headers per view.
-                e.g. "Olá, Dr. Silva" (Dashboard), "Agenda Semanal" (Calendário).
-            */}
 
             {mainView === 'dashboard' && (
-                <div className="flex-1 overflow-auto p-8">
-                     {agendaData.shopId && <div className="mb-6"><ShareLink shopId={agendaData.shopId} /></div>}
+                <div className="flex-1 overflow-auto">
+                     {/* Share Link logic: Check if shopId exists and NO admin dashboard (since admins assume diff role view) */}
+                     {agendaData.shopId && !adminDashboardData && <div className="mb-6 mx-8 mt-8"><ShareLink shopId={agendaData.shopId} /></div>}
                      
-                     {dashboardData ? (
-                        <DashboardOverview 
-                            data={dashboardData} 
-                            onNewAppointment={() => handleOpenModal()} 
-                        />
+                     {adminDashboardData ? (
+                        <AdminDashboard data={adminDashboardData} organizationName={organization?.name} />
+                     ) : professionalDashboardData ? (
+                        <ProfessionalDashboard data={professionalDashboardData} userName={userName} />
+                     ) : dashboardData ? (
+                        <div className="p-8">
+                            <DashboardOverview 
+                                data={dashboardData} 
+                                onNewAppointment={() => handleOpenModal()} 
+                            />
+                        </div>
                      ) : (
-                         <div className="text-center p-12 text-gray-500">
-                             Carregando painel...
+                         <div className="flex flex-col items-center justify-center p-12 text-center h-full">
+                             <div className="bg-blue-50 text-blue-600 p-4 rounded-full mb-4">
+                                <span className="material-symbols-outlined text-4xl">calendar_month</span>
+                             </div>
+                             <h2 className="text-xl font-semibold text-gray-900 mb-2">Bem-vindo ao Agenda Fácil</h2>
+                             <p className="text-gray-500 max-w-md">
+                                 Selecione uma opção no menu lateral para começar.
+                             </p>
+                             <button onClick={() => setMainView('agenda')} className="mt-6 text-blue-600 hover:text-blue-800 font-medium">
+                                 Ir para Agenda
+                             </button>
                          </div>
                      )}
                 </div>
@@ -105,7 +112,6 @@ export default function AgendaPageClient({ date, agendaData, dashboardData, init
 
             {mainView === 'agenda' && (
                 <div className="flex-1 h-full"> 
-                   {/* AgendaContainer has its own internal layout/padding */}
                    <AgendaContainer
                         date={date}
                         view={calendarView}
@@ -115,6 +121,7 @@ export default function AgendaPageClient({ date, agendaData, dashboardData, init
                         clients={agendaData.clients || []}
                         appointments={agendaData.appointments || []}
                         onOpenModal={handleOpenModal}
+                        onBlockClick={() => setIsBlockModalOpen(true)}
                     />
                 </div>
             )}
@@ -127,9 +134,14 @@ export default function AgendaPageClient({ date, agendaData, dashboardData, init
             )}
             
             {mainView === 'settings' && (
-                <div className="flex-1 overflow-auto p-6">
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Configurações</h1>
-                    <p className="text-gray-500">Funcionalidade em desenvolvimento.</p>
+                <div className="flex-1 overflow-auto bg-gray-50 h-full">
+                     {organization ? (
+                        <SettingsView organization={organization} />
+                     ) : (
+                        <div className="p-8 text-center text-gray-500">
+                             Você precisa estar vinculado a uma organização para acessar configurações.
+                        </div>
+                     )}
                 </div>
             )}
       </div>
@@ -143,6 +155,13 @@ export default function AgendaPageClient({ date, agendaData, dashboardData, init
         initialDate={modalData.date || new Date()}
         initialTime={modalData.time}
         initialProfessionalId={modalData.professionalId}
+        appointment={modalData.appointment}
+      />
+      
+      <BlockScheduleModal
+        isOpen={isBlockModalOpen}
+        onClose={() => setIsBlockModalOpen(false)}
+        professionals={agendaData.professionals || []}
       />
     </div>
   )

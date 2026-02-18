@@ -1,6 +1,18 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronRight, Shield, CheckCircle, BarChart, Users, Zap, Lock, Layers } from 'lucide-react';
+import SystemShowcase from '../components/SystemShowcase';
+import Hero from '../components/Hero';
+import Services from '../components/Services';
+import Testimonials from '../components/Testimonials';
+import Pricing from '../components/Pricing';
+import FAQ from '../components/FAQ';
+import Contact from '../components/Contact';
+import Segments from '../components/Segments';
+import TechDiff from '../components/TechDiff';
+import WhyUs from '../components/WhyUs';
+import PainPoints from '../components/PainPoints';
+import CreativeCalendar from '../components/CreativeCalendar';
 
 const Section = ({ children, id, className = "" }) => (
   <section id={id} className={`py-20 ${className}`}>
@@ -27,47 +39,7 @@ const Home = () => {
         <div className="bg-[#050507] text-white font-sans selection:bg-blue-500 selection:text-white">
             
             {/* 1. HERO INSTITUCIONAL */}
-            <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-20">
-                {/* Background Glow */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-blue-600/20 blur-[120px] rounded-full pointer-events-none" />
-                
-                <div className="container mx-auto px-4 text-center z-10 relative">
-                    <motion.h1 
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
-                        className="text-4xl md:text-6xl font-bold mb-6 tracking-tight leading-tight"
-                    >
-                        Sistemas inteligentes para <br className="hidden md:block" />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
-                            gestão, automação e crescimento
-                        </span>
-                    </motion.h1>
-                    
-                    <motion.p 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2, duration: 0.8 }}
-                        className="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto mb-10 leading-relaxed"
-                    >
-                        Desenvolvemos soluções SaaS modernas para empresas que precisam de controle, agilidade e resultados reais no dia a dia.
-                    </motion.p>
-                    
-                    <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.4, duration: 0.8 }}
-                        className="flex flex-col md:flex-row gap-4 justify-center items-center"
-                    >
-                        <a href="#sistemas" className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all shadow-lg shadow-blue-600/30 flex items-center gap-2">
-                            Conhecer os sistemas <ChevronRight size={18} />
-                        </a>
-                        <a href="#contato" className="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-lg font-semibold transition-all">
-                            Solicitar demonstração
-                        </a>
-                    </motion.div>
-                </div>
-            </section>
+            <Hero />
 
             {/* 2. QUEM SOMOS */}
             <Section id="quem-somos" className="bg-[#0a0a0f]">
@@ -93,63 +65,19 @@ const Home = () => {
                     <p className="text-gray-400">Plataformas dedicadas para cada necessidade</p>
                 </div>
                 
-                <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-                    {/* Sistema 1 */}
-                    <motion.div 
-                        initial={{ opacity: 0, x: -30 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        className="bg-[#12121a] border border-white/5 rounded-2xl p-8 hover:border-blue-500/50 transition-colors group"
-                    >
-                        <div className="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center mb-6 text-blue-400 group-hover:text-blue-300">
-                            <Layers size={28} />
-                        </div>
-                        <h3 className="text-2xl font-bold mb-3">Sistema de Gestão Comercial</h3>
-                        <p className="text-gray-400 mb-6 min-h-[60px]">Plataforma completa para controle de vendas, clientes e operações do dia a dia.</p>
-                        <ul className="space-y-3 mb-8">
-                            {['Organização total das vendas', 'Controle de clientes', 'Interface simples', 'Acesso rápido às informações'].map((item, i) => (
-                                <li key={i} className="flex items-center gap-3 text-gray-300">
-                                    <CheckCircle size={18} className="text-green-500 flex-shrink-0" /> {item}
-                                </li>
-                            ))}
-                        </ul>
-                        <div className="flex gap-4">
-                            <a href="/assinar" className="flex-1 py-3 text-center bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors">
-                                Ver detalhes
-                            </a>
-                            <a href="#contato" className="flex-1 py-3 text-center border border-white/10 hover:bg-white/5 rounded-lg font-medium transition-colors">
-                                Solicitar demo
-                            </a>
-                        </div>
-                    </motion.div>
-
-                    {/* Sistema 2 */}
-                    <motion.div 
-                         initial={{ opacity: 0, x: 30 }}
-                         whileInView={{ opacity: 1, x: 0 }}
-                         viewport={{ once: true }}
-                        className="bg-[#12121a] border border-white/5 rounded-2xl p-8 hover:border-purple-500/50 transition-colors group"
-                    >
-                        <div className="w-12 h-12 bg-purple-500/10 rounded-lg flex items-center justify-center mb-6 text-purple-400 group-hover:text-purple-300">
-                            <BarChart size={28} />
-                        </div>
-                        <h3 className="text-2xl font-bold mb-3">Sistema de Automação e Relatórios</h3>
-                        <p className="text-gray-400 mb-6 min-h-[60px]">Solução focada em automação de processos e relatórios inteligentes para tomada de decisão.</p>
-                        <ul className="space-y-3 mb-8">
-                            {['Relatórios claros', 'Automação de tarefas', 'Dados em tempo real', 'Mais produtividade'].map((item, i) => (
-                                <li key={i} className="flex items-center gap-3 text-gray-300">
-                                    <CheckCircle size={18} className="text-purple-500 flex-shrink-0" /> {item}
-                                </li>
-                            ))}
-                        </ul>
-                        <div className="flex gap-4">
-                            <a href="/assinar" className="w-full py-3 text-center bg-purple-600 hover:bg-purple-700 rounded-lg font-medium transition-colors">
-                                Ver detalhes
-                            </a>
-                        </div>
-                    </motion.div>
-                </div>
+                <SystemShowcase />
             </Section>
+
+            <Segments />
+            <PainPoints />
+            <WhyUs />
+            <TechDiff />
+
+            <CreativeCalendar />
+            <Services />
+            <Testimonials />
+            <Pricing />
+            <FAQ />
 
             {/* 4. PARA QUEM É */}
             <Section className="bg-[#0a0a0f]">
@@ -256,22 +184,7 @@ const Home = () => {
             </Section>
 
             {/* 8. CTA FINAL */}
-            <Section id="contato" className="bg-gradient-to-t from-blue-900/20 to-[#050507]">
-                <motion.div {...fadeIn} className="text-center max-w-3xl mx-auto">
-                    <h2 className="text-4xl font-bold mb-6">Pronto para conhecer sistemas que realmente funcionam?</h2>
-                    <p className="text-xl text-gray-400 mb-10">
-                        Descubra como as soluções da Kryon Systems podem transformar a gestão do seu negócio.
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <a href="https://wa.me/5538997269019" target="_blank" className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-lg transition-all shadow-lg shadow-blue-600/30">
-                            Solicitar demonstração
-                        </a>
-                        <a href="https://wa.me/5538997269019" target="_blank" className="px-8 py-4 bg-[#1a1a2e] hover:bg-[#252540] border border-white/10 text-white rounded-lg font-bold text-lg transition-all">
-                            Falar com um especialista
-                        </a>
-                    </div>
-                </motion.div>
-            </Section>
+            <Contact />
         </div>
     );
 };

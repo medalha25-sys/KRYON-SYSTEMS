@@ -34,10 +34,20 @@ export async function getFinancialSummary(startDate?: string, endDate?: string) 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { income: 0, expense: 0, balance: 0 }
 
+  // Get Organization ID
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('organization_id')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile || !profile.organization_id) return { income: 0, expense: 0, balance: 0 }
+  const orgId = profile.organization_id
+
   let query = supabase
     .from('financial_transactions')
     .select('amount, type, status')
-    .eq('tenant_id', user.id)
+    .eq('organization_id', orgId)
     .eq('status', 'paid')
 
   if (startDate) query = query.gte('date', startDate)
@@ -65,10 +75,20 @@ export async function getTransactions(startDate?: string, endDate?: string) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return []
 
+  // Get Organization ID
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('organization_id')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile || !profile.organization_id) return []
+  const orgId = profile.organization_id
+
   let query = supabase
     .from('financial_transactions')
     .select('*, financial_categories(*)')
-    .eq('tenant_id', user.id)
+    .eq('organization_id', orgId)
     .order('date', { ascending: false })
     .order('created_at', { ascending: false })
 
@@ -84,10 +104,20 @@ export async function getCategories() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return []
 
+  // Get Organization ID
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('organization_id')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile || !profile.organization_id) return []
+  const orgId = profile.organization_id
+
   const { data } = await supabase
     .from('financial_categories')
     .select('*')
-    .eq('tenant_id', user.id)
+    .eq('organization_id', orgId)
     .order('name')
 
   return data as Category[]
@@ -97,6 +127,18 @@ export async function saveTransaction(data: Partial<Transaction>) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Não autorizado' }
+
+  // Ensure category exists or is valid if provided
+  
+  // Get Organization ID
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('organization_id')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile || !profile.organization_id) return { error: 'Não autorizado' }
+  const orgId = profile.organization_id
 
   // Ensure category exists or is valid if provided
   
@@ -114,7 +156,7 @@ export async function saveTransaction(data: Partial<Transaction>) {
         payment_method: data.payment_method
       })
       .eq('id', data.id)
-      .eq('tenant_id', user.id)
+      .eq('organization_id', orgId)
 
     if (error) {
         console.error('Update transaction error:', error)
@@ -125,16 +167,14 @@ export async function saveTransaction(data: Partial<Transaction>) {
     const { error } = await supabase
       .from('financial_transactions')
       .insert({
-        tenant_id: user.id,
+        organization_id: orgId,
         description: data.description,
         amount: data.amount,
         type: data.type,
         category_id: data.category_id,
         date: data.date || new Date().toISOString().split('T')[0],
         status: data.status || 'paid',
-        payment_method: data.payment_method,
-        reference_id: data.reference_id,
-        reference_type: data.reference_type
+        payment_method: data.payment_method
       })
 
     if (error) {
@@ -153,11 +193,21 @@ export async function deleteTransaction(id: string) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Não autorizado' }
 
+  // Get Organization ID
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('organization_id')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile || !profile.organization_id) return { error: 'Não autorizado' }
+  const orgId = profile.organization_id
+
   const { error } = await supabase
     .from('financial_transactions')
     .delete()
     .eq('id', id)
-    .eq('tenant_id', user.id)
+    .eq('organization_id', orgId)
 
   if (error) {
       console.error('Delete transaction error:', error)
@@ -174,14 +224,43 @@ export async function seedCategories() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
     
+    // Get Organization ID
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('organization_id')
+        .eq('id', user.id)
+        .single()
+
+    if (!profile || !profile.organization_id) return
+    const orgId = profile.organization_id
+
     // Check if user has categories
     const { count } = await supabase
         .from('financial_categories')
         .select('*', { count: 'exact', head: true })
-        .eq('tenant_id', user.id)
+        .eq('organization_id', orgId)
         
     if (count === 0) {
-        await supabase.rpc('seed_financial_categories', { user_id: user.id })
+        // We'll need to update the RPC function or manually insert standard categories here.
+        // For now, let's just insert manually to avoid RPC dependency on legacy schema
+        const standardCategories = [
+            { name: 'Consultas', type: 'income' },
+            { name: 'Procedimentos', type: 'income' },
+            { name: 'Aluguel', type: 'expense' },
+            { name: 'Materiais', type: 'expense' },
+            { name: 'Salários', type: 'expense' },
+            { name: 'Marketing', type: 'expense' },
+            { name: 'Impostos', type: 'expense' },
+            { name: 'Outros', type: 'expense' }
+        ]
+
+        const categoriesToInsert = standardCategories.map(cat => ({
+            organization_id: orgId,
+            name: cat.name,
+            type: cat.type
+        }))
+
+        await supabase.from('financial_categories').insert(categoriesToInsert)
     }
 }
 

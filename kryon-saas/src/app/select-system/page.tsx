@@ -29,16 +29,29 @@ export default function SelectSystemPage() {
         return
       }
 
-      // Fetch subscriptions with product details
+      // 1. Get Organization ID
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('organization_id')
+        .eq('id', user.id)
+        .single()
+
+      if (!profile?.organization_id) {
+         console.log('No organization found for user:', user.id)
+         router.push('/login?message=Organization%20not%20found') 
+         return
+      }
+
+      // 2. Fetch subscriptions with product details for this organization
       const { data: subscriptions, error: subError } = await supabase
         .from('subscriptions')
         .select('*, products(*)')
-        .eq('tenant_id', user.id)
+        .eq('organization_id', profile.organization_id)
         .in('status', ['active', 'trial'])
 
       if (subError || !subscriptions || subscriptions.length === 0) {
-        console.log('No active subscriptions found for user:', user.id)
-        router.push('/') // Redirect to landing if no access
+        console.log('No active subscriptions found for org:', profile.organization_id)
+        router.push('/login?message=No%20active%20subscriptions') // Redirect to login if no access
         return
       }
 

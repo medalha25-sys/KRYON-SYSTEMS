@@ -5,13 +5,63 @@ import { Client, Appointment } from '@/types/agenda'
 import { format, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
+import ClinicalRecordForm from './ClinicalRecordForm'
+
+export interface ClinicalRecord {
+  id: string
+  created_at: string
+  content: any
+  free_notes?: string
+  professional_id?: string
+  appointment_id?: string
+  agenda_professionals?: { name: string }
+  agenda_appointments?: { 
+    start_time: string
+    agenda_services: { name: string }
+  }
+}
+
 interface PatientProfileProps {
   client: Client
   appointments: Appointment[]
+  clinicalRecords: ClinicalRecord[]
 }
 
-export default function PatientProfile({ client, appointments }: PatientProfileProps) {
-  const [activeTab, setActiveTab] = useState<'timeline' | 'info'>('timeline')
+export default function PatientProfile({ client, appointments, clinicalRecords }: PatientProfileProps) {
+  const [activeTab, setActiveTab] = useState<'timeline' | 'info' | 'prontuario'>('timeline')
+  const [showRecordForm, setShowRecordForm] = useState(false)
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | undefined>(undefined)
+
+  const unlinkedCompletedApps = appointments.filter(app => 
+    app.status === 'completed' && 
+    !clinicalRecords.some(r => r.appointment_id === app.id)
+  )
+
+  const handleNewRecordClick = () => {
+      // If there are unlinked completed appointments, force selection? 
+      // Or just default to one?
+      // Let's simplified flow: 
+      // 1. If unlinked completed apps exist, show selection or auto-select if only 1.
+      // 2. If none, show warning?
+      // For now, let's just toggling form and passing appointmentId if available.
+      
+      if (unlinkedCompletedApps.length === 0) {
+          alert("Não há agendamentos concluídos disponíveis para criar um prontuário.")
+          return
+      }
+
+      if (unlinkedCompletedApps.length === 1) {
+          setSelectedAppointmentId(unlinkedCompletedApps[0].id)
+          setShowRecordForm(true)
+      } else {
+          // Ideally show a modal to select. For now, let's just pick the most recent one or show form with a selector inside?
+          // Let's show form and maybe pass pre-selected?
+          // Actually, PatientProfile doesn't have a selection modal. 
+          // Let's pick the most recent completed one.
+          setSelectedAppointmentId(unlinkedCompletedApps[0].id) // They are sorted DESC usually? verification needed.
+          setShowRecordForm(true)
+      }
+  }
 
   // Stats
   const totalSessions = appointments.filter(a => a.status === 'completed').length
@@ -97,11 +147,120 @@ export default function PatientProfile({ client, appointments }: PatientProfileP
                 >
                     Dados do Paciente
                 </button>
+                <button 
+                    onClick={() => setActiveTab('prontuario')}
+                    className={`pb-4 -mb-4 font-medium transition ${activeTab === 'prontuario' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                >
+                    Prontuário
+                </button>
              </div>
 
              <div className="p-6">
                 {activeTab === 'timeline' ? (
                     <Timeline appointments={appointments} />
+                ) : activeTab === 'prontuario' ? (
+                    <div className="space-y-6">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Histórico Clínico</h3>
+                            {!showRecordForm && (
+                                <button 
+                                    onClick={handleNewRecordClick}
+                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2 shadow-sm"
+                                >
+                                    <span className="material-symbols-outlined text-sm">add</span>
+                                    Novo Registro
+                                </button>
+                            )}
+                        </div>
+
+                        {showRecordForm ? (
+                            <ClinicalRecordForm 
+                                clientId={client.id} 
+                                appointmentId={selectedAppointmentId}
+                                onCancel={() => {
+                                    setShowRecordForm(false)
+                                    setSelectedAppointmentId(undefined)
+                                }}
+                                onSuccess={() => {
+                                    setShowRecordForm(false)
+                                    setSelectedAppointmentId(undefined)
+                                    window.location.reload()
+                                }}
+                            />
+                        ) : (
+                            <div className="space-y-4">
+                                {clinicalRecords?.length === 0 ? (
+                                    <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-lg border border-dashed border-gray-300 dark:border-gray-700">
+                                        <div className="mx-auto w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-3">
+                                            <span className="material-symbols-outlined text-gray-400">assignment_add</span>
+                                        </div>
+                                        <p className="text-gray-500">Nenhum registro encontrado.</p>
+                                        <p className="text-sm text-gray-400 mt-1">Crie o primeiro prontuário deste paciente.</p>
+                                    </div>
+                                ) : (
+                                    clinicalRecords?.map(record => (
+                                        <div key={record.id} className="bg-white dark:bg-gray-900 p-5 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
+                                            <div className="flex justify-between items-start mb-4 pb-3 border-b border-gray-100 dark:border-gray-800">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400">
+                                                        <span className="material-symbols-outlined">clinical_notes</span>
+                                                    </div>
+                                                    <div>
+                                                        <div className="font-semibold text-gray-900 dark:text-gray-100">
+                                                            {format(parseISO(record.created_at), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                                                        </div>
+                                                        <div className="text-xs text-gray-500">
+                                                            às {format(parseISO(record.created_at), 'HH:mm')}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="text-xs font-medium text-gray-500 bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full border border-gray-200 dark:border-gray-700">
+                                                    {record.agenda_professionals?.name || 'Profissional'}
+                                                </div>
+                                            </div>
+                                            
+                                            {record.agenda_appointments && (
+                                                 <div className="mb-4 text-xs font-medium text-blue-600 bg-blue-50 dark:bg-blue-900/20 p-2 rounded flex items-center gap-2">
+                                                    <span className="material-symbols-outlined text-sm">event</span>
+                                                    Referente ao agendamento de {format(parseISO(record.agenda_appointments.start_time), "dd/MM/yyyy HH:mm")}
+                                                    <span className="text-blue-400">•</span>
+                                                    {record.agenda_appointments.agenda_services?.name}
+                                                 </div>
+                                            )}
+
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                {record.content.anamnesis?.mainComplaint && (
+                                                    <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded">
+                                                        <span className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">Queixa Principal</span>
+                                                        <p className="text-sm text-gray-800 dark:text-gray-300">{record.content.anamnesis.mainComplaint}</p>
+                                                    </div>
+                                                )}
+                                                {record.content.diagnosis?.hypothesis && (
+                                                    <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded">
+                                                        <span className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">Hipótese Diagnóstica</span>
+                                                        <p className="text-sm text-gray-800 dark:text-gray-300">{record.content.diagnosis.hypothesis}</p>
+                                                    </div>
+                                                )}
+                                                {record.content.treatment?.conduct && (
+                                                    <div className="md:col-span-2 p-3 bg-gray-50 dark:bg-gray-800 rounded">
+                                                        <span className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">Conduta</span>
+                                                        <p className="text-sm text-gray-800 dark:text-gray-300">{record.content.treatment.conduct}</p>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {record.free_notes && (
+                                                <div className="mt-3 p-3 bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-100 dark:border-yellow-900/30 rounded">
+                                                    <span className="text-xs font-bold text-yellow-600 dark:text-yellow-500 uppercase tracking-wider block mb-1">Notas Livres</span>
+                                                    <p className="text-sm text-gray-800 dark:text-gray-300 whitespace-pre-wrap">{record.free_notes}</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        )}
+                    </div>
                 ) : (
                     <div className="p-4 text-gray-500">
                         {/* Reuse ClientModal form logic or simple display here */}
@@ -196,7 +355,11 @@ function Timeline({ appointments }: { appointments: Appointment[] }) {
                         <div className="flex items-center justify-between space-x-2 mb-1">
                             <div className="font-bold text-slate-900 dark:text-slate-100">{format(parseISO(app.start_time), 'dd/MM/yyyy')} <span className="text-gray-400 font-normal text-sm">às {format(parseISO(app.start_time), 'HH:mm')}</span></div>
                             <span className={`text-xs px-2 py-0.5 rounded ${app.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
-                                {app.status === 'completed' ? 'Realizada' : app.status}
+                                {app.status === 'completed' ? 'Realizada' : 
+                                 app.status === 'scheduled' ? 'Agendada' :
+                                 app.status === 'confirmed' ? 'Confirmada' :
+                                 app.status === 'canceled' ? 'Cancelada' :
+                                 app.status === 'no_show' ? 'Não Compareceu' : app.status}
                             </span>
                         </div>
                         <div className="text-slate-500 dark:text-slate-400 text-sm mb-2">

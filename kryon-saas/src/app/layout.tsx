@@ -20,6 +20,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Kryon Systems",
   description: "Plataforma de gestão integrada Kryon Systems.",
+  icons: {
+    icon: "/logo-clinica.png",
+  },
 };
 
 import { Toaster } from 'sonner'

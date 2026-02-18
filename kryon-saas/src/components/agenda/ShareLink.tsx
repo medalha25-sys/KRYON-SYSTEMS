@@ -3,14 +3,15 @@
 import React from 'react'
 
 export default function ShareLink({ shopId, slug }: { shopId?: string, slug?: string }) {
+  const [origin, setOrigin] = React.useState('')
   const [copied, setCopied] = React.useState(false)
 
+  React.useEffect(() => {
+    setOrigin(window.location.origin)
+  }, [])
+
   const handleCopy = () => {
-    // Generate link based on what's available
-    // If shopId is available, use it. If slug (for public page) use it.
-    // The public page I created is /agendar/[slug]. I assumed slug is ID.
     const link = `${window.location.origin}/agendar/${shopId}`
-    
     navigator.clipboard.writeText(link)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
@@ -32,7 +33,7 @@ export default function ShareLink({ shopId, slug }: { shopId?: string, slug?: st
       
       <div className="flex items-center gap-2 w-full sm:w-auto">
         <code className="text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3 py-2 rounded flex-1 sm:flex-none text-gray-600 dark:text-gray-300 truncate max-w-[200px]">
-            {`${typeof window !== 'undefined' ? window.location.origin : ''}/agendar/${shopId}`}
+            {origin ? `${origin}/agendar/${shopId}` : `/agendar/${shopId}`}
         </code>
         <button 
             onClick={handleCopy}

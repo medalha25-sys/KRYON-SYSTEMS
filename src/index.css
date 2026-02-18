@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base Styles */
 :root {
   --bg-color: #050507;
   --bg-secondary: #0a0a12;
@@ -12,10 +17,6 @@
   --glass: rgba(255, 255, 255, 0.05);
   --glass-border: rgba(255, 255, 255, 0.1);
   --transition: all 0.3s ease;
-}
-
-background-gradient {
-    background: radial-gradient(circle at 50% 50%, rgba(112, 0, 255, 0.15) 0%, rgba(5, 5, 7, 0) 50%);
 }
 
 * {
@@ -47,11 +48,17 @@ body {
   background: var(--primary);
 }
 
-/* Utilities */
+
+/* Components (No Layer to Force Inclusion) */
+.background-gradient {
+    background: radial-gradient(circle at 50% 50%, rgba(112, 0, 255, 0.15) 0%, rgba(5, 5, 7, 0) 50%);
+}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
+  width: 100%;
 }
 
 .section {
@@ -134,7 +141,7 @@ body {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
-/* Responsive */
+/* Utilities */
 @media (max-width: 768px) {
   .title {
     font-size: 2rem;

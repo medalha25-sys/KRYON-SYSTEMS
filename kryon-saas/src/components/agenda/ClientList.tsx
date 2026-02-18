@@ -128,6 +128,16 @@ function ClientModal({ isOpen, onClose, client }: { isOpen: boolean, onClose: ()
                         <label className="block text-sm mb-1">Nome</label>
                         <input name="name" defaultValue={client?.name} required className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
                     </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm mb-1">CPF</label>
+                            <input name="cpf" defaultValue={client?.cpf} placeholder="000.000.000-00" className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
+                        </div>
+                        <div>
+                            <label className="block text-sm mb-1">Data de Nascimento</label>
+                            <input name="birth_date" type="date" defaultValue={client?.birth_date} className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
+                        </div>
+                    </div>
                     <div>
                         <label className="block text-sm mb-1">Telefone</label>
                         <input name="phone" defaultValue={client?.phone} className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
@@ -136,9 +146,13 @@ function ClientModal({ isOpen, onClose, client }: { isOpen: boolean, onClose: ()
                         <label className="block text-sm mb-1">Email</label>
                         <input name="email" type="email" defaultValue={client?.email} className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
                     </div>
+                    <div className="flex items-center gap-2">
+                         <input type="checkbox" name="consent_lgpd" id="lgpd" defaultChecked={client?.consent_lgpd} className="w-4 h-4 text-primary rounded" />
+                         <label htmlFor="lgpd" className="text-sm">Consentimento LGPD (Armazenamento de dados)</label>
+                    </div>
                     <div>
                         <label className="block text-sm mb-1">Notas</label>
-                        <textarea name="notes" defaultValue={client?.notes} className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
+                        <textarea name="notes" defaultValue={client?.notes} className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600" rows={3} />
                     </div>
                     <div className="flex justify-end gap-2 pt-4">
                         <button type="button" onClick={onClose} className="px-4 py-2 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 rounded">Cancelar</button>

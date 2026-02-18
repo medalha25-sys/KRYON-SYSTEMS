@@ -9,10 +9,20 @@ export async function getWorkSchedules(professionalId: string) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return []
 
+  // Get Organization ID
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('organization_id')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile || !profile.organization_id) return []
+  const orgId = profile.organization_id
+
   const { data } = await supabase
     .from('agenda_work_schedules')
     .select('*')
-    .eq('tenant_id', user.id)
+    .eq('organization_id', orgId)
     .eq('professional_id', professionalId)
     .order('weekday')
 
@@ -24,17 +34,17 @@ export async function saveWorkScheduleAction(professionalId: string, schedules: 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Não autorizado' }
 
-  // Get shop_id (tenant_id) from profile
+  // Get Organization ID from profile
   const { data: profile } = await supabase
     .from('profiles')
-    .select('shop_id')
+    .select('organization_id')
     .eq('id', user.id)
     .single()
 
-  const tenantId = profile?.shop_id
+  const orgId = profile?.organization_id
 
-  if (!tenantId) {
-      return { error: 'Loja não encontrada para este usuário.' }
+  if (!orgId) {
+      return { error: 'Organização não encontrada para este usuário.' }
   }
 
   // Delete existing schedules for this professional
@@ -42,11 +52,11 @@ export async function saveWorkScheduleAction(professionalId: string, schedules: 
     .from('agenda_work_schedules')
     .delete()
     .eq('professional_id', professionalId)
-    .eq('tenant_id', tenantId)
+    .eq('organization_id', orgId)
 
   // Insert new ones
   const toInsert = schedules.map(s => ({
-    tenant_id: tenantId,
+    organization_id: orgId,
     product_slug: 'agenda-facil',
     professional_id: professionalId,
     weekday: s.weekday,

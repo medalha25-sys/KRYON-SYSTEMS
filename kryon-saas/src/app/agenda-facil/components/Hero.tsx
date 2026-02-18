@@ -1,4 +1,8 @@
+'use client'
+
 import Link from 'next/link'
+import { motion } from 'framer-motion'
+import { fadeSoft, staggerSoft, buttonElegant } from '../utils/animations'
 
 interface ButtonProps {
   text: string
@@ -9,46 +13,66 @@ interface ButtonProps {
 const heroData = {
   section_style: "py-24 px-6 text-center bg-gray-50",
   container_style: "max-w-4xl mx-auto",
-  title: "Organize sua agenda, reduza faltas e controle sua clínica em um só lugar.",
-  subtitle: "O Agenda Fácil é um sistema completo para psicólogos com agendamento online, prontuário digital e controle financeiro integrado.",
+  title: "Gestão Clínica Premium para Psicólogos Organizados",
+  subtitle: "Organize agenda, prontuários e financeiro com estrutura profissional e segurança.",
   buttons: [
     {
       text: "Começar teste grátis de 15 dias",
       href: "/register",
-      style: "bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-blue-700 transition"
+      style: "bg-emerald-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-emerald-500 transition shadow-lg"
     },
     {
       text: "Ver como funciona",
       href: "#como-funciona",
-      style: "border-2 border-blue-600 text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-blue-600 hover:text-white transition"
+      style: "border-2 border-emerald-600 text-emerald-600 px-8 py-4 rounded-lg font-semibold hover:bg-emerald-50 hover:text-emerald-700 transition"
     }
   ]
 }
 
 export default function Hero() {
   return (
-    <section className={heroData.section_style}>
+    <motion.section 
+      className={heroData.section_style}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.2 }}
+      variants={staggerSoft}
+    >
       <div className={heroData.container_style}>
-        <h1 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900 leading-tight">
+        <motion.h1 
+          className="text-4xl md:text-5xl font-bold mb-6 text-gray-900 leading-tight"
+          variants={fadeSoft}
+        >
           {heroData.title}
-        </h1>
+        </motion.h1>
         
-        <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+        <motion.p 
+          className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed"
+          variants={fadeSoft}
+        >
           {heroData.subtitle}
-        </p>
+        </motion.p>
 
-        <div className={`flex flex-col md:flex-row gap-4 justify-center`}>
+        <motion.div 
+          className={`flex flex-col md:flex-row gap-4 justify-center`}
+          variants={fadeSoft}
+        >
           {heroData.buttons.map((btn: ButtonProps, index: number) => (
              <Link 
                 key={index} 
                 href={btn.href} 
-                className={`${btn.style} inline-flex items-center justify-center`}
              >
-                {btn.text}
+                <motion.div
+                  className={`${btn.style} inline-flex items-center justify-center`}
+                  variants={buttonElegant}
+                  whileHover="hover"
+                >
+                  {btn.text}
+                </motion.div>
              </Link>
           ))}
-        </div>
+        </motion.div>
       </div>
-    </section>
+    </motion.section>
   )
 }

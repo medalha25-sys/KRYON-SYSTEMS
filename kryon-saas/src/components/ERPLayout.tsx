@@ -79,7 +79,7 @@ const ERPLayout: React.FC<LayoutProps> = ({ children, userEmail }) => {
     loadUserData();
   }, []);
 
-  const basePath = slug ? `/products/${slug}` : '/dashboard';
+  const basePath = slug ? `/products/${slug}` : '/select-system';
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: 'dashboard', href: basePath },

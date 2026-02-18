@@ -1,119 +1,93 @@
-import { NextResponse } from 'next/server'
-import { createClient } from '@/utils/supabase/server'
+import { NextResponse } from 'next/server';
+import { createClient } from '@/utils/supabase/server';
+import { MercadoPagoService } from '@/lib/mercadopago';
 
 export async function POST(req: Request) {
   try {
-    const notification = await req.json()
-    console.log('--- Webhook Mercado Pago Recv ---')
-    console.log('Notification:', JSON.stringify(notification, null, 2))
+    // 1. Parse Notification
+    const url = new URL(req.url);
+    const topic = url.searchParams.get('topic') || url.searchParams.get('type');
+    const id = url.searchParams.get('id') || url.searchParams.get('data.id');
 
-    // Mercado Pago notifications normally provide the ID in data.id or notification.id
-    // and the type in 'type' or 'action'
-    const paymentId = notification.data?.id || notification.id
-    const type = notification.type || (notification.action?.startsWith('payment.') ? 'payment' : null)
+    // Sometimes MP sends data in body
+    const body = await req.json().catch(() => ({}));
+    
+    // Normalize data inputs
+    const notificationId = id || body?.data?.id || body?.id;
+    const notificationTopic = topic || body?.type || body?.topic; // 'subscription_preapproval' or 'payment'
 
-    if (type === 'payment' && paymentId) {
-      console.log(`Processing payment ID: ${paymentId}`)
-      
-      const supabase = await createClient()
+    console.log(`[MP Webhook] Topic: ${notificationTopic}, ID: ${notificationId}`);
 
-      // 1. Idempotency check: Check if this payment was already processed
-      const { data: existingPayment } = await supabase
-        .from('payments')
-        .select('id')
-        .eq('mercadopago_payment_id', paymentId.toString())
-        .single()
-
-      if (existingPayment) {
-        console.log(`Payment ${paymentId} already processed. Skipping.`)
-        return NextResponse.json({ received: true, note: 'already processed' })
-      }
-
-      // 2. Fetch payment details from Mercado Pago
-      // Documentation: https://www.mercadopago.com.br/developers/pt/reference/payments/_payments_id/get
-      const accessToken = process.env.MP_ACCESS_TOKEN
-      if (!accessToken) {
-        console.error('CRITICAL: MP_ACCESS_TOKEN not found in environment variables.')
-        return NextResponse.json({ error: 'Server configuration error' }, { status: 500 })
-      }
-
-      const mpResponse = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`
-        }
-      })
-
-      if (!mpResponse.ok) {
-        console.error(`Failed to fetch payment ${paymentId} from MP:`, await mpResponse.text())
-        return NextResponse.json({ error: 'Failed to fetch payment details' }, { status: 502 })
-      }
-
-      const paymentData = await mpResponse.json()
-      const status = paymentData.status
-      const amount = paymentData.transaction_amount
-      const paidAt = paymentData.date_approved
-      
-      // Metadados são essenciais para saber QUAL tenant e QUAL produto ativar
-      // Estes metadados devem ser enviados na criação da preferência/checkout
-      const tenantId = paymentData.metadata?.tenant_id
-      const productId = paymentData.metadata?.product_id
-
-      console.log(`MP Payment Data - Status: ${status}, Tenant: ${tenantId}, Product: ${productId}`)
-
-      if (status === 'approved' && tenantId && productId) {
-        // 3. Register payment
-        const { error: paymentError } = await supabase
-          .from('payments')
-          .insert({
-            tenant_id: tenantId,
-            product_id: productId,
-            mercadopago_payment_id: paymentId.toString(),
-            amount: amount,
-            status: status,
-            paid_at: paidAt || new Date().toISOString()
-          })
-
-        if (paymentError) {
-          console.error('Error inserting payment:', paymentError)
-          throw paymentError
-        }
-
-        // 4. Activate or Update Subscription
-        // status = 'active', extend end date (e.g., 30 days)
-        const periodEnd = new Date()
-        periodEnd.setDate(periodEnd.getDate() + 30)
-
-        const { error: subError } = await supabase
-          .from('subscriptions')
-          .upsert({
-            tenant_id: tenantId,
-            product_id: productId,
-            status: 'active',
-            mercadopago_subscription_id: paymentData.id?.toString(),
-            current_period_end: periodEnd.toISOString()
-          }, { onConflict: 'tenant_id,product_id' })
-
-        if (subError) {
-          console.error('Error updating subscription:', subError)
-          throw subError
-        }
-
-        console.log(`Successfully activated subscription for Tenant ${tenantId} / Product ${productId}`)
-      } else {
-        console.log(`Payment not approved or metadata missing. Status: ${status}`)
-      }
+    if (!notificationId) {
+        return NextResponse.json({ error: 'Missing ID' }, { status: 400 });
     }
 
-    return NextResponse.json({ received: true })
-  } catch (error) {
-    console.error('Mercado Pago Webhook Error:', error)
-    return NextResponse.json({ error: 'Webhook error' }, { status: 500 })
-  }
-}
+    const supabase = await createClient();
 
-export async function GET() {
-  return NextResponse.json({ 
-    message: 'Mercado Pago Webhook Endpoint Active',
-    required_metadata: ['tenant_id', 'product_id']
-  })
+    // 2. Handle Subscription Updates
+    if (notificationTopic === 'subscription_preapproval') {
+        // Fetch latest status from MP
+        const subData = await MercadoPagoService.getSubscription(notificationId);
+        
+        const status = subData.status; // authorized, paused, cancelled
+        const externalReference = subData.external_reference; // organization_id
+        const payerId = subData.payer_id;
+        
+        console.log(`[MP Webhook] Sub ID: ${notificationId} | Status: ${status} | Check Org: ${externalReference}`);
+
+        if (externalReference) {
+            // Map MP status to our DB status
+            // MP: authorized, paused, cancelled, pending
+            // DB: active, past_due, canceled, trialing
+            let dbStatus = 'active';
+            if (status === 'authorized') dbStatus = 'active';
+            if (status === 'paused') dbStatus = 'past_due';
+            if (status === 'cancelled') dbStatus = 'canceled';
+            if (status === 'pending') dbStatus = 'trialing'; // or inactive
+
+            // Update Subscription Record
+            // We find by organization_id (stored in external_reference)
+            // Ideally we also know the product... but here we might assume 'agenda-facil' 
+            // OR we stored "orgId:productId" in external_reference.
+            // Let's assume external_reference is just organization_id for now, and we apply to the main product or all?
+            // BETTER: Migration to store 'subscription_id' in local DB allows lookup by `external_id`.
+            
+            // Try to find by external_id first
+            const { data: existingSub } = await supabase
+                .from('subscriptions')
+                .select('*')
+                .eq('external_id', notificationId)
+                .single();
+
+            if (existingSub) {
+                 await supabase
+                    .from('subscriptions')
+                    .update({
+                        status: dbStatus,
+                        external_payer_id: payerId?.toString(),
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', existingSub.id);
+            } else {
+                // First time sync? Or maybe we can't link it if we don't know the product.
+                // Fallback: Try update by Organization ID if we can assume a default product (Agenda Facil)
+                // This is risky. Prefer finding by external_id. 
+                // If it doesn't exist, it might be the INITIAL creation webhook.
+                // In separate flow, we should save the ID immediately after user returns from checkout.
+                console.warn(`[MP Webhook] Subscription local record not found for external_id: ${notificationId}`);
+            }
+        }
+    }
+    
+    // 3. Handle Payments (Charge success/fail)
+    if (notificationTopic === 'payment') {
+         // Log payment logic here if needed, or link to subscription `last_charged_at`
+         // ... implementation for payment history ...
+    }
+
+    return NextResponse.json({ received: true });
+  } catch (error: any) {
+    console.error('[MP Webhook] Error:', error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 }

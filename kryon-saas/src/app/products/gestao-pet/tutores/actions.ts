@@ -8,9 +8,23 @@ import { translateSupabaseError } from '@/utils/error_handling'
 export async function getPetOwners(query?: string) {
   const supabase = await createClient()
   
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return []
+
+  // Get Organization ID
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('organization_id')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile || !profile.organization_id) return []
+  const orgId = profile.organization_id
+
   let dbQuery = supabase
     .from('pet_owners')
     .select('*')
+    .eq('organization_id', orgId)
     .eq('product_slug', 'gestao-pet')
     .order('name')
 
@@ -39,9 +53,18 @@ export async function createPetOwnerAction(formData: FormData) {
 
   if (!name || !phone) return { error: 'Nome e Telefone são obrigatórios' }
 
+  // Get Organization ID
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('organization_id')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile || !profile.organization_id) return { error: 'Unauthorized' }
+  const orgId = profile.organization_id
+
   const { error } = await supabase.from('pet_owners').insert({
-    tenant_id: user.id, // RLS will validate this matches get_user_tenant()
-    product_slug: 'gestao-pet',
+    organization_id: orgId,
     name,
     phone,
     email
@@ -63,12 +86,24 @@ export async function updatePetOwnerAction(id: string, formData: FormData) {
   const phone = formData.get('phone') as string
   const email = formData.get('email') as string
 
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Unauthorized' }
+
+  // Get Organization ID
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('organization_id')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile || !profile.organization_id) return { error: 'Unauthorized' }
+  const orgId = profile.organization_id
+
   const { error } = await supabase
     .from('pet_owners')
     .update({ name, phone, email })
     .eq('id', id)
-    // RLS handles tenant check, but good practice to add if logic gets complex
-    // .eq('tenant_id', user.id) 
+    .eq('organization_id', orgId) 
 
   if (error) {
       console.error('Update owner error:', error)
@@ -80,11 +115,24 @@ export async function updatePetOwnerAction(id: string, formData: FormData) {
 
 export async function deletePetOwnerAction(id: string) {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Unauthorized' }
+
+  // Get Organization ID
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('organization_id')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile || !profile.organization_id) return { error: 'Unauthorized' }
+  const orgId = profile.organization_id
 
   const { error } = await supabase
     .from('pet_owners')
     .delete()
     .eq('id', id)
+    .eq('organization_id', orgId)
 
   if (error) {
       console.error('Delete owner error:', error)

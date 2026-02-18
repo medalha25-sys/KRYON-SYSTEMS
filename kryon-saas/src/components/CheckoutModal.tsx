@@ -223,9 +223,9 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ subtotal, onClose, onFina
         setIsFinishing(true);
         try {
             await onFinalize(finalPayments, discount);
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
-            alert('Erro ao finalizar venda');
+            alert(`Erro ao finalizar venda: ${error.message || 'Erro desconhecido'}`);
             setIsFinishing(false);
         }
     };

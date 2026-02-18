@@ -186,7 +186,7 @@ async function handlePostLogin(user: User, supabase: SupabaseClient) {
             return { success: true, redirect: `/products/${slug}` }
         } else {
             console.log('DEBUG LOGIN: Multiple systems found, redirecting to selection')
-            return { success: true, redirect: '/products' }
+            return { success: true, redirect: '/select-system' }
         }
     }
 

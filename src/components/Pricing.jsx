@@ -56,28 +56,28 @@ const Pricing = () => {
                     </p>
 
                     {/* Controls Container */}
-                    <div style={{ 
+                    <div className="pricing-controls" style={{ 
                         background: 'var(--glass)', 
                         border: '1px solid var(--glass-border)',
                         borderRadius: '20px',
-                        padding: '2rem',
+                        padding: 'clamp(1rem, 5%, 2rem)',
                         maxWidth: '900px',
                         margin: '0 auto 3rem auto',
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
-                        gap: '2rem'
+                        gap: '1.5rem'
                     }}>
                         {/* 1. Cycle Toggle */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                            <span style={{ color: billingCycle === 'monthly' ? '#fff' : 'var(--text-muted)', fontWeight: billingCycle === 'monthly' ? 'bold' : 'normal', cursor: 'pointer' }} onClick={() => setBillingCycle('monthly')}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+                            <span style={{ color: billingCycle === 'monthly' ? '#fff' : 'var(--text-muted)', fontWeight: billingCycle === 'monthly' ? 'bold' : 'normal', cursor: 'pointer', fontSize: '0.9rem' }} onClick={() => setBillingCycle('monthly')}>
                                 Mensal
                             </span>
                             <div 
                                 onClick={() => setBillingCycle(billingCycle === 'semestral' ? 'monthly' : 'semestral')}
                                 style={{
-                                    width: '60px',
-                                    height: '32px',
+                                    width: '56px',
+                                    height: '28px',
                                     background: billingCycle === 'semestral' ? 'var(--primary)' : 'rgba(255,255,255,0.1)',
                                     borderRadius: '32px',
                                     position: 'relative',
@@ -86,8 +86,8 @@ const Pricing = () => {
                                 }}
                             >
                                 <div style={{
-                                    width: '26px',
-                                    height: '26px',
+                                    width: '22px',
+                                    height: '22px',
                                     background: '#fff',
                                     borderRadius: '50%',
                                     position: 'absolute',
@@ -97,7 +97,7 @@ const Pricing = () => {
                                     boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
                                 }} />
                             </div>
-                            <span style={{ color: billingCycle === 'semestral' ? '#fff' : 'var(--text-muted)', fontWeight: billingCycle === 'semestral' ? 'bold' : 'normal', cursor: 'pointer' }} onClick={() => setBillingCycle('semestral')}>
+                            <span style={{ color: billingCycle === 'semestral' ? '#fff' : 'var(--text-muted)', fontWeight: billingCycle === 'semestral' ? 'bold' : 'normal', cursor: 'pointer', fontSize: '0.9rem' }} onClick={() => setBillingCycle('semestral')}>
                                 Semestral <span style={{ fontSize: '0.7em', color: 'var(--primary)', border: '1px solid var(--primary)', padding: '2px 6px', borderRadius: '4px', marginLeft: '4px' }}>-20% OFF</span>
                             </span>
                         </div>
@@ -108,48 +108,53 @@ const Pricing = () => {
                         {/* 2. Fiscal Controls */}
                         <div style={{ 
                             display: 'flex', 
-                            flexWrap: 'wrap', 
-                            justifyContent: 'center', 
+                            flexDirection: 'column',
                             alignItems: 'center', 
-                            gap: '2rem',
+                            gap: '1.5rem',
                             width: '100%'
                         }}>
                             {/* Toggle Fiscal */}
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', textAlign: 'left' }}>
                                 <div 
                                     onClick={() => setWantsFiscal(!wantsFiscal)}
                                     style={{
-                                        width: '50px',
-                                        height: '26px',
+                                        width: '46px',
+                                        height: '24px',
                                         background: wantsFiscal ? 'var(--primary)' : 'rgba(255,255,255,0.1)',
                                         borderRadius: '26px',
                                         position: 'relative',
                                         cursor: 'pointer',
-                                        transition: '0.3s'
+                                        transition: '0.3s',
+                                        flexShrink: 0
                                     }}
                                 >
                                     <div style={{
-                                        width: '20px',
-                                        height: '20px',
+                                        width: '18px',
+                                        height: '18px',
                                         background: wantsFiscal ? '#000' : '#fff',
                                         borderRadius: '50%',
                                         position: 'absolute',
                                         top: '3px',
-                                        left: wantsFiscal ? '27px' : '3px',
+                                        left: wantsFiscal ? '25px' : '3px',
                                         transition: '0.3s'
                                     }} />
                                 </div>
-                                <span style={{ color: '#fff', fontWeight: '500' }}>Desejo emitir notas (NF-e/NFC-e)</span>
+                                <span style={{ color: '#fff', fontWeight: '500', fontSize: '0.9rem' }}>Desejo emitir notas (NF-e/NFC-e)</span>
                             </div>
 
                             {/* Note Packs */}
                             <AnimatePresence>
                                 {wantsFiscal && (
                                     <motion.div 
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0, x: -20 }}
-                                        style={{ display: 'flex', gap: '10px' }}
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -10 }}
+                                        style={{ 
+                                            display: 'flex', 
+                                            gap: '6px', 
+                                            flexWrap: 'wrap', 
+                                            justifyContent: 'center' 
+                                        }}
                                     >
                                         {fiscalOptions.map((opt, idx) => (
                                             <div 
@@ -159,14 +164,16 @@ const Pricing = () => {
                                                     border: fiscalTier === idx ? '1px solid var(--primary)' : '1px solid var(--glass-border)',
                                                     background: fiscalTier === idx ? 'rgba(0, 240, 255, 0.1)' : 'transparent',
                                                     borderRadius: '8px',
-                                                    padding: '8px 16px',
+                                                    padding: '6px 10px',
                                                     cursor: 'pointer',
                                                     textAlign: 'center',
-                                                    transition: '0.3s'
+                                                    transition: '0.3s',
+                                                    flex: '1 1 80px',
+                                                    minWidth: '80px'
                                                 }}
                                             >
-                                                <div style={{ fontWeight: 'bold', color: fiscalTier === idx ? 'var(--primary)' : 'var(--text-muted)' }}>{opt.count} Notas</div>
-                                                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>R$ {opt.price}/mês</div>
+                                                <div style={{ fontWeight: 'bold', fontSize: '0.8rem', color: fiscalTier === idx ? 'var(--primary)' : 'var(--text-muted)' }}>{opt.count} Notas</div>
+                                                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>R$ {opt.price}/mês</div>
                                             </div>
                                         ))}
                                     </motion.div>
@@ -177,9 +184,9 @@ const Pricing = () => {
                 </div>
 
                 {/* Cards */}
-                <div style={{
+                <div className="pricing-grid" style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
                     gap: '2rem',
                     maxWidth: '1200px',
                     margin: '0 auto'
@@ -187,6 +194,7 @@ const Pricing = () => {
                     {/* PLAN: BASIC */}
                     <PlanCard 
                         name="Básico"
+                        slug="basic"
                         cycle={billingCycle}
                         price={getPrice('basic')}
                         basePrice={basePrices[billingCycle].basic}
@@ -205,6 +213,7 @@ const Pricing = () => {
                      {/* PLAN: ESSENTIAL */}
                      <PlanCard 
                         name="Essencial"
+                        slug="essential"
                         cycle={billingCycle}
                         price={getPrice('essential')}
                         basePrice={basePrices[billingCycle].essential}
@@ -224,6 +233,7 @@ const Pricing = () => {
                      {/* PLAN: PRO */}
                      <PlanCard 
                         name="Pro"
+                        slug="pro"
                         cycle={billingCycle}
                         price={getPrice('pro')}
                         basePrice={basePrices[billingCycle].pro}
@@ -240,12 +250,32 @@ const Pricing = () => {
                     />
                 </div>
             </div>
+
+            <style>{`
+                @media (max-width: 768px) {
+                    .pricing-grid {
+                        grid-template-columns: 1fr !important;
+                        gap: 1.5rem !important;
+                    }
+                    .pricing-controls {
+                        margin-bottom: 2rem !important;
+                    }
+                }
+                @media (max-width: 480px) {
+                    .section {
+                        padding: 40px 0 !important;
+                    }
+                    .title {
+                        font-size: 1.8rem !important;
+                    }
+                }
+            `}</style>
         </section>
     );
 };
 
 // Subcomponent for cleaner code
-const PlanCard = ({ name, cycle, price, basePrice, fiscalPrice, totalSix, features, highlight }) => (
+const PlanCard = ({ name, cycle, price, basePrice, fiscalPrice, totalSix, features, highlight, slug }) => (
     <motion.div
         whileHover={{ y: -5 }}
         style={{
@@ -321,7 +351,9 @@ const PlanCard = ({ name, cycle, price, basePrice, fiscalPrice, totalSix, featur
         </ul>
 
         <a 
-            href="https://app.kryonsystems.com.br/register"
+            href={`https://app.kryonsystems.com.br/trial?product=${slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
             className="btn btn-primary"
             style={{ 
                 width: '100%', 
@@ -331,7 +363,7 @@ const PlanCard = ({ name, cycle, price, basePrice, fiscalPrice, totalSix, featur
                 border: highlight ? 'none' : '1px solid var(--glass-border)'
             }}
         >
-            ASSINAR AGORA
+            TESTE GRÁTIS
         </a>
     </motion.div>
 );

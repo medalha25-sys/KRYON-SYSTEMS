@@ -8,12 +8,26 @@ import { translateSupabaseError } from '@/utils/error_handling'
 export async function getPetAppointments(date?: string) {
   const supabase = await createClient()
   
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return []
+
+  // Get Organization ID
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('organization_id')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile || !profile.organization_id) return []
+  const orgId = profile.organization_id
+  
   let dbQuery = supabase
     .from('pet_appointments')
     .select(`
         *,
         pets (id, name, owner_id, pet_owners(name))
     `)
+    .eq('organization_id', orgId)
     .eq('product_slug', 'gestao-pet')
     .order('appointment_date')
 
@@ -33,9 +47,23 @@ export async function getPetAppointments(date?: string) {
 
 export async function getPetsForSelect() {
     const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return []
+
+    // Get Organization ID
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('organization_id')
+      .eq('id', user.id)
+      .single()
+  
+    if (!profile || !profile.organization_id) return []
+    const orgId = profile.organization_id
+
     const { data } = await supabase
         .from('pets')
         .select('id, name, owner_id, pet_owners(name)')
+        .eq('organization_id', orgId)
         .eq('product_slug', 'gestao-pet')
         .order('name')
     return (data || []) as unknown as Pet[]
@@ -56,8 +84,18 @@ export async function createPetAppointmentAction(formData: FormData) {
 
   const appointment_date = new Date(`${date}T${time}`).toISOString()
 
+  // Get Organization ID
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('organization_id')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile || !profile.organization_id) return { error: 'Unauthorized' }
+  const orgId = profile.organization_id
+
   const { error } = await supabase.from('pet_appointments').insert({
-    tenant_id: user.id, 
+    organization_id: orgId, 
     product_slug: 'gestao-pet',
     pet_id,
     service,
@@ -83,12 +121,26 @@ export async function updatePetAppointmentAction(id: string, formData: FormData)
   const time = formData.get('time') as string
   const status = formData.get('status') as string
 
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Unauthorized' }
+
+  // Get Organization ID
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('organization_id')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile || !profile.organization_id) return { error: 'Unauthorized' }
+  const orgId = profile.organization_id
+
   const appointment_date = new Date(`${date}T${time}`).toISOString()
 
   const { error } = await supabase
     .from('pet_appointments')
     .update({ pet_id, service, appointment_date, status })
     .eq('id', id)
+    .eq('organization_id', orgId)
 
   if (error) {
       console.error('Update appointment error:', error)
@@ -100,11 +152,24 @@ export async function updatePetAppointmentAction(id: string, formData: FormData)
 
 export async function deletePetAppointmentAction(id: string) {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Unauthorized' }
+
+  // Get Organization ID
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('organization_id')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile || !profile.organization_id) return { error: 'Unauthorized' }
+  const orgId = profile.organization_id
 
   const { error } = await supabase
     .from('pet_appointments')
     .delete()
     .eq('id', id)
+    .eq('organization_id', orgId)
 
   if (error) {
       console.error('Delete appointment error:', error)

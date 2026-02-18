@@ -150,9 +150,9 @@ const SalesTerminal: React.FC = () => {
 
             setCart([]);
             setShowCheckoutModal(false);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error finishing sale:', error);
-            throw error;
+            throw error; // Re-throw to be caught by CheckoutModal
         }
     };
 

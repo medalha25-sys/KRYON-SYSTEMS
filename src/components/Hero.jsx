@@ -33,13 +33,21 @@ const Hero = () => {
                 zIndex: -1
             }} />
 
-            <div className="container" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', alignItems: 'center' }}>
+            <div className="container" style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 500px), 1fr))', 
+                gap: '4rem', 
+                alignItems: 'center',
+                position: 'relative',
+                zIndex: 1
+            }}>
 
                 {/* Content */}
                 <motion.div
                     initial={{ opacity: 0, x: -50 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.8 }}
+                    style={{ textAlign: 'inherit' }}
                 >
                     <div style={{
                         display: 'inline-block',
@@ -54,8 +62,8 @@ const Hero = () => {
                         🚀 Tecnologia que organiza, conecta e escala.
                     </div>
 
-                    <h1 style={{
-                        fontSize: '3.5rem',
+                    <h1 className="hero-title" style={{
+                        fontSize: 'clamp(2.5rem, 8vw, 3.5rem)',
                         fontWeight: '800',
                         lineHeight: '1.1',
                         marginBottom: '1.5rem',
@@ -66,13 +74,13 @@ const Hero = () => {
                         Criamos sistemas <br /> <span className="gradient-text">inteligentes</span> para o seu negócio.
                     </h1>
 
-                    <p className="subtitle" style={{ fontSize: '1.1rem', lineHeight: '1.8' }}>
+                    <p className="subtitle" style={{ fontSize: '1.1rem', lineHeight: '1.8', margin: '0 0 2rem 0' }}>
                         Desenvolvemos plataformas web e soluções SaaS para diferentes segmentos,
                         todas preparadas para o futuro digital e a nova realidade tributária do Brasil.
                     </p>
 
                     <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                        <a href="https://app.kryonsystems.com.br/register" className="btn btn-primary" style={{ gap: '10px' }}>
+                        <a href="https://app.kryonsystems.com.br/trial" target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ gap: '10px' }}>
                             Começar Teste Grátis <Rocket size={18} />
                         </a>
                         <a href="#contact" className="btn btn-outline">
@@ -86,110 +94,109 @@ const Hero = () => {
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.8, delay: 0.2 }}
-                    style={{ position: 'relative' }}
+                    style={{ position: 'relative', width: '100%' }}
                 >
-                    {/* Abstract Tech Representation */}
-                    <div style={{
-                        background: 'linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))',
-                        backdropFilter: 'blur(20px)',
-                        border: '1px solid var(--glass-border)',
-                        borderRadius: '24px',
-                        padding: '2rem',
-                        position: 'relative'
+                    {/* Monitor Area */}
+                    <div className="hero-mockup-wrapper" style={{
+                        position: 'relative',
+                        width: '100%',
+                        maxWidth: '550px',
+                        margin: '0 auto'
                     }}>
-                        {/* Floating Badge 1 */}
-                        <div className="hero-floating-badge-wrapper">
-                            <div className="hero-floating-badge"
-                                style={{
-                                    position: 'absolute',
-                                    top: '-20px',
-                                    right: '-20px',
-                                    background: '#1a1a2e',
-                                    padding: '1rem',
-                                    borderRadius: '16px',
-                                    border: '1px solid var(--primary)',
-                                    boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.5rem',
-                                    zIndex: 10
-                                }}>
-                                <div style={{ background: 'var(--primary)', padding: '8px', borderRadius: '8px', color: '#000' }}>
-                                    <Globe size={20} />
+                        {/* Desktop Monitor Mockup */}
+                        <div className="hero-monitor" style={{
+                            width: '100%',
+                            aspectRatio: '16/10',
+                            background: '#1a1a2e',
+                            border: '10px solid #333',
+                            borderRadius: '16px',
+                            position: 'relative',
+                            boxShadow: '0 30px 60px rgba(0,0,0,0.6)',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            transform: 'perspective(1500px) rotateY(-10deg) rotateX(2deg)',
+                            overflow: 'hidden'
+                        }}>
+                             {/* Dashboard Content Mockup */}
+                             <div style={{ flex: 1, padding: '1rem', background: '#0f172a', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <div style={{ width: '80px', height: '10px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px' }}></div>
+                                    <div style={{ width: '24px', height: '24px', background: '#3b82f6', borderRadius: '50%' }}></div>
                                 </div>
-                                <div>
-                                    <div style={{ fontSize: '0.8rem', color: '#aaa' }}>Status</div>
-                                    <div style={{ fontWeight: 'bold' }}>Online Global</div>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem' }}>
+                                    {[1, 2, 3].map(i => (
+                                        <div key={i} style={{ height: '40px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}></div>
+                                    ))}
                                 </div>
-                            </div>
+                                <div style={{ flex: 1, background: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}></div>
+                             </div>
                         </div>
 
-                        {/* Main Graphic Content - Simplified Code/Dashboard Look */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
-                                <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ff5f56' }}></div>
-                                <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ffbd2e' }}></div>
-                                <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#27c93f' }}></div>
-                            </div>
+                        {/* Monitor Stand */}
+                        <div className="hero-monitor-stand" style={{
+                            width: '100px',
+                            height: '30px',
+                            background: '#222',
+                            margin: '-2px auto 0',
+                            clipPath: 'polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%)',
+                            transform: 'perspective(1500px) rotateY(-10deg)'
+                        }} />
 
-                            <div style={{
-                                height: '8px', width: '60%', background: 'rgba(255,255,255,0.1)', borderRadius: '4px'
-                            }}></div>
-                            <div style={{
-                                height: '8px', width: '80%', background: 'rgba(255,255,255,0.1)', borderRadius: '4px'
-                            }}></div>
-
-                            <div style={{
-                                marginTop: '1rem',
-                                display: 'grid',
-                                gridTemplateColumns: '1fr 1fr',
-                                gap: '1rem'
-                            }}>
-                                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '12px' }}>
-                                    <Database size={24} color="var(--primary)" style={{ marginBottom: '0.5rem' }} />
-                                    <div style={{ fontSize: '0.8rem', color: '#aaa' }}>Cloud Data</div>
-                                    <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>99.9%</div>
+                        {/* Mobile Phone Mockup */}
+                        <motion.div
+                            initial={{ y: 50, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.5 }}
+                            className="hero-phone"
+                            style={{
+                                position: 'absolute',
+                                bottom: '-20px',
+                                right: '-10px',
+                                width: '150px',
+                                height: '300px',
+                                background: '#000',
+                                border: '6px solid #333',
+                                borderRadius: '24px',
+                                boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+                                zIndex: 10,
+                                overflow: 'hidden'
+                            }}
+                        >
+                            <div style={{ height: '15px', width: '50px', background: '#333', margin: '0 auto', borderRadius: '0 0 8px 8px' }}></div>
+                            <div style={{ padding: '0.75rem', height: '100%', background: '#0f172a', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                <div style={{ width: '100%', height: '30px', background: '#3b82f6', borderRadius: '6px' }}></div>
+                                <div style={{ width: '80%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px' }}></div>
+                                <div style={{ width: '60%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px' }}></div>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+                                    {[1, 2, 3, 4].map(i => <div key={i} style={{ height: '30px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px' }}></div>)}
                                 </div>
-                                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '12px' }}>
-                                    <Code size={24} color="var(--secondary)" style={{ marginBottom: '0.5rem' }} />
-                                    <div style={{ fontSize: '0.8rem', color: '#aaa' }}>API Requests</div>
-                                    <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>2.5k/s</div>
-                                </div>
                             </div>
-
-                            <div style={{
-                                marginTop: '1rem',
-                                padding: '1rem',
-                                background: 'rgba(0, 240, 255, 0.05)',
-                                borderRadius: '12px',
-                                border: '1px dashed var(--primary)',
-                                textAlign: 'center',
-                                fontSize: '0.9rem',
-                                color: 'var(--primary)',
-                                marginBottom: '20px' // Add spacing for mobile overlap safety
-                            }}>
-                                System Ready
-                            </div>
-                        </div>
-
+                        </motion.div>
                     </div>
                 </motion.div>
             </div >
 
             <style>{`
         @media (max-width: 968px) {
-          .container { grid-template-columns: 1fr !important; text-align: center; }
-          h1 { font-size: 2.5rem !important; }
-          .subtitle { margin: 0 auto 2rem auto; }
-          .btn { justify-content: center; }
+          .container { grid-template-columns: 1fr !important; text-align: center; gap: 3rem !important; }
+          .hero-title { font-size: 2.2rem !important; }
+          .subtitle { margin: 0 auto 2rem auto !important; }
           div[style*="display: flex"] { justify-content: center; }
-          .hero-floating-badge {
-             right: auto !important;
-             left: 50% !important;
-             transform: translateX(-50%) scale(0.9) !important;
-             top: -30px !important;
-             width: max-content;
+          .hero-mockup-wrapper { margin-top: 2rem; }
+          .hero-monitor { transform: none !important; border-width: 6px !important; }
+          .hero-monitor-stand { display: none; }
+          .hero-phone { 
+            width: 130px !important; 
+            height: 260px !important; 
+            right: 0px !important; 
+            bottom: -30px !important; 
+            transform: none !important; 
           }
+        }
+        @media (max-width: 480px) {
+          .hero-title { font-size: 1.8rem !important; }
+          .hero-phone { display: none; }
+          .hero-mockup-wrapper { max-width: 100%; }
         }
       `}</style>
         </section >

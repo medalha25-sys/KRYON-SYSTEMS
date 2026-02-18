@@ -12,12 +12,10 @@ interface AgendaGridProps {
   services: Service[]
   clients: Client[]
   onSlotClick?: (date: Date, time: string, professionalId: string) => void
+  onAppointmentClick?: (appointment: Appointment) => void
 }
 
-export default function AgendaGrid({ date, professionals, appointments, services, clients, onSlotClick }: AgendaGridProps) {
-  const [selectedProfessional, setSelectedProfessional] = useState<string | 'all'>('all')
-
-  // Generate Time Slots (08:00 to 18:00)
+export default function AgendaGrid({ date, professionals, appointments, services, clients, onSlotClick, onAppointmentClick }: AgendaGridProps) {
   const START_HOUR = 8
   const END_HOUR = 18
   const slots = []
@@ -25,10 +23,6 @@ export default function AgendaGrid({ date, professionals, appointments, services
     slots.push(setHours(setMinutes(new Date(date), 0), i))
     slots.push(setHours(setMinutes(new Date(date), 30), i))
   }
-
-  const filteredProfessionals = selectedProfessional === 'all' 
-    ? professionals 
-    : professionals.filter(p => p.id === selectedProfessional)
 
   const getAppointmentsForSlot = (profId: string, slotTime: Date) => {
     return appointments.filter(app => {
@@ -78,7 +72,7 @@ export default function AgendaGrid({ date, professionals, appointments, services
           
           {/* Professionals Headers */}
           <div className="flex flex-1">
-             {filteredProfessionals.map(prof => (
+             {professionals.map(prof => (
                <div key={prof.id} className="flex-1 min-w-[200px] p-4 text-center font-semibold border-r border-gray-200 dark:border-gray-700 last:border-r-0 bg-white dark:bg-gray-800">
                   <div className="text-gray-900 dark:text-white capitalize">{prof.name}</div>
                   {prof.specialty && <span className="block text-xs text-gray-500 font-normal">{prof.specialty}</span>}
@@ -98,7 +92,7 @@ export default function AgendaGrid({ date, professionals, appointments, services
 
                {/* Professionals Columns - Slots */}
                <div className="flex-1 flex">
-                 {filteredProfessionals.map(prof => {
+                 {professionals.map(prof => {
                    const slotApps = getAppointmentsForSlot(prof.id, slot)
                    
                    return (
@@ -107,14 +101,19 @@ export default function AgendaGrid({ date, professionals, appointments, services
                         {slotApps.map(app => (
                            <div 
                              key={app.id} 
-                             className="absolute inset-x-1 top-1 bottom-1 bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-100 text-xs p-2 rounded border-l-4 border-blue-500 overflow-hidden shadow-sm z-10 cursor-pointer hover:shadow-md transition-shadow"
+                             className="absolute inset-x-1 top-1 bottom-1 text-xs p-2 rounded border-l-4 overflow-hidden shadow-sm z-10 cursor-pointer hover:shadow-md transition-shadow"
+                             style={{
+                                 backgroundColor: prof.color ? `${prof.color}20` : '#EBF8FF', // 20 = 12% opacity
+                                 borderColor: prof.color || '#4299E1',
+                                 color: prof.color ? (prof.color === '#ffffff' ? '#000' : '#4A5568') : '#2B6CB0' // Darker text
+                             }}
                              onClick={(e) => {
                                  e.stopPropagation();
-                                 onSlotClick?.(new Date(date), format(slot, 'HH:mm'), prof.id) // Temporary: open modal on edit too? Or edit modal
+                                 onAppointmentClick ? onAppointmentClick(app) : onSlotClick?.(new Date(date), format(slot, 'HH:mm'), prof.id)
                              }}
                              title={`${app.clients?.name} - ${app.agenda_services?.name}`}
                            >
-                              <p className="font-bold truncate">{app.clients?.name || 'Cliente'}</p>
+                              <p className="font-bold truncate" style={{ color: prof.color || '#2c5282' }}>{app.clients?.name || 'Cliente'}</p>
                               <p className="truncate opacity-75">{app.agenda_services?.name}</p>
                            </div>
                         ))}

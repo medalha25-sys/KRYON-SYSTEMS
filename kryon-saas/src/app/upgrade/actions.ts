@@ -59,7 +59,7 @@ export async function createCheckoutPreference(productSlug: string) {
           }
         ],
         metadata: {
-          tenant_id: user.id, // Currently tenant_id is mapped to user_id in the trial creation
+          organization_id: await getOrganizationId(user.id, supabase),
           product_id: product.id
         },
         back_urls: {
@@ -104,9 +104,18 @@ export async function upgradeSubscription(productSlug: string) {
         status: 'active',
         current_period_end: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString()
     })
-    .eq('tenant_id', user.id) // Updated to new schema field
+    .eq('organization_id', await getOrganizationId(user.id, supabase)) // Updated to new schema field
     // We need product_id here, let's fetch it or use slug if possible (but schema has product_id)
     
   // ... rest of logic for the mock if user really wants it ...
   return { success: true }
+}
+
+async function getOrganizationId(userId: string, supabase: any) {
+  const { data } = await supabase
+    .from('profiles')
+    .select('organization_id')
+    .eq('id', userId)
+    .single()
+  return data?.organization_id
 }

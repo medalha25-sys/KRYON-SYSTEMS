@@ -10,9 +10,10 @@ interface WeeklyAgendaProps {
   professionals: Professional[]
   appointments: Appointment[]
   onSlotClick?: (date: Date, time: string, professionalId: string) => void
+  onAppointmentClick?: (appointment: Appointment) => void
 }
 
-export default function WeeklyAgenda({ date, professionals, appointments, onSlotClick }: WeeklyAgendaProps) {
+export default function WeeklyAgenda({ date, professionals, appointments, onSlotClick, onAppointmentClick }: WeeklyAgendaProps) {
   // We assume date is somewhere in the week. We find the start of the week (Monday).
   // Note: date-fns startOfWeek defaults to Sunday. We want Monday.
   const weekStart = startOfWeek(date, { weekStartsOn: 1 }) // 1 = Monday
@@ -73,21 +74,36 @@ export default function WeeklyAgenda({ date, professionals, appointments, onSlot
 
                         return (
                             <div key={day.toString()} className="flex-1 border-r border-gray-100 dark:border-gray-700 last:border-r-0 relative group p-1">
-                                {slotApps.map(app => (
+                                {slotApps.map(app => {
+                                    const isBlocked = app.status === 'blocked'
+                                    return (
                                     <div 
                                         key={app.id} 
-                                        className={`mb-1 p-2 text-xs rounded border-l-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow
-                                            ${app.status === 'completed' ? 'bg-green-50 border-green-500 text-green-700' : 
-                                              app.agenda_services?.name.toLowerCase().includes('online') ? 'bg-blue-50 border-blue-500 text-blue-700' :
-                                              'bg-green-50 border-green-500 text-green-700' // Default to presencial style
-                                            }
-                                        `}
-                                        onClick={() => onSlotClick?.(day, `${hour}:00`, app.professional_id)}
+                                        className="mb-1 p-2 text-xs rounded border-l-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow relative overflow-hidden"
+                                        style={{
+                                            backgroundColor: isBlocked ? '#FEE2E2' : (app.agenda_professionals?.color ? `${app.agenda_professionals.color}20` : '#EBF8FF'),
+                                            borderColor: isBlocked ? '#EF4444' : (app.agenda_professionals?.color || '#4299E1'),
+                                            color: isBlocked ? '#991B1B' : '#2D3748'
+                                        }}
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            onAppointmentClick ? onAppointmentClick(app) : onSlotClick?.(day, `${hour}:00`, app.professional_id)
+                                        }}
                                     >
-                                        <div className="font-bold">{format(parseISO(app.start_time), 'HH:mm')} • {app.agenda_services?.name.includes('Online') ? 'Online' : 'Presencial'}</div>
-                                        <div className="font-bold mt-1 text-sm">{app.clients?.name}</div>
+                                        {isBlocked ? (
+                                            <>
+                                                <div className="font-bold">{format(parseISO(app.start_time), 'HH:mm')} • Bloqueado</div>
+                                                <div className="font-bold mt-1 text-sm">{app.notes}</div>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <div className="font-bold">{format(parseISO(app.start_time), 'HH:mm')} • {app.agenda_services?.name.includes('Online') ? 'Online' : 'Presencial'}</div>
+                                                <div className="font-bold mt-1 text-sm">{app.clients?.name}</div>
+                                            </>
+                                        )}
                                     </div>
-                                ))}
+                                    )
+                                })}
 
                                 {slotApps.length === 0 && (
                                      <button 

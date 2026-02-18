@@ -1,10 +1,13 @@
-export type AgendaStatus = 'scheduled' | 'confirmed' | 'completed' | 'canceled' | 'no_show';
+export type AgendaStatus = 'scheduled' | 'confirmed' | 'completed' | 'canceled' | 'no_show' | 'blocked';
 
 export interface Client {
   id: string;
   name: string;
   phone?: string;
   email?: string;
+  cpf?: string;
+  birth_date?: string;
+  consent_lgpd?: boolean;
   notes?: string;
 }
 
@@ -19,6 +22,8 @@ export interface Professional {
   id: string;
   name: string;
   specialty?: string;
+  color?: string;
+  default_session_price?: number;
 }
 
 export interface Appointment {
@@ -30,6 +35,7 @@ export interface Appointment {
   end_time: string;   // ISO string
   status: AgendaStatus;
   notes?: string;
+  session_price?: number;
   
   // Joined data for display
   clients?: Client;

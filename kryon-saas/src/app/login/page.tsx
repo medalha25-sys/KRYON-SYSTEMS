@@ -71,11 +71,10 @@ function LoginForm() {
         <div className="w-full max-w-md space-y-8">
             {/* Header / Logo Area */}
             <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
-                <div className="flex items-center gap-3 mb-8">
-                    <div className="w-12 h-12 flex items-center justify-center">
-                        <Image src="/logo-k.svg" alt="Kryon Logo" width={48} height={48} className="w-full h-full object-contain" />
+                <div className="flex flex-col items-center gap-3 mb-8">
+                    <div className="w-full flex items-center justify-center">
+                        <Image src="/logo-clinica.png" alt="Clínica Serena" width={300} height={120} className="object-contain h-32 md:h-40" />
                     </div>
-                    <span className="text-2xl font-bold text-slate-900 tracking-tight">Kryon Systems</span>
                 </div>
 
                 <h1 className="text-3xl font-bold text-slate-900">Bem-vindo de volta</h1>

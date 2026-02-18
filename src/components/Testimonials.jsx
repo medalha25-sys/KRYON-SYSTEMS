@@ -18,8 +18,8 @@ const testimonials = [
         image: null
     },
     {
-        name: "Roberto Lima",
-        role: "Assistência Técnica",
+        name: "Renato Silva",
+        role: "Dika Celulares",
         text: "As Ordens de Serviço organizaram minha oficina. O cliente recebe atualização por email e eu não perco mais peças no estoque.",
         rating: 5,
         image: null

@@ -10,10 +10,20 @@ export async function getProfessionals() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return []
 
+  // Get Organization ID
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('organization_id')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile || !profile.organization_id) return []
+  const orgId = profile.organization_id
+
   const { data } = await supabase
     .from('agenda_professionals')
     .select('*')
-    .eq('tenant_id', user.id)
+    .eq('organization_id', orgId)
     .order('name')
 
   return (data || []) as Professional[]
@@ -29,9 +39,18 @@ export async function createProfessionalAction(formData: FormData) {
 
   if (!name) return { error: 'Nome é obrigatório' }
 
+  // Get Organization ID
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('organization_id')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile || !profile.organization_id) return { error: 'Unauthorized' }
+  const orgId = profile.organization_id
+
   const { error } = await supabase.from('agenda_professionals').insert({
-    tenant_id: user.id,
-    product_slug: 'agenda-facil',
+    organization_id: orgId,
     name,
     specialty
   })
@@ -52,11 +71,21 @@ export async function updateProfessionalAction(id: string, formData: FormData) {
     const name = formData.get('name') as string
     const specialty = formData.get('specialty') as string
   
-    const { error } = await supabase
-      .from('agenda_professionals')
-      .update({ name, specialty })
-      .eq('id', id)
-      .eq('tenant_id', user.id)
+  // Get Organization ID
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('organization_id')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile || !profile.organization_id) return { error: 'Unauthorized' }
+  const orgId = profile.organization_id
+
+  const { error } = await supabase
+    .from('agenda_professionals')
+    .update({ name, specialty })
+    .eq('id', id)
+    .eq('organization_id', orgId)
   
     if (error) {
         console.error('Update professional error:', error)
@@ -71,11 +100,21 @@ export async function deleteProfessionalAction(id: string) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
   
-    const { error } = await supabase
-      .from('agenda_professionals')
-      .delete()
-      .eq('id', id)
-      .eq('tenant_id', user.id)
+  // Get Organization ID
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('organization_id')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile || !profile.organization_id) return { error: 'Unauthorized' }
+  const orgId = profile.organization_id
+
+  const { error } = await supabase
+    .from('agenda_professionals')
+    .delete()
+    .eq('id', id)
+    .eq('organization_id', orgId)
   
     if (error) {
         console.error('Delete professional error:', error)

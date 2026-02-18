@@ -10,10 +10,20 @@ export async function getServices() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return []
 
+  // Get Organization ID
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('organization_id')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile || !profile.organization_id) return []
+  const orgId = profile.organization_id
+
   const { data } = await supabase
     .from('agenda_services')
     .select('*')
-    .eq('tenant_id', user.id)
+    .eq('organization_id', orgId)
     .order('name')
 
   return (data || []) as Service[]
@@ -30,9 +40,18 @@ export async function createServiceAction(formData: FormData) {
 
   if (!name) return { error: 'Nome é obrigatório' }
 
+  // Get Organization ID
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('organization_id')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile || !profile.organization_id) return { error: 'Unauthorized' }
+  const orgId = profile.organization_id
+
   const { error } = await supabase.from('agenda_services').insert({
-    tenant_id: user.id,
-    product_slug: 'agenda-facil',
+    organization_id: orgId,
     name,
     duration_minutes: duration,
     price
@@ -56,11 +75,21 @@ export async function updateServiceAction(id: string, formData: FormData) {
     const duration = parseInt(formData.get('duration_minutes') as string)
     const price = parseFloat(formData.get('price') as string)
   
+    // Get Organization ID
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('organization_id')
+        .eq('id', user.id)
+        .single()
+    
+    if (!profile || !profile.organization_id) return { error: 'Unauthorized' }
+    const orgId = profile.organization_id
+  
     const { error } = await supabase
       .from('agenda_services')
       .update({ name, duration_minutes: duration, price })
       .eq('id', id)
-      .eq('tenant_id', user.id)
+      .eq('organization_id', orgId)
   
     if (error) {
         console.error('Update service error:', error)
@@ -75,11 +104,21 @@ export async function deleteServiceAction(id: string) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { error: 'Unauthorized' }
   
+    // Get Organization ID
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('organization_id')
+      .eq('id', user.id)
+      .single()
+  
+    if (!profile || !profile.organization_id) return { error: 'Unauthorized' }
+    const orgId = profile.organization_id
+  
     const { error } = await supabase
       .from('agenda_services')
       .delete()
       .eq('id', id)
-      .eq('tenant_id', user.id)
+      .eq('organization_id', orgId)
   
     if (error) {
         console.error('Delete service error:', error)
