@@ -114,7 +114,7 @@ async function handlePostLogin(user: User, supabase: SupabaseClient) {
     // Use Admin to bypass RLS, ensuring we see it if it exists
     const { data: existingSubs } = await supabaseAdmin
       .from('subscriptions')
-      .select('*, products(slug)')
+      .select('*')
       .eq('organization_id', orgId)
       .in('status', ['active', 'trial'])
 
@@ -189,7 +189,7 @@ async function handlePostLogin(user: User, supabase: SupabaseClient) {
     // Refetch to be sure we have the latest
     const { data: finalSubs } = await supabaseAdmin
       .from('subscriptions')
-      .select('*, products(slug)')
+      .select('*')
       .eq('organization_id', orgId)
       .in('status', ['active', 'trial'])
     
@@ -219,7 +219,8 @@ async function handlePostLogin(user: User, supabase: SupabaseClient) {
              const slug = finalSubs[0].products?.slug || finalSubs[0].product_slug
              if (slug === 'agenda-facil') redirectPath = '/products/agenda-facil'
              else if (slug === 'fashion-ai' || slug === 'fashion-manager') redirectPath = '/fashion/dashboard'
-             else if (slug === 'gestao-pet') redirectPath = '/products/gestao-pet' // or wherever
+             else if (slug === 'gestao-pet') redirectPath = '/products/gestao-pet'
+             else if (slug === 'concrete-erp') redirectPath = '/concrete'
              else redirectPath = `/products/${slug}`
         }
     } else {
