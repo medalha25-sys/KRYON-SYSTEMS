@@ -121,6 +121,7 @@ async function handlePostLogin(user: User, supabase: SupabaseClient) {
     // If no subscription, create a trial
     if (!existingSubs || existingSubs.length === 0) {
       console.log('DEBUG LOGIN: No active subscription found for org', orgId)
+      console.log('DEBUG LOGIN: Attempting to create trial for user metadata product_slug:', productSlug)
       
       if (!productSlug) {
           // Default to agenda-facil if not specified, or try to detect from legacy shop
@@ -171,11 +172,11 @@ async function handlePostLogin(user: User, supabase: SupabaseClient) {
         console.log('DEBUG LOGIN: Trial subscription created successfully')
       } else {
            // Fallback if product lookup failed (e.g., 'agenda-facil' not in DB yet?)
-           // Log warning but allow login if user has legacy shop
-           console.warn('DEBUG LOGIN: Product not found for slug:', productSlug)
-           // If we have a shop, maybe we can proceed without a subscription record for now?
-           // No, select-system needs subscriptions. 
-           // Let's return a specific error instructing the user to contact support (or we seed the product).
+           console.error('DEBUG LOGIN: Product not found for slug:', productSlug)
+           // Log all products to help debug
+           const { data: allProducts } = await supabaseAdmin.from('products').select('slug')
+           console.log('DEBUG LOGIN: Available products:', allProducts?.map(p => p.slug))
+           
            return { error: `Sistema selecionado (${productSlug}) não encontrado. Contate o suporte.` }
       }
     }
@@ -223,8 +224,10 @@ async function handlePostLogin(user: User, supabase: SupabaseClient) {
         }
     } else {
         // No subscription found even after creation attempt?
-        console.error('DEBUG LOGIN: No subscription found after creation logic.')
-        return { error: 'Login realizado, mas você não possui uma assinatura ativa.' }
+        console.error('DEBUG LOGIN: No subscription found after creation logic. Org:', orgId, 'User:', user.id)
+        const { data: debugSubs } = await supabaseAdmin.from('subscriptions').select('*').eq('organization_id', orgId)
+        console.log('DEBUG LOGIN: All subs for this org:', debugSubs)
+        return { error: 'Login realizado, mas você não possui uma assinatura ativa. Por favor, entre em contato com o suporte.' }
     }
 
     // Ensure shop store_type syncs with destination (Legacy Sync)
