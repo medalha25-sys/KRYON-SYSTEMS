@@ -10,37 +10,49 @@ export async function getUsers() {
 
   if (!rpcError && rpcData && rpcData.length > 0) {
     console.log('RPC success. Users found:', rpcData.length)
-    return (rpcData as any[]).map((u) => ({
-      id: u.id,
-      email: u.email || 'Sem email',
-      name: u.name || 'Sem nome',
-      shop_name: u.shop_name || 'Sem Loja',
-      cnpj: u.shop_cnpj || '-',
-      status: u.sub_status || 'inactive',
-      product: u.sub_product || '-',
-      joined_at: u.joined_at ? new Date(u.joined_at).toLocaleDateString('pt-BR') : '-'
-    }))
-  }
+  // Deduplicate by ID
+  const uniqueUsers = new Map();
+  
+  (rpcData as any[]).forEach((u) => {
+    if (!uniqueUsers.has(u.id)) {
+      uniqueUsers.set(u.id, {
+        id: u.id,
+        email: u.email || 'Sem email',
+        name: u.name || 'Sem nome',
+        shop_name: u.shop_name || 'Sem Loja',
+        cnpj: u.shop_cnpj || '-',
+        status: u.sub_status || 'inactive',
+        product: u.sub_product || '-',
+        joined_at: u.joined_at ? new Date(u.joined_at).toLocaleDateString('pt-BR') : '-'
+      });
+    }
+  });
 
-  console.error('RPC failed or empty. Falling back to manual join...')
-  if (rpcError) console.error('RPC Error:', rpcError)
+  return Array.from(uniqueUsers.values());
+}
 
-  // Fallback: Manually join profiles and subscriptions
-  const { data: profiles, error: profilesError } = await supabase
-    .from('profiles')
-    .select('*, shops(name, cnpj), subscriptions(status, product_slug)')
-    .order('created_at', { ascending: false })
+console.error('RPC failed or empty. Falling back to manual join...')
+if (rpcError) console.error('RPC Error:', rpcError)
 
-  if (profilesError) {
-    console.error('Error fetching profiles fallback:', profilesError)
-    return []
-  }
+// Fallback: Manually join profiles and subscriptions
+const { data: profiles, error: profilesError } = await supabase
+  .from('profiles')
+  .select('*, shops(name, cnpj), subscriptions(status, product_slug)')
+  .order('created_at', { ascending: false })
 
-  return profiles.map((p) => {
+if (profilesError) {
+  console.error('Error fetching profiles fallback:', profilesError)
+  return []
+}
+
+const uniqueProfiles = new Map();
+
+profiles.forEach((p) => {
+  if (!uniqueProfiles.has(p.id)) {
     const sub = p.subscriptions?.[0] || {}
-    const shop = p.shops?.[0] || {} // One-to-one strictly speaking but usually returned as array or single obj depending on query
+    const shop = p.shops?.[0] || {} 
 
-    return {
+    uniqueProfiles.set(p.id, {
       id: p.id,
       email: p.email || 'Email não disponível (Use RPC)',
       name: p.name || 'Sem nome',
@@ -49,8 +61,11 @@ export async function getUsers() {
       status: sub.status || 'inactive',
       product: sub.product_slug || '-',
       joined_at: p.created_at ? new Date(p.created_at).toLocaleDateString('pt-BR') : '-'
-    }
-  })
+    });
+  }
+});
+
+return Array.from(uniqueProfiles.values())
 }
 
 export async function toggleVipStatus(userId: string, currentStatus: string) {
@@ -124,8 +139,36 @@ export async function getProducts() {
 
   if (error) {
     console.error('Error fetching products:', error)
-    return []
+    return data
   }
-
   return data
 }
+
+export async function deleteUser(userId: string) {
+  const supabase = await createClient()
+
+  // 1. Delete Subscriptions
+  const { error: subError } = await supabase.from('subscriptions').delete().eq('user_id', userId)
+  if (subError) console.error('Error deleting subscriptions:', subError)
+
+  // 2. Delete Shops
+  const { error: shopError } = await supabase.from('shops').delete().eq('owner_id', userId)
+  if (shopError) console.error('Error deleting shops:', shopError)
+
+  // 3. Delete Organization Memberships
+  const { error: memberError } = await supabase.from('organization_members').delete().eq('user_id', userId)
+  if (memberError) console.error('Error deleting memberships:', memberError)
+
+  // 4. Delete Profile
+  const { error: profileError } = await supabase.from('profiles').delete().eq('id', userId)
+  if (profileError) {
+      console.error('Error deleting profile:', profileError)
+      throw new Error('Erro ao excluir perfil do usuário')
+  }
+
+  // Note: This does NOT delete the user from Authentication (requires Service Role). 
+  // But it removes them from the system data/lists.
+  
+  return { success: true }
+}
+

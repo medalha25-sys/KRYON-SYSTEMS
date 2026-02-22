@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   })
@@ -58,11 +58,14 @@ export async function middleware(request: NextRequest) {
   // 3. Authenticated User Logic
   if (user && !isPublicPath && !isFlowPage) {
       // Check if user has an active organization selected in profile
-      const { data: profile } = await supabase
+      const { data: profile, error } = await supabase
         .from('profiles')
-        .select('organization_id')
+        .select('organization_id, role, is_super_admin')
         .eq('id', user.id)
         .single()
+      
+      if (error) console.error('PROXY PROFILE ERROR:', error)
+      console.log('PROXY DEBUG:', { path: request.nextUrl.pathname, role: profile?.role, is_super: profile?.is_super_admin })
 
       // If user is logged in, but has no organization context, send to Org Selection
       if (!profile?.organization_id) {
@@ -79,18 +82,34 @@ export async function middleware(request: NextRequest) {
       }
       
       // Check for Admin Routes
-      if (request.nextUrl.pathname.startsWith('/admin')) {
-        // Fetch profile to check role
-        const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', user.id)
-            .single()
+      if (request.nextUrl.pathname.startsWith('/admin') || request.nextUrl.pathname.startsWith('/super-admin')) {
+        // Use profile fetched above
         
-        if (profile?.role !== 'admin') {
+        // Super Admin redirection
+        if (request.nextUrl.pathname === '/admin' && profile?.is_super_admin) {
+            console.log('PROXY: Redirecting /admin to /super-admin')
             const url = request.nextUrl.clone()
-            url.pathname = '/select-system' 
+            url.pathname = '/super-admin'
             return NextResponse.redirect(url)
+        }
+
+        // Protect /super-admin
+        if (request.nextUrl.pathname.startsWith('/super-admin') && !profile?.is_super_admin) {
+             console.log('PROXY: Access denied to /super-admin')
+             const url = request.nextUrl.clone()
+             url.pathname = '/'
+             return NextResponse.redirect(url)
+        }
+        
+        // Protect /admin (Regular admins only, or super admins can view too potentially, but let's enforce admin role)
+        if (request.nextUrl.pathname.startsWith('/admin') && !request.nextUrl.pathname.startsWith('/super-admin')) {
+            if (profile?.role !== 'admin' && !profile?.is_super_admin) {
+                console.log('PROXY: Access denied to /admin')
+                const url = request.nextUrl.clone()
+                url.pathname = '/select-system' 
+                url.searchParams.set('message', 'Acesso negado: Apenas administradores podem acessar esta área.')
+                return NextResponse.redirect(url)
+            }
         }
       }
   }

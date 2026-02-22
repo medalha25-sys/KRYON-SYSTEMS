@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { getUsers, toggleVipStatus, updateUserProduct, getProducts } from './actions'
+import { getUsers, toggleVipStatus, updateUserProduct, getProducts, deleteUser } from './actions'
 import { ProductSwitchModal } from './ProductSwitchModal'
 
 export default function AdminUsersPage() {
@@ -139,6 +139,27 @@ export default function AdminUsersPage() {
                         title="Trocar Produto"
                     >
                         <span className="material-symbols-outlined">swap_horiz</span>
+                    </button>
+                    <button 
+                        onClick={async () => {
+                             if (!confirm(`Tem certeza que deseja EXCLUIR o usuário ${user.name}? Esta ação não pode ser desfeita.`)) return;
+                             try {
+                                 setLoading(true)
+                                 await deleteUser(user.id)
+                                 // Refresh list
+                                 const data = await getUsers()
+                                 setUsers(data)
+                             } catch (err) {
+                                 alert('Erro ao excluir usuário')
+                                 console.error(err)
+                             } finally {
+                                 setLoading(false)
+                             }
+                        }}
+                        className="text-slate-400 hover:text-red-500 transition ml-2"
+                        title="Excluir Usuário"
+                    >
+                        <span className="material-symbols-outlined">delete</span>
                     </button>
                   </td>
                 </tr>

@@ -71,26 +71,56 @@ export default function SelectOrganizationPage() {
   }, [router, supabase])
 
   const handleSelectOrganization = async (orgId: string) => {
-      setUpdateLoading(true)
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+      try {
+          setUpdateLoading(true)
+          setErrorMsg(null)
+          
+          const { data: { user } } = await supabase.auth.getUser()
+          if (!user) {
+              router.push('/login')
+              return
+          }
 
-      // Update the user's current Profile to point to this Organization
-      // This "session" state in DB allows subsequent queries to know context
-      const { error } = await supabase
-        .from('profiles')
-        .update({ organization_id: orgId })
-        .eq('id', user.id)
+          // Update the user's current Profile to point to this Organization
+          const { error: updateError } = await supabase
+            .from('profiles')
+            .update({ organization_id: orgId })
+            .eq('id', user.id)
 
-      if (error) {
-          console.error("Failed to switch context", error)
-          alert("Erro ao selecionar organização.")
+          if (updateError) {
+              console.error("Failed to switch context", updateError)
+              setErrorMsg(`Erro ao vincular empresa: ${updateError.message}`)
+              setUpdateLoading(false)
+              return
+          }
+
+          // 2. REFECTH PROFILE TO CHECK SUPER ADMIN
+          const { data: profile, error: refetchError } = await supabase
+            .from('profiles')
+            .select('is_super_admin')
+            .eq('id', user.id)
+            .single()
+
+          if (refetchError) {
+              console.error("Failed to fetch profile", refetchError)
+              // If we can't fetch is_super_admin, we might be blocked by RLS
+              // Let's try to proceed to select-system anyway as a fallback
+              router.push('/select-system')
+              return
+          }
+
+          if (profile?.is_super_admin) {
+              router.push('/super-admin')
+              return
+          }
+
+          // Redirect to Product Selection
+          router.push('/select-system')
+      } catch (err: any) {
+          console.error("Critical error in organization selection:", err)
+          setErrorMsg(`Erro crítico: ${err.message || 'Erro desconhecido'}`)
           setUpdateLoading(false)
-          return
       }
-
-      // Redirect to Product Selection
-      router.push('/select-system')
   }
 
   if (loading) {

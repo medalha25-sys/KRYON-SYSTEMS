@@ -48,16 +48,18 @@ export async function updateSession(request: NextRequest) {
   }
 
   // If user is logged in, check shop and trial status
-  if (user && !request.nextUrl.pathname.startsWith('/assinar') && !request.nextUrl.pathname.startsWith('/auth')) {
+    if (user && !request.nextUrl.pathname.startsWith('/assinar') && !request.nextUrl.pathname.startsWith('/auth')) {
     const { data: profile } = await supabase
       .from('profiles')
-      .select('shop_id, shops(plan, trial_ate, store_type)')
+      .select('organization_id, is_super_admin, shop_id, shops(plan, trial_ate, store_type)')
       .eq('id', user.id)
       .single()
 
     const shop = profile?.shops as any
+    const isSuperAdmin = profile?.is_super_admin === true
 
     if (shop) {
+      // ... existing shop logic ...
       const isTrialOver = shop.trial_ate && new Date(shop.trial_ate) < new Date()
       const isBlocked = shop.plan === 'bloqueado'
       const isTrial = shop.plan === 'trial'
@@ -69,35 +71,59 @@ export async function updateSession(request: NextRequest) {
         return NextResponse.redirect(url)
       }
 
-      // Route Protection: Prevent Cross-System Access
-      // 1. If Fashion Store user tries to access other systems
-      if (storeType === 'fashion_store_ai') {
-          if (request.nextUrl.pathname.startsWith('/mobile') || request.nextUrl.pathname.startsWith('/products/agenda-facil')) {
-             const url = request.nextUrl.clone()
-             url.pathname = '/fashion/dashboard'
-             return NextResponse.redirect(url)
+      // Route Protection: Prevent Cross-System Access (Skips for Super Admin)
+      if (!isSuperAdmin) {
+          if (storeType === 'fashion_store_ai') {
+              if (request.nextUrl.pathname.startsWith('/mobile') || request.nextUrl.pathname.startsWith('/products/agenda-facil')) {
+                  const url = request.nextUrl.clone()
+                  url.pathname = '/fashion/dashboard'
+                  return NextResponse.redirect(url)
+              }
+          }
+
+          if (storeType === 'mobile_store_ai') {
+              if (request.nextUrl.pathname.startsWith('/fashion') || request.nextUrl.pathname.startsWith('/products/agenda-facil')) {
+                  const url = request.nextUrl.clone()
+                  url.pathname = '/mobile/dashboard'
+                  return NextResponse.redirect(url)
+              }
+          }
+
+          if (storeType === 'agenda_facil_ai') {
+              if (request.nextUrl.pathname.startsWith('/fashion') || request.nextUrl.pathname.startsWith('/mobile')) {
+                  const url = request.nextUrl.clone()
+                  url.pathname = '/products/agenda-facil'
+                  return NextResponse.redirect(url)
+              }
           }
       }
 
-      // 2. If Mobile Store user tries to access other systems
-      if (storeType === 'mobile_store_ai') {
-          if (request.nextUrl.pathname.startsWith('/fashion') || request.nextUrl.pathname.startsWith('/products/agenda-facil')) {
-             const url = request.nextUrl.clone()
-             url.pathname = '/mobile/dashboard'
-             return NextResponse.redirect(url)
-          }
-      }
+    // 4. Concrete ERP Module Protection
+    const isConcreteApp = request.nextUrl.pathname.startsWith('/concrete')
 
-      // 3. If Agenda Facil user tries to access other systems
-      if (storeType === 'agenda_facil_ai') {
-          if (request.nextUrl.pathname.startsWith('/fashion') || request.nextUrl.pathname.startsWith('/mobile')) {
-             const url = request.nextUrl.clone()
-             url.pathname = '/products/agenda-facil'
-             return NextResponse.redirect(url)
-          }
-      }
+    if (isConcreteApp && !isSuperAdmin) {
+        if (!profile?.organization_id) {
+            const url = request.nextUrl.clone()
+            url.pathname = '/select-system'
+            return NextResponse.redirect(url)
+        }
+
+        const { data: orgData } = await supabase
+          .from('organizations')
+          .select('modules')
+          .eq('id', profile?.organization_id)
+          .single()
+
+        const modules = orgData?.modules as any
+        if (!modules?.concrete_erp) {
+            console.warn('Unauthorized access attempt to Concrete ERP', { orgId: profile?.organization_id })
+            const url = request.nextUrl.clone()
+            url.pathname = '/select-system'
+            return NextResponse.redirect(url)
+        }
     }
   }
+}
 
   return supabaseResponse
 }

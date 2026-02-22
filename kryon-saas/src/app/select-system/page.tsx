@@ -1,9 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+export const dynamic = 'force-dynamic'
+
+import { Suspense, useEffect, useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { toast } from 'sonner'
 import { motion } from 'framer-motion'
 import { ArrowRight, Calendar, Dog } from 'lucide-react'
 
@@ -15,10 +18,30 @@ type Product = {
 }
 
 export default function SelectSystemPage() {
+  return (
+    <Suspense fallback={
+        <div className="min-h-screen bg-gray-950 flex items-center justify-center text-white">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+    }>
+      <SelectSystemContent />
+    </Suspense>
+  )
+}
+
+function SelectSystemContent() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const router = useRouter()
+  const searchParams = useSearchParams()
   const supabase = createClient()
+
+  useEffect(() => {
+    const message = searchParams.get('message')
+    if (message) {
+      toast.error(message)
+    }
+  }, [searchParams])
 
   useEffect(() => {
     async function fetchProducts() {
@@ -32,14 +55,20 @@ export default function SelectSystemPage() {
       // 1. Get Organization ID
       const { data: profile } = await supabase
         .from('profiles')
-        .select('organization_id')
+        .select('organization_id, is_super_admin')
         .eq('id', user.id)
         .single()
 
       if (!profile?.organization_id) {
          console.log('No organization found for user:', user.id)
-         router.push('/login?message=Organization%20not%20found') 
+         router.push('/login?message=Organizacao%20nao%20encontrada') 
          return
+      }
+
+      // 1.5 Check Super Admin
+      if (profile?.is_super_admin) {
+           router.push('/super-admin')
+           return
       }
 
       // 2. Fetch subscriptions with product details for this organization
@@ -51,7 +80,7 @@ export default function SelectSystemPage() {
 
       if (subError || !subscriptions || subscriptions.length === 0) {
         console.log('No active subscriptions found for org:', profile.organization_id)
-        router.push('/login?message=No%20active%20subscriptions') // Redirect to login if no access
+        router.push('/login?message=Nenhuma%20assinatura%20ativa%20encontrada') // Redirect to login if no access
         return
       }
 

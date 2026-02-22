@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import { type User, type SupabaseClient } from '@supabase/supabase-js'
+import { createServerClient as createClientSSR } from '@supabase/ssr'
 import { translateSupabaseError } from '@/utils/error_handling'
 
 /**
@@ -11,232 +12,279 @@ import { translateSupabaseError } from '@/utils/error_handling'
  * Used by both login (password) and verifyOtp (code).
  */
 async function handlePostLogin(user: User, supabase: SupabaseClient) {
-  console.log('DEBUG LOGIN: User authenticated', { id: user.id, email: user.email, metadata: user.user_metadata })
+  console.log('DEBUG LOGIN: User authenticated', { id: user.id, email: user.email })
+
+  // Use Admin Client for checks to bypass RLS latency/issues during login
+  const supabaseAdmin = createClientSSR(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      cookies: {
+        getAll() { return [] },
+        setAll(cookiesToSet: any) {}
+      }
+    }
+  )
 
   try {
-    // 1. Post-Confirmation Onboarding Check
-    let { data: shop, error: fetchShopError } = await supabase
-      .from('shops')
-      .select('id, name')
-      .eq('owner_id', user.id)
-      .maybeSingle()
-
-    if (fetchShopError) {
-      console.error('Fetch Shop Error:', fetchShopError)
-      return { error: 'Erro ao consultar sua empresa: ' + fetchShopError.message }
-    }
-
     const companyName = user.user_metadata?.company_name || 'Minha Empresa'
     let productSlug = user.user_metadata?.product_slug
-    
-    // If no shop, create one
-    if (!shop) {
-      console.log('DEBUG LOGIN: Shop not found, creating one...')
-      const slug = (companyName || 'loja')
-        .toLowerCase()
-        .trim()
-        .normalize('NFD') // Remove accents
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9]/g, '-')
-        .replace(/-+/g, '-') + '-' + Math.random().toString(36).substring(2, 7)
 
-      const trialDays = 15
-      const trialEnd = new Date()
-      trialEnd.setDate(trialEnd.getDate() + trialDays)
-
-      const { data: newShop, error: shopError } = await supabase
-        .from('shops')
-        .insert({
-          owner_id: user.id,
-          name: companyName,
-          slug: slug,
-          plan: 'trial',
-          trial_ate: trialEnd.toISOString()
-        })
-        .select('id')
+    // ---------------------------------------------------------
+    // 1. RESOLVE ORGANIZATION
+    // ---------------------------------------------------------
+    // Try to find an existing organization linked to the user's profile
+    let { data: profile, error: profileError } = await supabaseAdmin
+        .from('profiles')
+        .select('organization_id, role, is_super_admin')
+        .eq('id', user.id)
         .single()
+    
+    console.log('DEBUG LOGIN: Service Role Key Present?', !!process.env.SUPABASE_SERVICE_ROLE_KEY)
+    console.log('DEBUG LOGIN: Fetched Profile:', profile)
+    if (profileError) console.error('DEBUG LOGIN: Profile Error:', profileError)
 
-      if (shopError) {
-        console.error('DEBUG LOGIN: Shop creation error', shopError)
-        return { error: 'Erro ao configurar sua empresa: ' + shopError.message }
-      } 
-      shop = { id: newShop.id, name: companyName } 
-      console.log('DEBUG LOGIN: Shop created', shop.id)
+    let orgId = profile?.organization_id
+
+    // If not in profile, check organization_members
+    if (!orgId) {
+        const { data: member } = await supabaseAdmin
+            .from('organization_members')
+            .select('organization_id')
+            .eq('user_id', user.id)
+            .limit(1)
+            .maybeSingle()
+        
+        if (member) {
+            orgId = member.organization_id
+            // Fix profile link
+            await supabaseAdmin.from('profiles').update({ organization_id: orgId }).eq('id', user.id)
+        }
     }
 
-    // 2. Ensure at least one subscription exists
-    const { data: existingSubs } = await supabase
+    // If still no org, create one (SaaS onboarding)
+    if (!orgId) {
+        console.log('DEBUG LOGIN: No organization found, creating one...')
+        const orgSlug = (companyName || 'org')
+            .toLowerCase()
+            .trim()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z0-9]/g, '-') + '-' + Math.random().toString(36).substring(2, 7)
+
+        const { data: newOrg, error: orgError } = await supabaseAdmin
+            .from('organizations')
+            .insert({ name: companyName, slug: orgSlug })
+            .select('id')
+            .single()
+
+        if (orgError) { 
+            console.error('DEBUG LOGIN: Org creation error', orgError)
+            return { error: 'Erro ao criar organização: ' + orgError.message }
+        }
+
+        orgId = newOrg.id
+        
+        // Link user to org
+        await supabaseAdmin.from('organization_members').insert({ 
+            organization_id: orgId, 
+            user_id: user.id, 
+            role: 'owner' // First user is owner
+        })
+        
+        // Update profile
+        await supabaseAdmin.from('profiles').upsert({ 
+            id: user.id,
+            organization_id: orgId,
+            role: 'admin',
+            name: user.user_metadata?.full_name || companyName
+        })
+    }
+
+    // ---------------------------------------------------------
+    // 1.5 CHECK SUPER ADMIN BYPASS
+    // ---------------------------------------------------------
+    if (profile?.is_super_admin) {
+        console.log('DEBUG LOGIN: User is Super Admin, bypassing subscription check.')
+        return { success: true, redirect: '/super-admin' }
+    }
+
+    // ---------------------------------------------------------
+    // 2. CHECK SUBSCRIPTION (By Organization)
+    // ---------------------------------------------------------
+    // Use Admin to bypass RLS, ensuring we see it if it exists
+    const { data: existingSubs } = await supabaseAdmin
       .from('subscriptions')
-      .select('id')
-      .eq('user_id', user.id)
+      .select('*, products(slug)')
+      .eq('organization_id', orgId)
       .in('status', ['active', 'trial'])
 
+    // If no subscription, create a trial
     if (!existingSubs || existingSubs.length === 0) {
-      console.log('DEBUG LOGIN: No active subscription found for user', user.id)
+      console.log('DEBUG LOGIN: No active subscription found for org', orgId)
       
       if (!productSlug) {
-          console.log('DEBUG LOGIN: No productSlug in metadata, searching for default product...')
-          const { data: firstProduct } = await supabase.from('products').select('slug').limit(1).single()
-          productSlug = firstProduct?.slug
+          // Default to agenda-facil if not specified, or try to detect from legacy shop
+          const { data: legacyShop } = await supabaseAdmin.from('shops').select('store_type').eq('owner_id', user.id).maybeSingle()
+          if (legacyShop?.store_type === 'agenda_facil_ai') productSlug = 'agenda-facil'
+          else if (legacyShop?.store_type === 'fashion_store_ai') productSlug = 'fashion-manager'
+          else productSlug = 'agenda-facil' // Default fallback
+          
+          console.log('DEBUG LOGIN: Force-detected product slug:', productSlug)
       }
 
-      if (productSlug) {
-        console.log('DEBUG LOGIN: Creating trial subscription for product:', productSlug)
+      // Try to find the product
+      const { data: product } = await supabaseAdmin.from('products').select('id, slug').eq('slug', productSlug).single()
+
+      if (product) {
+        console.log('DEBUG LOGIN: Creating trial subscription for product:', product.slug)
         const trialEnd = new Date()
         trialEnd.setDate(trialEnd.getDate() + 15)
 
-        const { error: subError } = await supabase
+        const { error: subError } = await supabaseAdmin
           .from('subscriptions')
           .insert({
-            user_id: user.id, 
-            product_slug: productSlug,
+            organization_id: orgId, // LINK TO ORG, NOT USER
+            product_id: product.id,
+            product_slug: product.slug, // Legacy/Redundancy
             status: 'trial',
             current_period_end: trialEnd.toISOString()
           })
         
         if (subError) {
             console.error('DEBUG LOGIN: Subscription creation error', subError)
-            
-            // Tradução de erros comuns do banco de dados
-            return { error: 'Erro ao criar seu período de teste: ' + translateSupabaseError(subError) }
+            // If checking user_id constraint failure (legacy table?), try adding user_id
+            if (subError.message.includes('user_id')) {
+                 console.log('DEBUG LOGIN: Retrying subscription with user_id (Legacy Schema support)...')
+                 const { error: retryError } = await supabaseAdmin.from('subscriptions').insert({
+                    organization_id: orgId,
+                    user_id: user.id,
+                    product_id: product.id,
+                    product_slug: product.slug,
+                    status: 'trial',
+                    current_period_end: trialEnd.toISOString()
+                 })
+                 if (retryError) return { error: 'Erro ao criar assinatura (Retry): ' + retryError.message }
+            } else {
+                return { error: 'Erro ao criar seu período de teste: ' + translateSupabaseError(subError) }
+            }
         }
         console.log('DEBUG LOGIN: Trial subscription created successfully')
       } else {
-          return { error: 'Não foi possível identificar o sistema que você deseja acessar. Fale com suporte.' }
+           // Fallback if product lookup failed (e.g., 'agenda-facil' not in DB yet?)
+           // Log warning but allow login if user has legacy shop
+           console.warn('DEBUG LOGIN: Product not found for slug:', productSlug)
+           // If we have a shop, maybe we can proceed without a subscription record for now?
+           // No, select-system needs subscriptions. 
+           // Let's return a specific error instructing the user to contact support (or we seed the product).
+           return { error: `Sistema selecionado (${productSlug}) não encontrado. Contate o suporte.` }
       }
     }
 
     revalidatePath('/', 'layout')
     
-    // 3. Final Fetch & Redirect
-    const { data: subscriptions } = await supabase
+    // ---------------------------------------------------------
+    // 3. DETERMINE REDIRECT
+    // ---------------------------------------------------------
+    // Refetch to be sure we have the latest
+    const { data: finalSubs } = await supabaseAdmin
       .from('subscriptions')
       .select('*, products(slug)')
-      .eq('user_id', user.id)
+      .eq('organization_id', orgId)
       .in('status', ['active', 'trial'])
-
-    console.log('DEBUG LOGIN: Final subscription check count:', subscriptions?.length)
-
-    // Check store_type for redirection
-    const { data: shopData } = await supabase
-      .from('shops')
-      .select('store_type')
-      .eq('owner_id', user.id)
-      .maybeSingle()
     
-    // Default to 'other' if not found
-    let storeType = shopData?.store_type || 'other'
-    console.log('DEBUG LOGIN: Store Type:', storeType)
+    // Fallback: Check 'shops' table for legacy store_type redirection
+    // (This ensures we don't break old flows if SaaS migration isn't 100%)
+    const { data: shop } = await supabaseAdmin
+        .from('shops')
+        .select('store_type')
+        .eq('owner_id', user.id)
+        .maybeSingle()
 
-    // CHECK FOR SYNC: Update store_type based on active subscriptions
-    // Do not force store_type if it effectively hides other products
-    if (subscriptions && subscriptions.length > 0) {
-        const subSlugs = subscriptions.map((s: any) => s.product_slug || (s.products as any)?.slug);
-        
-        let derivedType = 'other';
-        const hasFashion = subSlugs.some((s: string) => s && s.includes('fashion-manager'));
-        const hasMobile = subSlugs.some((s: string) => s && s.includes('tech-assist'));
-        const hasAgenda = subSlugs.some((s: string) => s && s.includes('agenda')); 
+    let redirectPath = '/select-system' // Default
 
-        // Only set specific store types if they are the exclusive or dominant intended type
-        // If user has Agenda (or mixed), usage determines priority, but exclusive agenda goes to agenda
-        if (hasFashion && !hasAgenda && !hasMobile) {
-            derivedType = 'fashion_store_ai';
-        } else if (hasMobile && !hasFashion && !hasAgenda) {
-            derivedType = 'mobile_store_ai';
-        } else if (hasAgenda && !hasFashion && !hasMobile) {
-            derivedType = 'agenda_facil_ai';
-        } else {
-             derivedType = 'other';
+    // Logic: If user has specific legacy store_type, prioritize it
+    // Else, if has 1 subscription, go there.
+    // If multiple, go to select-system.
+    
+    if (shop?.store_type === 'agenda_facil_ai') {
+        redirectPath = '/products/agenda-facil'
+    } else if (shop?.store_type === 'fashion_store_ai') {
+        redirectPath = '/fashion/dashboard'
+    } else if (shop?.store_type === 'mobile_store_ai') {
+        redirectPath = '/mobile/dashboard'
+    } else if (finalSubs && finalSubs.length > 0) {
+        // SaaS Logic
+        if (finalSubs.length === 1) {
+             const slug = finalSubs[0].products?.slug || finalSubs[0].product_slug
+             if (slug === 'agenda-facil') redirectPath = '/products/agenda-facil'
+             else if (slug === 'fashion-ai' || slug === 'fashion-manager') redirectPath = '/fashion/dashboard'
+             else if (slug === 'gestao-pet') redirectPath = '/products/gestao-pet' // or wherever
+             else redirectPath = `/products/${slug}`
         }
-
-        // Update DB if mismatch
-        if (storeType !== derivedType) {
-             console.log(`DEBUG LOGIN: Auto-correcting store_type from '${storeType}' to '${derivedType}'`)
-             await supabase.from('shops').update({ store_type: derivedType }).eq('owner_id', user.id)
-             storeType = derivedType
-        }
+    } else {
+        // No subscription found even after creation attempt?
+        console.error('DEBUG LOGIN: No subscription found after creation logic.')
+        return { error: 'Login realizado, mas você não possui uma assinatura ativa.' }
     }
 
-    if (storeType === 'fashion_store_ai') {
-        console.log('DEBUG LOGIN: Redirecting to fashion dashboard...')
-        return { success: true, redirect: '/fashion/dashboard' }
+    // Ensure shop store_type syncs with destination (Legacy Sync)
+    // If we determined we are going to Agenda, make sure Shop says Agenda
+    if (redirectPath.includes('agenda-facil') && shop?.store_type !== 'agenda_facil_ai') {
+        await supabaseAdmin.from('shops').update({ store_type: 'agenda_facil_ai' }).eq('owner_id', user.id)
     }
 
-    if (storeType === 'mobile_store_ai') {
-        console.log('DEBUG LOGIN: Redirecting to mobile dashboard...')
-        return { success: true, redirect: '/mobile/dashboard' }
-    }
+    return { success: true, redirect: redirectPath }
 
-    if (storeType === 'agenda_facil_ai') {
-        console.log('DEBUG LOGIN: Redirecting to agenda dashboard...')
-        return { success: true, redirect: '/products/agenda-facil' }
-    }
-
-    // Legacy/Generic Redirection
-    if (subscriptions && subscriptions.length > 0) {
-        if (subscriptions.length === 1) {
-            const slug = subscriptions[0].product_slug || (subscriptions[0].products as any)?.slug
-            
-            // Map legacy slugs to new routes if needed (migration fallback)
-            if (slug === 'fashion-manager') return { success: true, redirect: '/fashion/dashboard' }
-            if (slug === 'tech-assist') return { success: true, redirect: '/products/tech-assist' }
-            
-            console.log('DEBUG LOGIN: Redirecting to product dashboard:', slug)
-            return { success: true, redirect: `/products/${slug}` }
-        } else {
-            console.log('DEBUG LOGIN: Multiple systems found, redirecting to selection')
-            return { success: true, redirect: '/select-system' }
-        }
-    }
-
-    // Fallback if truly no subscription can be created/found
-    console.error('DEBUG LOGIN: Reached final fallback. User has no active system.')
-    return { error: 'Login realizado, mas você não possui uma assinatura ativa. Por favor, entre em contato com o suporte.' }
   } catch (err: any) {
       if (err.digest?.startsWith('NEXT_REDIRECT')) throw err
       console.error('CRITICAL LOGIN ERROR:', err)
-      
-      let errorMessage = 'Ocorreu um erro inesperado. Tente novamente em alguns instantes.'
-      if (err.message?.includes('Database error')) {
-        errorMessage = 'Erro de conexão com o banco de dados. Por favor, tente novamente.'
-      }
-
-      return { error: errorMessage }
+      return { error: 'Ocorreu um erro inesperado: ' + (err.message || err) }
   }
 }
 
 export async function login(prevState: any, formData: FormData) {
-  const supabase = await createClient()
+  try {
+      const supabase = await createClient()
 
-  const data = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
+      const data = {
+        email: formData.get('email') as string,
+        password: formData.get('password') as string,
+      }
+
+      const { error } = await supabase.auth.signInWithPassword(data)
+
+      if (error) {
+        let friendlyMessage = error.message
+        
+        if (error.message === 'Invalid login credentials') {
+          friendlyMessage = 'E-mail ou senha incorretos. Verifique seus dados e tente novamente.'
+        } else if (error.message === 'Email not confirmed') {
+          friendlyMessage = 'E-mail ainda não confirmado. Verifique sua caixa de entrada (e spam).'
+        } else {
+          friendlyMessage = `Erro na autenticação: ${error.message}`
+        }
+
+          console.warn('Login Failed:', error.message)
+          return { error: friendlyMessage }
+      }
+
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        return { error: 'Erro ao obter usuário após login' }
+      }
+
+      const result = await handlePostLogin(user, supabase)
+      if (result?.error) {
+        console.error('LOGIN FLOW ERROR:', result.error)
+      }
+      return result
+  } catch (err: any) {
+      if (err.digest?.startsWith('NEXT_REDIRECT')) throw err
+      console.error('CRITICAL LOGIN ACTION ERROR:', err)
+      // Log full error object for debugging
+      console.dir(err, { depth: null })
+      return { error: 'Erro crítico ao tentar entrar: ' + (err.message || 'Erro desconhecido') }
   }
-
-  const { error } = await supabase.auth.signInWithPassword(data)
-
-  if (error) {
-    let friendlyMessage = error.message
-    
-    if (error.message === 'Invalid login credentials') {
-      friendlyMessage = 'E-mail ou senha incorretos. Verifique seus dados e tente novamente.'
-    } else if (error.message === 'Email not confirmed') {
-      friendlyMessage = 'E-mail ainda não confirmado. Verifique sua caixa de entrada (e spam).'
-    } else {
-      friendlyMessage = `Erro na autenticação: ${error.message}`
-    }
-
-      console.warn('Login Failed:', error.message)
-      return { error: friendlyMessage }
-  }
-
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) {
-    return { error: 'Erro ao obter usuário após login' }
-  }
-
-  return await handlePostLogin(user, supabase)
 }
 
 export async function verifyOtp(formData: FormData) {

@@ -27,6 +27,7 @@ export const metadata: Metadata = {
 
 import { Toaster } from 'sonner'
 import { ThemeProvider } from '@/components/ThemeContext';
+import { ImpersonationBanner } from '@/components/admin/ImpersonationBanner';
 
 export default function RootLayout({
   children,
@@ -46,6 +47,7 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <ThemeProvider>
+          <ImpersonationBanner />
           {children}
           <Toaster position="top-right" richColors />
         </ThemeProvider>
