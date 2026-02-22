@@ -20,7 +20,12 @@ export async function updateSession(request: NextRequest) {
             request,
           })
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
+            supabaseResponse.cookies.set(name, value, {
+                ...options,
+                domain: process.env.NODE_ENV === 'production' ? '.kryonsystems.com.br' : undefined,
+                sameSite: 'lax',
+                secure: process.env.NODE_ENV === 'production'
+            })
           )
         },
       },
@@ -48,7 +53,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   // If user is logged in, check shop and trial status
-    if (user && !request.nextUrl.pathname.startsWith('/assinar') && !request.nextUrl.pathname.startsWith('/auth')) {
+  if (user && !request.nextUrl.pathname.startsWith('/assinar') && !request.nextUrl.pathname.startsWith('/auth')) {
     const { data: profile } = await supabase
       .from('profiles')
       .select('organization_id, is_super_admin, shop_id, shops(plan, trial_ate, store_type)')
@@ -59,7 +64,6 @@ export async function updateSession(request: NextRequest) {
     const isSuperAdmin = profile?.is_super_admin === true
 
     if (shop) {
-      // ... existing shop logic ...
       const isTrialOver = shop.trial_ate && new Date(shop.trial_ate) < new Date()
       const isBlocked = shop.plan === 'bloqueado'
       const isTrial = shop.plan === 'trial'
@@ -97,33 +101,19 @@ export async function updateSession(request: NextRequest) {
               }
           }
       }
-
-    // 4. Concrete ERP Module Protection
-    const isConcreteApp = request.nextUrl.pathname.startsWith('/concrete')
-
-    if (isConcreteApp && !isSuperAdmin) {
-        if (!profile?.organization_id) {
-            const url = request.nextUrl.clone()
-            url.pathname = '/select-system'
-            return NextResponse.redirect(url)
-        }
-
-        const { data: orgData } = await supabase
-          .from('organizations')
-          .select('modules')
-          .eq('id', profile?.organization_id)
-          .single()
-
-        const modules = orgData?.modules as any
-        if (!modules?.concrete_erp) {
-            console.warn('Unauthorized access attempt to Concrete ERP', { orgId: profile?.organization_id })
-            const url = request.nextUrl.clone()
-            url.pathname = '/select-system'
-            return NextResponse.redirect(url)
-        }
     }
   }
-}
+
+  // 5. Multi-domain / Subdomain handling
+  const host = request.headers.get('host') || ''
+  const isERPSubdomain = host.startsWith('erp.')
+
+  // If accessing via erp. sub-domain, and not already on /concrete, redirect
+  if (isERPSubdomain && !request.nextUrl.pathname.startsWith('/concrete')) {
+      const url = request.nextUrl.clone()
+      url.pathname = `/concrete${request.nextUrl.pathname === '/' ? '' : request.nextUrl.pathname}`
+      return NextResponse.redirect(url)
+  }
 
   return supabaseResponse
 }
