@@ -26,7 +26,7 @@ import {
   FileText
 } from 'lucide-react'
 import Link from 'next/link'
-import { seedInitialDataAction } from '../actions'
+import { popularBancoInicialAction } from '../actions'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 
@@ -40,7 +40,7 @@ export default function ConcreteERPDashboardClient({ stats }: Props) {
 
   const handleImportData = async () => {
     setLoading(true)
-    const res = await seedInitialDataAction()
+    const res = await popularBancoInicialAction()
     setLoading(false)
     if (res.success) {
       toast.success(res.message || 'Base populada com sucesso!')
@@ -68,7 +68,7 @@ export default function ConcreteERPDashboardClient({ stats }: Props) {
           
           <div className="flex gap-4">
              <button 
-               onClick={() => router.push('/concrete/pedidos/novo')}
+               onClick={() => router.push('/pedidos/novo')}
                className="flex items-center gap-2 bg-white text-black hover:bg-neutral-200 px-6 py-3 rounded-md font-bold transition active:scale-95 uppercase text-sm tracking-widest"
              >
                 <Plus className="w-4 h-4" />
@@ -133,7 +133,7 @@ export default function ConcreteERPDashboardClient({ stats }: Props) {
                  </div>
                </div>
                <Link 
-                 href="/concrete/estoque" 
+                 href="/estoque" 
                  className="bg-red-600 hover:bg-red-500 text-black px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition shadow-lg shadow-red-500/20"
                >
                  Verificar Estoque
@@ -191,23 +191,23 @@ export default function ConcreteERPDashboardClient({ stats }: Props) {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                 <Link href="/concrete/estoque" className="bg-neutral-900 border border-neutral-800 p-6 rounded hover:border-emerald-500 transition group">
+                 <Link href="/estoque" className="bg-neutral-900 border border-neutral-800 p-6 rounded hover:border-emerald-500 transition group">
                     <h3 className="text-sm font-bold uppercase mb-2 group-hover:text-emerald-400">Estoque de Insumos</h3>
                     <p className="text-xs text-neutral-500 leading-relaxed">Controle de cimento, areia e brita com baixa automática.</p>
                  </Link>
-                 <Link href="/concrete/producao" className="bg-neutral-900 border border-neutral-800 p-6 rounded hover:border-blue-500 transition group">
+                 <Link href="/producao" className="bg-neutral-900 border border-neutral-800 p-6 rounded hover:border-blue-500 transition group">
                     <h3 className="text-sm font-bold uppercase mb-2 group-hover:text-blue-400">Linha de Produção</h3>
                     <p className="text-xs text-neutral-500 leading-relaxed">Gestão industrial em tempo real e controle de ordens de serviço.</p>
                  </Link>
-                 <Link href="/concrete/entregas" className="bg-neutral-900 border border-neutral-800 p-6 rounded hover:border-emerald-500 transition group">
+                 <Link href="/entregas" className="bg-neutral-900 border border-neutral-800 p-6 rounded hover:border-emerald-500 transition group">
                     <h3 className="text-sm font-bold uppercase mb-2 group-hover:text-emerald-400">Logística</h3>
                     <p className="text-xs text-neutral-500 leading-relaxed">Controle de entregas, rastreamento e confirmação de recebimento.</p>
                  </Link>
-                 <Link href="/concrete/caminhoes" className="bg-neutral-900 border border-neutral-800 p-6 rounded hover:border-orange-500 transition group">
+                 <Link href="/caminhoes" className="bg-neutral-900 border border-neutral-800 p-6 rounded hover:border-orange-500 transition group">
                     <h3 className="text-sm font-bold uppercase mb-2 group-hover:text-orange-500">Gestão de Frota</h3>
                     <p className="text-xs text-neutral-500 leading-relaxed">Cadastro de caminhões, manutenção e capacidade de carga.</p>
                  </Link>
-                 <Link href="/concrete/motoristas" className="bg-neutral-900 border border-neutral-800 p-6 rounded hover:border-blue-500 transition group">
+                 <Link href="/motoristas" className="bg-neutral-900 border border-neutral-800 p-6 rounded hover:border-blue-500 transition group">
                     <h3 className="text-sm font-bold uppercase mb-2 group-hover:text-blue-500">Motoristas</h3>
                     <p className="text-xs text-neutral-500 leading-relaxed">Controle de equipe operacional e licenças de condução.</p>
                  </Link>

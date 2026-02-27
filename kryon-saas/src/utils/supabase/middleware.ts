@@ -38,69 +38,99 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (
-    !user &&
-    !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/register') &&
-    !request.nextUrl.pathname.startsWith('/auth') &&
-    !request.nextUrl.pathname.startsWith('/assinar') &&
-    request.nextUrl.pathname !== '/'
-  ) {
-    // No user, redirect to login page
-    const url = request.nextUrl.clone()
-    url.pathname = '/login'
-    return NextResponse.redirect(url)
-  }
+  // 3. Authenticated User Logic (Consolidated from proxy.ts)
+  const isPublicPath = 
+    request.nextUrl.pathname === '/' ||
+    request.nextUrl.pathname.startsWith('/login') ||
+    request.nextUrl.pathname.startsWith('/register') ||
+    request.nextUrl.pathname.startsWith('/auth') ||
+    request.nextUrl.pathname.startsWith('/pricing') ||
+    request.nextUrl.pathname.startsWith('/products/agenda-facil/landing') ||
+    request.nextUrl.pathname.startsWith('/agenda-facil');
 
-  // If user is logged in, check shop and trial status
-  if (user && !request.nextUrl.pathname.startsWith('/assinar') && !request.nextUrl.pathname.startsWith('/auth')) {
+  const isFlowPage = 
+    request.nextUrl.pathname === '/select-organization' ||
+    request.nextUrl.pathname === '/select-system';
+
+  if (user && !isPublicPath && !isFlowPage) {
     const { data: profile } = await supabase
       .from('profiles')
-      .select('organization_id, is_super_admin, shop_id, shops(plan, trial_ate, store_type)')
+      .select('organization_id, role, is_super_admin, shop_id, shops(plan, trial_ate, store_type)')
       .eq('id', user.id)
-      .single()
+      .single();
 
-    const shop = profile?.shops as any
-    const isSuperAdmin = profile?.is_super_admin === true
+    const isSuperAdmin = profile?.is_super_admin === true;
 
-    if (shop) {
-      const isTrialOver = shop.trial_ate && new Date(shop.trial_ate) < new Date()
-      const isBlocked = shop.plan === 'bloqueado'
-      const isTrial = shop.plan === 'trial'
-      const storeType = shop.store_type
+    // 3.1. Organization Context Protection
+    if (!profile?.organization_id) {
+        const url = request.nextUrl.clone();
+        url.pathname = '/select-organization';
+        return NextResponse.redirect(url);
+    }
+
+    // 3.2. System/Root Redirection
+    if (request.nextUrl.pathname === '/') {
+        const url = request.nextUrl.clone();
+        url.pathname = '/select-system';
+        return NextResponse.redirect(url);
+    }
+
+    // 3.3. Subscription & Trial Checks
+    const shop = profile?.shops as any;
+    if (shop && !request.nextUrl.pathname.startsWith('/assinar')) {
+      const isTrialOver = shop.trial_ate && new Date(shop.trial_ate) < new Date();
+      const isBlocked = shop.plan === 'bloqueado';
+      const isTrial = shop.plan === 'trial';
 
       if (isBlocked || (isTrial && isTrialOver)) {
-        const url = request.nextUrl.clone()
-        url.pathname = '/assinar'
-        return NextResponse.redirect(url)
+        const url = request.nextUrl.clone();
+        url.pathname = '/assinar';
+        return NextResponse.redirect(url);
+      }
+    }
+
+    // 3.4. Admin & Super Admin Route Protection
+    if (request.nextUrl.pathname.startsWith('/admin') || request.nextUrl.pathname.startsWith('/super-admin')) {
+      if (request.nextUrl.pathname === '/admin' && isSuperAdmin) {
+          const url = request.nextUrl.clone();
+          url.pathname = '/super-admin';
+          return NextResponse.redirect(url);
       }
 
-      // Route Protection: Prevent Cross-System Access (Skips for Super Admin)
-      if (!isSuperAdmin) {
-          if (storeType === 'fashion_store_ai') {
-              if (request.nextUrl.pathname.startsWith('/mobile') || request.nextUrl.pathname.startsWith('/products/agenda-facil')) {
-                  const url = request.nextUrl.clone()
-                  url.pathname = '/fashion/dashboard'
-                  return NextResponse.redirect(url)
-              }
-          }
-
-          if (storeType === 'mobile_store_ai') {
-              if (request.nextUrl.pathname.startsWith('/fashion') || request.nextUrl.pathname.startsWith('/products/agenda-facil')) {
-                  const url = request.nextUrl.clone()
-                  url.pathname = '/mobile/dashboard'
-                  return NextResponse.redirect(url)
-              }
-          }
-
-          if (storeType === 'agenda_facil_ai') {
-              if (request.nextUrl.pathname.startsWith('/fashion') || request.nextUrl.pathname.startsWith('/mobile')) {
-                  const url = request.nextUrl.clone()
-                  url.pathname = '/products/agenda-facil'
-                  return NextResponse.redirect(url)
-              }
+      if (request.nextUrl.pathname.startsWith('/super-admin') && !isSuperAdmin) {
+           const url = request.nextUrl.clone();
+           url.pathname = '/select-system';
+           return NextResponse.redirect(url);
+      }
+      
+      if (request.nextUrl.pathname.startsWith('/admin') && !request.nextUrl.pathname.startsWith('/super-admin')) {
+          if (profile?.role !== 'admin' && !isSuperAdmin) {
+              const url = request.nextUrl.clone();
+              url.pathname = '/select-system';
+              url.searchParams.set('message', 'Acesso negado: Apenas administradores podem acessar esta área.');
+              return NextResponse.redirect(url);
           }
       }
+    }
+
+    // 3.5. System Isolation (Cross-System Protection)
+    if (!isSuperAdmin) {
+        const storeType = shop?.store_type;
+        if (storeType === 'fashion_store_ai' && (request.nextUrl.pathname.startsWith('/mobile') || request.nextUrl.pathname.startsWith('/products/agenda-facil'))) {
+            const url = request.nextUrl.clone();
+            url.pathname = '/fashion/dashboard';
+            return NextResponse.redirect(url);
+        }
+        if (storeType === 'mobile_store_ai' && (request.nextUrl.pathname.startsWith('/fashion') || request.nextUrl.pathname.startsWith('/products/agenda-facil'))) {
+            const url = request.nextUrl.clone();
+            url.pathname = '/mobile/dashboard';
+            return NextResponse.redirect(url);
+        }
+        if (storeType === 'agenda_facil_ai' && (request.nextUrl.pathname.startsWith('/fashion') || request.nextUrl.pathname.startsWith('/mobile'))) {
+            const url = request.nextUrl.clone();
+            url.pathname = '/products/agenda-facil';
+            return NextResponse.redirect(url);
+        }
     }
   }
 
@@ -108,7 +138,6 @@ export async function updateSession(request: NextRequest) {
   const host = request.headers.get('host') || ''
   const isERPSubdomain = host.startsWith('erp.')
 
-  // If accessing via erp. sub-domain, and not already on /concrete, redirect
   if (isERPSubdomain && !request.nextUrl.pathname.startsWith('/concrete')) {
       const url = request.nextUrl.clone()
       url.pathname = `/concrete${request.nextUrl.pathname === '/' ? '' : request.nextUrl.pathname}`

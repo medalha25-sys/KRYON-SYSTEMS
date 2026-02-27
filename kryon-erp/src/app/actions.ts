@@ -20,7 +20,7 @@ export async function createConcreteQuote(data: {
 }) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     const { data: profile } = await supabase
         .from('profiles')
@@ -28,7 +28,7 @@ export async function createConcreteQuote(data: {
         .eq('id', user.id)
         .single()
 
-    if (!profile || !profile.organization_id) return { error: 'Org not found' }
+    if (!profile || !profile.organization_id) return { error: 'Organização não encontrada' }
 
     // 1. Fetch product to get cost_m3
     const { data: product } = await supabase
@@ -62,14 +62,14 @@ export async function createConcreteQuote(data: {
 
     if (error) return { error: translateSupabaseError(error) }
 
-    revalidatePath('/concrete')
+    revalidatePath('/')
     return { success: true }
 }
 
 export async function updateQuoteStatus(quoteId: string, status: 'pendente' | 'fechado' | 'perdido' | 'negociacao', lossReason?: string) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     const { error } = await supabase
         .from('erp_quotes')
@@ -84,7 +84,7 @@ export async function updateQuoteStatus(quoteId: string, status: 'pendente' | 'f
 
     // Note: Auto-delivery creation is handled by DB TRIGGER 'trg_auto_create_delivery'
     
-    revalidatePath('/concrete')
+    revalidatePath('/')
     return { success: true }
 }
 
@@ -112,10 +112,10 @@ export async function createClientAction(data: {
 }) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     const { data: profile } = await supabase.from('profiles').select('organization_id').eq('id', user.id).single()
-    if (!profile) return { error: 'Org not found' }
+    if (!profile) return { error: 'Organização não encontrada' }
 
     const { error } = await supabase.from('erp_clients').insert({ 
         organization_id: profile.organization_id, 
@@ -123,31 +123,31 @@ export async function createClientAction(data: {
     })
     if (error) return { error: translateSupabaseError(error) }
 
-    revalidatePath('/concrete/clientes')
+    revalidatePath('/clientes')
     return { success: true }
 }
 
 export async function updateClientAction(id: string, data: any) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     const { error } = await supabase.from('erp_clients').update(data).eq('id', id)
     if (error) return { error: translateSupabaseError(error) }
 
-    revalidatePath('/concrete/clientes')
+    revalidatePath('/clientes')
     return { success: true }
 }
 
 export async function deleteClientAction(id: string) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     const { error } = await supabase.from('erp_clients').delete().eq('id', id)
     if (error) return { error: translateSupabaseError(error) }
 
-    revalidatePath('/concrete/clientes')
+    revalidatePath('/clientes')
     return { success: true }
 }
 
@@ -173,10 +173,10 @@ export async function createProductAction(data: {
 }) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     const { data: profile } = await supabase.from('profiles').select('organization_id').eq('id', user.id).single()
-    if (!profile) return { error: 'Org not found' }
+    if (!profile) return { error: 'Organização não encontrada' }
 
     const { error } = await supabase.from('erp_products').insert({ 
         organization_id: profile.organization_id, 
@@ -184,38 +184,38 @@ export async function createProductAction(data: {
     })
     if (error) return { error: translateSupabaseError(error) }
 
-    revalidatePath('/concrete/produtos')
+    revalidatePath('/produtos')
     return { success: true }
 }
 
 export async function updateProductAction(id: string, data: any) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     const { error } = await supabase.from('erp_products').update(data).eq('id', id)
     if (error) return { error: translateSupabaseError(error) }
 
-    revalidatePath('/concrete/produtos')
+    revalidatePath('/produtos')
     return { success: true }
 }
 
 export async function deleteProductAction(id: string) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     const { error } = await supabase.from('erp_products').delete().eq('id', id)
     if (error) return { error: translateSupabaseError(error) }
 
-    revalidatePath('/concrete/produtos')
+    revalidatePath('/produtos')
     return { success: true }
 }
 
-export async function seedInitialDataAction() {
+export async function popularBancoInicialAction() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     const { data: profile } = await supabase
         .from('profiles')
@@ -223,7 +223,7 @@ export async function seedInitialDataAction() {
         .eq('id', user.id)
         .single()
     
-    if (!profile) return { error: 'Profile not found' }
+    if (!profile) return { error: 'Perfil não encontrado' }
     const orgId = profile.organization_id
 
     let productsAdded = 0
@@ -265,7 +265,7 @@ export async function seedInitialDataAction() {
         clientsAdded = seedClients.length
     }
 
-    revalidatePath('/concrete')
+    revalidatePath('/')
     return { 
         success: true, 
         message: `Base populada: ${productsAdded} produtos e ${clientsAdded} clientes adicionados.` 
@@ -436,7 +436,7 @@ export async function getDashboardMetrics() {
 export async function updateDeliveryStatusAction(id: string, status: string) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     const { error } = await supabase
         .from('erp_deliveries')
@@ -448,7 +448,7 @@ export async function updateDeliveryStatusAction(id: string, status: string) {
 
     if (error) return { error: translateSupabaseError(error) }
 
-    revalidatePath('/concrete/entregas')
+    revalidatePath('/entregas')
 
     // Trigger Financial Receivable if status is 'entregue'
     if (status === 'entregue') {
@@ -502,7 +502,7 @@ export async function createReceivableFromDelivery(deliveryId: string) {
 
     if (error) return { error: translateSupabaseError(error) }
     
-    revalidatePath('/concrete/financeiro/contas-receber')
+    revalidatePath('/financeiro/contas-receber')
     return { success: true }
 }
 
@@ -531,7 +531,7 @@ export async function getAccountsReceivable(statusFilter?: string) {
 export async function markAsPaidAction(id: string, forma_pagamento: string = 'Dinheiro') {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     const { error } = await supabase
         .from('erp_accounts_receivable')
@@ -545,7 +545,7 @@ export async function markAsPaidAction(id: string, forma_pagamento: string = 'Di
 
     if (error) return { error: translateSupabaseError(error) }
 
-    revalidatePath('/concrete/financeiro/contas-receber')
+    revalidatePath('/financeiro/contas-receber')
     return { success: true }
 }
 
@@ -557,10 +557,10 @@ export async function createInventoryAction(data: {
 }) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     const { data: profile } = await supabase.from('profiles').select('organization_id').eq('id', user.id).single()
-    if (!profile) return { error: 'Org not found' }
+    if (!profile) return { error: 'Organização não encontrada' }
 
     const { error } = await supabase.from('erp_inventory').insert({
         organization_id: profile.organization_id,
@@ -569,14 +569,14 @@ export async function createInventoryAction(data: {
 
     if (error) return { error: translateSupabaseError(error) }
 
-    revalidatePath('/concrete/estoque')
+    revalidatePath('/estoque')
     return { success: true }
 }
 
 export async function updateInventoryAction(id: string, data: any) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     const { error } = await supabase
         .from('erp_inventory')
@@ -585,20 +585,20 @@ export async function updateInventoryAction(id: string, data: any) {
 
     if (error) return { error: translateSupabaseError(error) }
 
-    revalidatePath('/concrete/estoque')
+    revalidatePath('/estoque')
     return { success: true }
 }
 
 export async function deleteInventoryAction(id: string) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     const { error } = await supabase.from('erp_inventory').delete().eq('id', id)
 
     if (error) return { error: translateSupabaseError(error) }
 
-    revalidatePath('/concrete/estoque')
+    revalidatePath('/estoque')
     return { success: true }
 }
 
@@ -615,10 +615,10 @@ export async function createFullBudgetAction(data: {
 }) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     const { data: profile } = await supabase.from('profiles').select('organization_id').eq('id', user.id).single()
-    if (!profile) return { error: 'Org not found' }
+    if (!profile) return { error: 'Organização não encontrada' }
 
     // Calculate totals
     let valor_total = 0
@@ -669,7 +669,7 @@ export async function createFullBudgetAction(data: {
 
     if (itemsError) return { error: translateSupabaseError(itemsError) }
 
-    revalidatePath('/concrete/orcamentos')
+    revalidatePath('/orcamentos')
     return { success: true, budgetId: budget.id }
 }
 
@@ -716,7 +716,7 @@ export async function getFullBudgetById(id: string) {
 export async function updateFullBudgetStatus(id: string, status: 'rascunho' | 'enviado' | 'aprovado' | 'cancelado') {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     const { error } = await supabase
         .from('erp_budgets')
@@ -725,15 +725,15 @@ export async function updateFullBudgetStatus(id: string, status: 'rascunho' | 'e
 
     if (error) return { error: translateSupabaseError(error) }
 
-    revalidatePath('/concrete/orcamentos')
-    revalidatePath(`/concrete/orcamentos/${id}`)
+    revalidatePath('/orcamentos')
+    revalidatePath(`/orcamentos/${id}`)
     return { success: true }
 }
 
 export async function convertBudgetToOrderAction(budgetId: string) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     // 1. Fetch Budget and its Items
     const budget = await getFullBudgetById(budgetId)
@@ -770,8 +770,8 @@ export async function convertBudgetToOrderAction(budgetId: string) {
 
     if (itemsError) return { error: translateSupabaseError(itemsError) }
 
-    revalidatePath('/concrete/pedidos')
-    revalidatePath('/concrete/orcamentos')
+    revalidatePath('/pedidos')
+    revalidatePath('/orcamentos')
     
     return { success: true, orderId: order.id }
 }
@@ -819,7 +819,7 @@ export async function getFullOrderById(id: string) {
 export async function updateFullOrderStatus(id: string, status: 'pendente' | 'em_producao' | 'pronto' | 'entregue' | 'cancelado') {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     const { error } = await supabase
         .from('erp_orders')
@@ -854,9 +854,9 @@ export async function updateFullOrderStatus(id: string, status: 'pendente' | 'em
         }
     }
 
-    revalidatePath('/concrete/pedidos')
-    revalidatePath(`/concrete/pedidos/${id}`)
-    revalidatePath('/concrete/producao')
+    revalidatePath('/pedidos')
+    revalidatePath(`/pedidos/${id}`)
+    revalidatePath('/producao')
     return { success: true }
 }
 
@@ -887,7 +887,7 @@ export async function getProductionOrders(status?: string) {
 export async function updateProductionOrderStatus(id: string, status: 'aguardando' | 'produzindo' | 'finalizado') {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     const { error } = await supabase
         .from('erp_production_orders')
@@ -906,7 +906,7 @@ export async function updateProductionOrderStatus(id: string, status: 'aguardand
         }
     }
 
-    revalidatePath('/concrete/producao')
+    revalidatePath('/producao')
     return { success: true }
 }
 
@@ -986,10 +986,10 @@ export async function getRawMaterials() {
 export async function createRawMaterialAction(formData: any) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     const { data: profile } = await supabase.from('profiles').select('organization_id').eq('id', user.id).single()
-    if (!profile) return { error: 'Org not found' }
+    if (!profile) return { error: 'Organização não encontrada' }
 
     const { error } = await supabase.from('erp_raw_materials').insert({
         ...formData,
@@ -997,17 +997,17 @@ export async function createRawMaterialAction(formData: any) {
     })
 
     if (error) return { error: translateSupabaseError(error) }
-    revalidatePath('/concrete/estoque')
+    revalidatePath('/estoque')
     return { success: true }
 }
 
 export async function addStockAction(materia_prima_id: string, quantidade: number) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     const { data: profile } = await supabase.from('profiles').select('organization_id').eq('id', user.id).single()
-    if (!profile) return { error: 'Org not found' }
+    if (!profile) return { error: 'Organização não encontrada' }
 
     // Record movement
     await supabase.from('erp_inventory_movements').insert({
@@ -1025,7 +1025,7 @@ export async function addStockAction(materia_prima_id: string, quantidade: numbe
     })
 
     if (error) return { error: translateSupabaseError(error) }
-    revalidatePath('/concrete/estoque')
+    revalidatePath('/estoque')
     return { success: true }
 }
 
@@ -1069,7 +1069,7 @@ export async function updateRecipeAction(produtoId: string, ingredients: { mater
         if (error) return { error: translateSupabaseError(error) }
     }
 
-    revalidatePath(`/concrete/produtos/${produtoId}/receita`)
+    revalidatePath(`/produtos/${produtoId}/receita`)
     return { success: true }
 }
 
@@ -1095,10 +1095,10 @@ export async function getTrucks() {
 export async function createTruckAction(formData: any) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     const { data: profile } = await supabase.from('profiles').select('organization_id').eq('id', user.id).single()
-    if (!profile) return { error: 'Org not found' }
+    if (!profile) return { error: 'Organização não encontrada' }
 
     const { error } = await supabase.from('erp_trucks').insert({
         ...formData,
@@ -1106,7 +1106,7 @@ export async function createTruckAction(formData: any) {
     })
 
     if (error) return { error: translateSupabaseError(error) }
-    revalidatePath('/concrete/caminhoes')
+    revalidatePath('/caminhoes')
     return { success: true }
 }
 
@@ -1130,10 +1130,10 @@ export async function getDrivers() {
 export async function createDriverAction(formData: any) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     const { data: profile } = await supabase.from('profiles').select('organization_id').eq('id', user.id).single()
-    if (!profile) return { error: 'Org not found' }
+    if (!profile) return { error: 'Organização não encontrada' }
 
     const { error } = await supabase.from('erp_drivers').insert({
         ...formData,
@@ -1141,7 +1141,7 @@ export async function createDriverAction(formData: any) {
     })
 
     if (error) return { error: translateSupabaseError(error) }
-    revalidatePath('/concrete/motoristas')
+    revalidatePath('/motoristas')
     return { success: true }
 }
 
@@ -1170,10 +1170,10 @@ export async function getDeliveries(status?: string) {
 export async function createDeliveryAction(formData: any) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     const { data: profile } = await supabase.from('profiles').select('organization_id').eq('id', user.id).single()
-    if (!profile) return { error: 'Org not found' }
+    if (!profile) return { error: 'Organização não encontrada' }
 
     // First, verify if the production order is 'finalizado'
     const { data: prodOrder } = await supabase
@@ -1194,15 +1194,15 @@ export async function createDeliveryAction(formData: any) {
 
     if (error) return { error: translateSupabaseError(error) }
     
-    revalidatePath('/concrete/entregas')
-    revalidatePath('/concrete/producao')
+    revalidatePath('/entregas')
+    revalidatePath('/producao')
     return { success: true }
 }
 
 export async function updateDeliveryStatus(id: string, status: string) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     const updateData: any = { status }
     if (status === 'entregue') {
@@ -1216,8 +1216,8 @@ export async function updateDeliveryStatus(id: string, status: string) {
 
     if (error) return { error: translateSupabaseError(error) }
     
-    revalidatePath('/concrete/entregas')
-    revalidatePath('/concrete')
+    revalidatePath('/entregas')
+    revalidatePath('/')
     return { success: true }
 }
 
@@ -1412,7 +1412,7 @@ export async function updateDeliveryMobileAction(id: string, status: string, dat
 }) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     const updateData: any = { 
         status,
@@ -1444,7 +1444,7 @@ export async function updateDeliveryMobileAction(id: string, status: string, dat
 
     revalidatePath(`/motorista/${id}`)
     revalidatePath('/motorista')
-    revalidatePath('/concrete/entregas')
+    revalidatePath('/entregas')
     
     return { success: true }
 }
@@ -1452,7 +1452,7 @@ export async function updateDeliveryMobileAction(id: string, status: string, dat
 export async function emitirNFeAction(entregaId: string) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     // 1. Get delivery details
     const { data: delivery } = await supabase
@@ -1547,15 +1547,15 @@ export async function emitirNFeAction(entregaId: string) {
 
     if (error) return { error: translateSupabaseError(error) }
 
-    revalidatePath('/concrete/fiscal/nfe')
-    revalidatePath('/concrete/entregas')
+    revalidatePath('/fiscal/nfe')
+    revalidatePath('/entregas')
     return { success: true, numero: proximo_numero }
 }
 
 export async function cancelarNFeAction(id: string) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { error: 'Unauthorized' }
+    if (!user) return { error: 'Não autorizado' }
 
     const { error } = await supabase
         .from('erp_invoices')
@@ -1567,7 +1567,7 @@ export async function cancelarNFeAction(id: string) {
 
     if (error) return { error: translateSupabaseError(error) }
 
-    revalidatePath('/concrete/fiscal/nfe')
+    revalidatePath('/fiscal/nfe')
     return { success: true }
 }
 

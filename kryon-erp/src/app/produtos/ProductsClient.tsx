@@ -5,7 +5,7 @@ import { Plus, Database, Edit2, Trash2, Search, Box, Tag, TrendingUp, RotateCcw,
     Beaker
 } from 'lucide-react'
 import ProductModal from './ProductModal'
-import { deleteProductAction, seedInitialDataAction } from '../actions'
+import { deleteProductAction, popularBancoInicialAction } from '../actions'
 import { toast } from 'sonner'
 import Link from 'next/link'
 
@@ -40,7 +40,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: a
     const handleSeed = async () => {
         setLoadingSeed(true)
         try {
-            const res = await seedInitialDataAction()
+            const res = await popularBancoInicialAction()
             if (res.success) {
                 toast.success('Mix de produtos semeado!')
                 window.location.reload()
@@ -151,13 +151,13 @@ export default function ProductsClient({ initialProducts }: { initialProducts: a
 
                                 <div className="flex gap-2 mt-auto">
                                     <Link 
-                                        href={`/concrete/produtos/${product.id}`}
+                                        href={`/produtos/${product.id}`}
                                         className="flex-1 bg-black hover:bg-neutral-800 border border-neutral-800 p-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition flex items-center justify-center gap-2 group"
                                     >
                                         <Search className="w-4 h-4 text-orange-500 group-hover:scale-110 transition-transform" /> Detalhes
                                     </Link>
                                     <Link 
-                                        href={`/concrete/produtos/${product.id}/receita`}
+                                        href={`/produtos/${product.id}/receita`}
                                         className="flex-1 bg-black hover:bg-neutral-800 border border-neutral-800 p-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition flex items-center justify-center gap-2 group border-emerald-500/20"
                                     >
                                         <Beaker className="w-4 h-4 text-emerald-500 group-hover:scale-110 transition-transform" /> Traço
