@@ -131,15 +131,24 @@ export async function updateSession(request: NextRequest) {
             url.pathname = '/products/agenda-facil';
             return NextResponse.redirect(url);
         }
+        if ((storeType === 'concrete_erp' || storeType === 'industrial') && !request.nextUrl.pathname.startsWith('/concrete')) {
+            const url = request.nextUrl.clone();
+            url.pathname = '/concrete';
+            return NextResponse.redirect(url);
+        }
     }
   }
 
-  // 5. Multi-domain / Subdomain handling
+  // 5. Multi-domain / Subdomain handling (DEPRECATED - Redirecting to main domain)
   const host = request.headers.get('host') || ''
   const isERPSubdomain = host.startsWith('erp.')
 
-  if (isERPSubdomain && !request.nextUrl.pathname.startsWith('/concrete')) {
+  if (isERPSubdomain) {
       const url = request.nextUrl.clone()
+      // Force main domain in production to avoid cookie issues
+      if (process.env.NODE_ENV === 'production') {
+        url.host = 'kryonsystems.com.br'
+      }
       url.pathname = `/concrete${request.nextUrl.pathname === '/' ? '' : request.nextUrl.pathname}`
       return NextResponse.redirect(url)
   }

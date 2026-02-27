@@ -119,7 +119,7 @@ function SelectSystemContent() {
           {products.map((product) => (
             <Link 
               key={product.id} 
-              href={`/products/${product.slug}`}
+              href={product.slug === 'concrete-erp' ? '/concrete' : `/products/${product.slug}`}
               className="block group"
             >
               <motion.div 
