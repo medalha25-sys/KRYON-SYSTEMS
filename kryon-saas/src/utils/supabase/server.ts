@@ -4,11 +4,19 @@ import { cookies } from 'next/headers'
 export async function createClient() {
   const cookieStore = await cookies()
 
-  console.log(
-    'SUPABASE DEBUG (SERVER)',
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.slice(0, 20)
-  )
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    console.error(
+      'SUPABASE ERROR (SERVER): Missing Environment Variables!',
+      'URL exists:', !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+      'Key exists:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    );
+  } else {
+    console.log(
+      'SUPABASE DEBUG (SERVER): Initialization successful.',
+      'URL prefix:', process.env.NEXT_PUBLIC_SUPABASE_URL.substring(0, 15),
+      'Key length:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY.length
+    );
+  }
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
