@@ -62,7 +62,10 @@ export async function updateSession(request: NextRequest) {
     const isSuperAdmin = profile?.is_super_admin === true;
 
     // 3.1. Organization Context Protection
-    if (!profile?.organization_id) {
+    const orgIdCookie = request.cookies.get('org_id')?.value;
+    const organizationId = profile?.organization_id || orgIdCookie;
+
+    if (!organizationId) {
         const url = request.nextUrl.clone();
         url.pathname = '/select-organization';
         return NextResponse.redirect(url);

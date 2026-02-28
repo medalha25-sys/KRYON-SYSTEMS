@@ -110,9 +110,14 @@ export default function SelectOrganizationPage() {
           }
 
           if (profile?.is_super_admin) {
+              // Set cookie for super admin too if needed, though they might not need it for isolation
+              document.cookie = `org_id=${orgId}; path=/; max-age=31536000; SameSite=Lax`;
               router.push('/super-admin')
               return
           }
+
+          // Set organization cookie for middleware to detect immediately
+          document.cookie = `org_id=${orgId}; path=/; max-age=31536000; SameSite=Lax`;
 
           // Redirect to Product Selection
           router.push('/select-system')
