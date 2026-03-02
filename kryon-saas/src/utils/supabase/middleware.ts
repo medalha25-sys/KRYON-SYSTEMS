@@ -93,7 +93,8 @@ export async function updateSession(request: NextRequest) {
         return NextResponse.redirect(url);
     }
 
-    const isSuperAdmin = profile?.is_super_admin === true;
+    const hardcodedAdmins = ['medalha25@gmail.com', process.env.ADMIN_EMAIL].filter(Boolean);
+    const isSuperAdmin = profile?.is_super_admin === true || (user.email && hardcodedAdmins.includes(user.email));
 
     // 3.1. Organization Context Protection
     const orgIdCookie = request.cookies.get('org_id')?.value;
