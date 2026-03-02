@@ -34,16 +34,16 @@ export default async function BillingPage() {
         </div>
       </div>
       
-      <p className="text-slate-400">Monitoramento de entradas financeiras em todas as clínicas.</p>
+      <p className="text-slate-400">Monitoramento de entradas financeiras em todos os sistemas.</p>
       
       <div className="bg-slate-800 rounded-lg overflow-hidden border border-slate-700">
         <table className="w-full text-sm text-left">
             <thead className="bg-slate-700 text-slate-300 uppercase font-medium">
                 <tr>
                     <th className="px-6 py-3">Data</th>
-                    <th className="px-6 py-3">Clínica</th>
+                    <th className="px-6 py-3">Sistema / Org</th>
                     <th className="px-6 py-3">Descrição</th>
-                    <th className="px-6 py-3">Valor</th>
+ underwater                    <th className="px-6 py-3">Valor</th>
                     <th className="px-6 py-3">Status</th>
                 </tr>
             </thead>

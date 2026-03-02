@@ -6,21 +6,26 @@ import Link from 'next/link'
 export default async function SubscriptionsAdminPage() {
   const supabase = await createClient()
 
-  // 1. Fetch all active subscriptions across all organizations
-  // We join products to see which SaaS it belongs to
-  // And profiles to see the owner email
-  const { data: subscriptions, error } = await supabase
+  // 1. Fetch all subscriptions
+  const { data: rawSubscriptions, error: sError } = await supabase
     .from('subscriptions')
-    .select(`
-        *,
-        organizations ( name, slug ),
-        products ( name, slug, price )
-    `)
+    .select('*')
     .order('created_at', { ascending: false })
 
-  if (error) {
-      return <div className="p-4 bg-red-500/10 text-red-500 rounded-lg">Erro ao carregar assinaturas: {error.message}</div>
+  // 2. Fetch products and organizations separately to avoid relationship ambiguity
+  const { data: products } = await supabase.from('products').select('*')
+  const { data: organizations } = await supabase.from('organizations').select('id, name, slug')
+
+  if (sError) {
+      return <div className="p-4 bg-red-500/10 text-red-500 rounded-lg">Erro ao carregar assinaturas: {sError.message}</div>
   }
+
+  // 3. Join data manually
+  const subscriptions = rawSubscriptions?.map(sub => ({
+      ...sub,
+      organizations: organizations?.find(o => o.id === sub.organization_id),
+      products: products?.find(p => p.id === sub.product_id)
+  }))
 
   // 2. Logic to map products to Landing Page Plans
   const getPlanName = (sub: any) => {

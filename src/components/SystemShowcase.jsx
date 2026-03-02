@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Check } from 'lucide-react';
+import { Check, Zap, Smartphone, Monitor } from 'lucide-react';
 
 const features = [
     {
@@ -23,247 +23,101 @@ const features = [
 
 const SystemShowcase = () => {
     return (
-        <section className="section" id="showcase" style={{ background: '#050507', overflow: 'hidden' }}>
-            <div className="container">
-                <div className="showcase-grid" style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 350px), 1fr))',
-                    gap: '4rem',
-                    alignItems: 'center'
-                }}>
-                    {/* Left Column: Mockups */}
-                    <div className="mockups-container" style={{ position: 'relative', height: '450px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                         {/* Desktop Monitor */}
-                         <div className="desktop-mockup" style={{
-                            width: '100%',
-                            maxWidth: '500px',
-                            aspectRatio: '16/9',
-                            background: '#1a1a2e',
-                            border: '10px solid #333',
-                            borderRadius: '12px',
-                            position: 'relative',
-                            boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            zIndex: 1,
-                            transform: 'perspective(1000px) rotateY(-10deg) rotateX(2deg)',
-                            transition: 'transform 0.5s ease'
-                        }}>
-                            {/* Main Area */}
-                            <div style={{ flex: 1, padding: 'clamp(10px, 3%, 20px)', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                                {/* Header Title */}
-                                <div>
-                                    <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#fff', marginBottom: '4px' }}>Visão Geral</div>
-                                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Métricas em tempo real.</div>
+        <div className="relative py-12 overflow-hidden">
+            <div className="grid lg:grid-cols-2 gap-20 items-center">
+                
+                {/* Visual Section */}
+                <div className="relative">
+                    {/* Background Glow */}
+                    <div className="absolute -inset-10 bg-blue-500/10 blur-[100px] rounded-full" />
+                    
+                    <div className="relative flex items-center justify-center min-h-[500px]">
+                        {/* Desktop Mockup */}
+                        <motion.div 
+                            initial={{ opacity: 0, x: -30 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            className="w-full max-w-[500px] glass-card p-3 border-white/10 shadow-2xl z-10"
+                        >
+                            <div className="bg-[#0f172a] rounded-xl overflow-hidden border border-white/5">
+                                <div className="h-8 bg-white/5 border-b border-white/5 px-4 flex items-center gap-1.5">
+                                    <div className="w-2.5 h-2.5 rounded-full bg-red-500/40" />
+                                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/40" />
+                                    <div className="w-2.5 h-2.5 rounded-full bg-green-500/40" />
                                 </div>
-
-                                {/* Acesso Rápido Section */}
-                                <div style={{ overflow: 'hidden' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', color: '#fff', fontSize: '0.9rem', fontWeight: 'bold' }}>
-                                        <div style={{ color: 'var(--primary)' }}>⚡</div>
-                                        Acesso Rápido
-                                    </div>
-                                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                                        {/* Abrir PDV */}
-                                        <div style={{
-                                            background: 'linear-gradient(135deg, #1e88e5 0%, #1565c0 100%)',
-                                            borderRadius: '8px',
-                                            padding: '12px',
-                                            flex: '1 1 100px',
-                                            minWidth: '100px',
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            gap: '8px',
-                                            boxShadow: '0 4px 15px rgba(30, 136, 229, 0.4)',
-                                            border: '1px solid rgba(255,255,255,0.1)'
-                                        }}>
-                                            <div style={{ width: '20px', height: '20px', background: 'rgba(255,255,255,0.2)', borderRadius: '4px' }} />
-                                            <div style={{ color: '#fff', fontSize: '0.75rem', fontWeight: 'bold', textAlign: 'center' }}>Abrir PDV</div>
+                                <div className="p-6 space-y-6">
+                                    <div className="flex justify-between items-start">
+                                        <div className="space-y-1">
+                                            <h4 className="font-bold text-white">Dashboard Vendas</h4>
+                                            <p className="text-[10px] text-gray-500">Hoje: +24% em relação a ontem</p>
                                         </div>
-
-                                        {/* Other Actions */}
-                                        {['Venda', 'O.S.'].map((item, i) => (
-                                            <div key={i} style={{
-                                                background: '#1a1a2e',
-                                                borderRadius: '8px',
-                                                padding: '10px',
-                                                flex: '1 1 60px',
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                gap: '8px',
-                                                border: '1px solid rgba(255,255,255,0.05)'
-                                            }}>
-                                                <div style={{ width: '18px', height: '18px', borderRadius: '50%', border: '2px solid rgba(255,255,255,0.2)' }} />
-                                                <div style={{ color: 'var(--text-muted)', fontSize: '0.7rem' }}>{item}</div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Bottom Widgets */}
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', flex: 1 }}>
-                                    <div style={{ background: '#1a1a2e', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)', padding: '12px' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                                            <div style={{ color: '#ff9f43', fontSize: '0.7rem', fontWeight: 'bold' }}>⚠ Estoque</div>
+                                        <div className="p-2 bg-blue-500/20 rounded-lg">
+                                            <Monitor size={20} className="text-blue-400" />
                                         </div>
-                                        <div style={{ color: 'var(--text-muted)', fontSize: '0.65rem', fontStyle: 'italic' }}>Ok</div>
                                     </div>
-                                    <div style={{ background: '#1a1a2e', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)', padding: '12px' }}>
-                                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                                            <div style={{ color: '#fff', fontSize: '0.7rem', fontWeight: 'bold' }}>🔧 O.S.</div>
+                                    
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="h-24 bg-gradient-to-br from-blue-500/10 to-transparent rounded-xl border border-blue-500/20 p-4">
+                                            <div className="w-8 h-1 bg-blue-500/40 rounded-full mb-3" />
+                                            <div className="h-10 w-full bg-white/5 rounded-lg" />
                                         </div>
-                                        <div style={{ color: 'var(--text-muted)', fontSize: '0.65rem', fontStyle: 'italic' }}>Ok</div>
+                                        <div className="h-24 bg-white/5 rounded-xl border border-white/5 p-4">
+                                            <div className="w-8 h-1 bg-white/10 rounded-full mb-3" />
+                                            <div className="h-10 w-full bg-white/5 rounded-lg" />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </motion.div>
 
-                        {/* Monitor Stand */}
-                        <div className="monitor-stand" style={{
-                            position: 'absolute',
-                            bottom: '0',
-                            left: '50%',
-                            transform: 'translateX(-50%)',
-                            width: '120px',
-                            height: '30px',
-                            background: 'linear-gradient(180deg, #333 0%, #111 100%)',
-                            clipPath: 'polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%)'
-                        }} />
-
-                        {/* Mobile Phone */}
+                        {/* Mobile Mockup Overlay */}
                         <motion.div 
-                            initial={{ y: 50, opacity: 0 }}
-                            whileInView={{ y: 0, opacity: 1 }}
+                            initial={{ opacity: 0, y: 50 }}
+                            whileInView={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.3 }}
-                            className="mobile-mockup"
-                            style={{
-                                position: 'absolute',
-                                bottom: '20px',
-                                right: '10px',
-                                width: '180px',
-                                height: '380px',
-                                background: '#000',
-                                border: '6px solid #1e293b',
-                                borderRadius: '24px',
-                                zIndex: 3,
-                                boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
-                                overflow: 'hidden'
-                            }}
+                            className="absolute -bottom-10 -right-4 w-[180px] h-[360px] bg-[#000] border-[6px] border-gray-800 rounded-[40px] shadow-2xl overflow-hidden z-20 hidden md:block"
                         >
-                            {/* Mobile Screen Content */}
-                            <div style={{ padding: '15px', height: '100%', background: '#0f172a', color: '#fff', display: 'flex', flexDirection: 'column' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-                                    <div style={{ width: '15px', height: '2px', background: '#94a3b8', boxShadow: '0 5px 0 #94a3b8, 0 -5px 0 #94a3b8' }} />
-                                    <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#2563eb' }} />
+                            <div className="h-full bg-[#0f172a] p-4 flex flex-col gap-4">
+                                <div className="w-12 h-1.5 bg-gray-800 rounded-full mx-auto mb-4" />
+                                <div className="h-12 bg-blue-600 rounded-2xl flex items-center justify-center">
+                                    <Smartphone size={24} className="text-white" />
                                 </div>
-
-                                <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '10px' }}>Dashboard mobile</div>
-                                
-                                <div style={{
-                                    background: 'linear-gradient(180deg, #3b82f6 0%, #2563eb 100%)',
-                                    borderRadius: '10px',
-                                    padding: '12px',
-                                    marginBottom: '10px',
-                                    textAlign: 'center'
-                                }}>
-                                    <div style={{ color: '#fff', fontSize: '0.8rem', fontWeight: 'bold' }}>Novo Pedido</div>
+                                <div className="space-y-2">
+                                    <div className="h-2 w-full bg-white/5 rounded-full" />
+                                    <div className="h-2 w-3/4 bg-white/5 rounded-full" />
                                 </div>
-
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                                    {[1, 2, 3, 4].map(i => (
-                                        <div key={i} style={{ background: '#1e293b', height: '40px', borderRadius: '8px' }} />
-                                    ))}
+                                <div className="grid grid-cols-2 gap-2 mt-auto">
+                                    <div className="h-16 bg-white/5 rounded-xl" />
+                                    <div className="h-16 bg-white/5 rounded-xl" />
                                 </div>
                             </div>
                         </motion.div>
                     </div>
+                </div>
 
-                    {/* Right Column: Features List */}
-                    <div className="features-container">
-                        {features.map((feature, index) => (
-                            <motion.div
-                                key={index}
-                                initial={{ opacity: 0, x: 20 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                transition={{ delay: index * 0.1 }}
-                                style={{
-                                    background: 'var(--glass)',
-                                    border: '1px solid var(--glass-border)',
-                                    borderRadius: '12px',
-                                    padding: '1.25rem',
-                                    marginBottom: '1rem',
-                                    display: 'flex',
-                                    gap: '1rem',
-                                    alignItems: 'flex-start'
-                                }}
-                            >
-                                <div style={{
-                                    background: 'linear-gradient(135deg, #ff4d4d 0%, #d93025 100%)',
-                                    minWidth: '40px',
-                                    height: '40px',
-                                    borderRadius: '10px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    boxShadow: '0 4px 10px rgba(217, 48, 37, 0.3)'
-                                }}>
-                                    <Check color="#fff" size={20} />
+                {/* Features Section */}
+                <div className="space-y-8">
+                    {features.map((feature, index) => (
+                        <motion.div
+                            key={index}
+                            initial={{ opacity: 0, x: 20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.1 }}
+                            className="glass-card group p-6 hover:border-blue-500/30 transition-all cursor-default"
+                        >
+                            <div className="flex gap-6 items-start">
+                                <div className="p-3 rounded-2xl bg-blue-500/5 border border-blue-500/10 text-blue-400 group-hover:bg-blue-500/20 transition-colors">
+                                    <Check size={24} />
                                 </div>
-                                <div>
-                                    <h3 style={{ fontSize: '1.1rem', marginBottom: '0.25rem', color: '#fff' }}>{feature.title}</h3>
-                                    <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: '1.4' }}>{feature.description}</p>
+                                <div className="space-y-2">
+                                    <h3 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">{feature.title}</h3>
+                                    <p className="text-gray-400 leading-relaxed">{feature.description}</p>
                                 </div>
-                            </motion.div>
-                        ))}
-                    </div>
+                            </div>
+                        </motion.div>
+                    ))}
                 </div>
             </div>
-
-            <style>{`
-                @media (max-width: 768px) {
-                    .showcase-grid {
-                        gap: 2rem !important;
-                    }
-                    .mockups-container {
-                        height: 380px !important;
-                        margin-bottom: 2rem;
-                    }
-                    .desktop-mockup {
-                        transform: none !important;
-                        border-width: 6px !important;
-                    }
-                    .mobile-mockup {
-                        width: 150px !important;
-                        height: 320px !important;
-                        right: 0px !important;
-                        bottom: 0px !important;
-                        transform: none !important;
-                    }
-                    .monitor-stand {
-                        display: none;
-                    }
-                    .features-container {
-                        margin-top: 2rem;
-                    }
-                }
-                @media (max-width: 480px) {
-                    .mockups-container {
-                        height: 320px !important;
-                    }
-                    .desktop-mockup {
-                        max-width: 100% !important;
-                    }
-                    .mobile-mockup {
-                        width: 130px !important;
-                        height: 280px !important;
-                    }
-                }
-            `}</style>
-        </section>
+        </div>
     );
 };
 

@@ -23,9 +23,9 @@ export default async function ClinicsPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Gerenciar Clínicas</h1>
+        <h1 className="text-2xl font-bold">Gerenciar Sistemas / Organizações</h1>
         <button className="px-4 py-2 bg-blue-600 rounded hover:bg-blue-500 text-sm">
-            Nova Clínica
+            Novo Sistema
         </button>
       </div>
 
