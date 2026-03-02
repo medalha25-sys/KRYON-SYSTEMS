@@ -60,11 +60,23 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname === '/select-system';
 
   if (user && !isPublicPath && !isFlowPage) {
+    // 3. Fetch Profile (Fixed: Separate queries to avoid ambiguous relationship joins in production)
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('organization_id, role, is_super_admin, shop_id, shops(plan, trial_ate, store_type)')
+      .select('organization_id, role, is_super_admin, shop_id')
       .eq('id', user.id)
       .maybeSingle();
+    
+    // Fetch Shop separately if shop_id exists
+    let shop = null;
+    if (profile?.shop_id) {
+        const { data: shopData } = await supabase
+            .from('shops')
+            .select('plan, trial_ate, store_type')
+            .eq('id', profile.shop_id)
+            .maybeSingle();
+        shop = shopData;
+    }
 
     if (profileError) {
         console.error('MIDDLEWARE ERROR: Failed to fetch profile:', profileError.message);
@@ -101,7 +113,6 @@ export async function updateSession(request: NextRequest) {
     }
 
     // 3.3. Subscription & Trial Checks
-    const shop = profile?.shops as any;
     if (shop && !request.nextUrl.pathname.startsWith('/assinar')) {
       const isTrialOver = shop.trial_ate && new Date(shop.trial_ate) < new Date();
       const isBlocked = shop.plan === 'bloqueado';
