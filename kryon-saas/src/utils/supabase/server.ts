@@ -1,30 +1,34 @@
 import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 
 export async function createClient() {
   const cookieStore = await cookies()
+  const host = (await headers()).get('host') || ''
+  const isKryonDomain = host.endsWith('kryonsystems.com.br')
 
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
+
+  if (!url || !key) {
     console.error(
       'SUPABASE ERROR (SERVER): Missing Environment Variables!',
-      'URL exists:', !!process.env.NEXT_PUBLIC_SUPABASE_URL,
-      'Key exists:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      'URL exists (public):', !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+      'URL exists (private):', !!process.env.SUPABASE_URL,
+      'Key exists (public):', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      'Key exists (private):', !!process.env.SUPABASE_ANON_KEY
     );
-  } else {
-    console.log(
-      'SUPABASE DEBUG (SERVER): Initialization successful.',
-      'URL prefix:', process.env.NEXT_PUBLIC_SUPABASE_URL.substring(0, 15),
-      'Key length:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY.length
-    );
+    throw new Error(`Não foi possível inicializar a conexão com o banco de dados. (Erro: ENV_${!!url}_${!!key})`);
   }
 
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    throw new Error("Your project's URL and Key are required to create a Supabase client!");
-  }
+  console.log(
+    'SUPABASE DEBUG (SERVER): Initialization successful.',
+    'URL prefix:', url.substring(0, 15),
+    'Key length:', key.length
+  );
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    url!,
+    key!,
     {
       cookies: {
         getAll() {
@@ -35,7 +39,7 @@ export async function createClient() {
             cookiesToSet.forEach(({ name, value, options }) =>
               cookieStore.set(name, value, {
                   ...options,
-                  domain: process.env.NODE_ENV === 'production' ? '.kryonsystems.com.br' : undefined,
+                  domain: (process.env.NODE_ENV === 'production' && isKryonDomain) ? '.kryonsystems.com.br' : undefined,
                   sameSite: 'lax',
                   secure: process.env.NODE_ENV === 'production'
               })

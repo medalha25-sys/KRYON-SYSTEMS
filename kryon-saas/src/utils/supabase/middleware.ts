@@ -24,10 +24,13 @@ export async function updateSession(request: NextRequest) {
           supabaseResponse = NextResponse.next({
             request,
           })
+          const host = request.headers.get('host') || ''
+          const isKryonDomain = host.endsWith('kryonsystems.com.br')
+          
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, {
                 ...options,
-                domain: process.env.NODE_ENV === 'production' ? '.kryonsystems.com.br' : undefined,
+                domain: (process.env.NODE_ENV === 'production' && isKryonDomain) ? '.kryonsystems.com.br' : undefined,
                 sameSite: 'lax',
                 secure: process.env.NODE_ENV === 'production'
             })
@@ -45,7 +48,6 @@ export async function updateSession(request: NextRequest) {
 
   // 3. Authenticated User Logic (Consolidated from proxy.ts)
   const isPublicPath = 
-    request.nextUrl.pathname === '/' ||
     request.nextUrl.pathname.startsWith('/login') ||
     request.nextUrl.pathname.startsWith('/register') ||
     request.nextUrl.pathname.startsWith('/auth') ||
@@ -58,11 +60,26 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname === '/select-system';
 
   if (user && !isPublicPath && !isFlowPage) {
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('organization_id, role, is_super_admin, shop_id, shops(plan, trial_ate, store_type)')
       .eq('id', user.id)
-      .single();
+      .maybeSingle();
+
+    if (profileError) {
+        console.error('MIDDLEWARE ERROR: Failed to fetch profile:', profileError.message);
+        // If there's a DB error (like recursion), don't redirect to a flow page that might loop
+        // Instead, try to proceed or send to a safe error/login page
+        return supabaseResponse; 
+    }
+
+    if (!profile && !isFlowPage) {
+        console.warn('MIDDLEWARE: No profile found for user', user.id);
+        const url = request.nextUrl.clone();
+        url.pathname = '/login';
+        url.searchParams.set('message', 'Perfil não encontrado.');
+        return NextResponse.redirect(url);
+    }
 
     const isSuperAdmin = profile?.is_super_admin === true;
 
@@ -151,7 +168,7 @@ export async function updateSession(request: NextRequest) {
   const host = request.headers.get('host') || ''
   const isERPSubdomain = host.startsWith('erp.')
 
-  if (isERPSubdomain) {
+  if (isERPSubdomain && !request.nextUrl.pathname.startsWith('/concrete')) {
       const url = request.nextUrl.clone()
       // Force main domain in production to avoid cookie issues
       if (process.env.NODE_ENV === 'production') {

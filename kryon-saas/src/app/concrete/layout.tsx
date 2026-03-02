@@ -1,6 +1,8 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
+import { Building2 } from 'lucide-react'
 import { AdminSidebar } from '@/components/admin/AdminSidebar'
+import { MobileBottomNav } from '@/components/admin/MobileBottomNav'
 import { PWARegister } from './PWARegister'
 
 export default async function ConcreteLayout({
@@ -24,18 +26,21 @@ export default async function ConcreteLayout({
 
   const isSuperAdmin = profile?.is_super_admin === true
   
-  // 2. Access Control
+  // 2. Fetch Org Data for Header
+  const { data: org } = await supabase
+    .from('organizations')
+    .select('name, modules')
+    .eq('id', profile?.organization_id || '00000000-0000-0000-0000-000000000000')
+    .single()
+
+  const orgName = org?.name || 'Sistema'
+  
+  // 3. Access Control
   if (!isSuperAdmin) {
       if (!profile?.organization_id) {
-          redirect('/select-system')
+          redirect('/select-organization')
       }
 
-      const { data: org } = await supabase
-        .from('organizations')
-        .select('modules')
-        .eq('id', profile.organization_id)
-        .single()
-      
       const modules = (org as any)?.modules
       if (!modules?.concrete_erp) {
           redirect('/select-system')
@@ -43,29 +48,34 @@ export default async function ConcreteLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-[#0F172A] text-slate-200 font-sans">
-      {/* Sidebar - We'll update the AdminSidebar or create a specific one if needed */}
-      <AdminSidebar userEmail={user?.email} />
+    <div className="flex min-h-screen bg-neutral-950 text-slate-200 font-sans pb-20 md:pb-0">
+      {/* Sidebar - Hidden on mobile */}
+      <div className="hidden md:block">
+        <AdminSidebar userEmail={user?.email} />
+      </div>
       
+      {/* Mobile Nav */}
+      <MobileBottomNav />
+
       <main className="flex-1 overflow-auto">
-        <header className="bg-[#1E293B] border-b border-slate-700/50 p-6 flex justify-between items-center shadow-xl">
-           <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
-                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                 </svg>
+        <header className="bg-neutral-900/50 backdrop-blur-md border-b border-neutral-800/50 p-4 md:p-6 flex justify-between items-center sticky top-0 z-40">
+           <div className="flex items-center gap-2 md:gap-3">
+              <div className="w-8 h-8 md:w-10 md:h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20 shrink-0">
+                 <Building2 className="w-5 h-5 md:w-6 md:h-6 text-white" />
               </div>
-              <h2 className="text-xl font-bold tracking-tight text-white uppercase sm:text-2xl">Concrete ERP Brasil</h2>
+              <h2 className="text-lg md:text-xl font-bold tracking-tight text-white uppercase truncate max-w-[200px] md:max-w-none">
+                {orgName}
+              </h2>
            </div>
            
-           <div className="flex items-center gap-4">
-              <span className="hidden md:inline-block text-xs font-bold px-3 py-1 bg-blue-500/10 text-blue-400 rounded-full border border-blue-500/20 uppercase tracking-widest">
-                Módulo Industrial Ativo
+           <div className="flex items-center gap-2 md:gap-4">
+              <span className="text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 bg-blue-500/10 text-blue-400 rounded-full border border-blue-500/20 uppercase tracking-widest whitespace-nowrap">
+                Módulo Ativo
               </span>
            </div>
         </header>
-        
-        <div className="p-8 animate-in fade-in duration-500">
+
+        <div className="p-4 md:p-8 animate-in fade-in duration-500">
             <PWARegister />
             {children}
         </div>

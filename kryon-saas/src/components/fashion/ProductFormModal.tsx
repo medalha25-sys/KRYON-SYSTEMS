@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { toast } from 'sonner';
 import CategoryManager from './CategoryManager';
@@ -14,7 +14,7 @@ interface ProductFormModalProps {
 }
 
 export default function ProductFormModal({ isOpen, onClose, onSuccess, productToEdit }: ProductFormModalProps) {
-    const supabase = createClient();
+    const supabase = useMemo(() => createClient(), []);
     const [loading, setLoading] = useState(false);
     const [categories, setCategories] = useState<any[]>([]);
     const [showCategoryManager, setShowCategoryManager] = useState(false);

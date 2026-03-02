@@ -18,7 +18,7 @@ export const CashRegisterProvider: React.FC<{ children: React.ReactNode }> = ({ 
     const [isRegisterOpen, setIsRegisterOpen] = useState(false);
     const [sessionId, setSessionId] = useState<string | null>(null);
     const [shopId, setShopId] = useState<string | null>(null);
-    const supabase = createClient();
+    const supabase = React.useMemo(() => createClient(), []);
 
     // Initial load: Fetch shopId and then check for open session
     useEffect(() => {

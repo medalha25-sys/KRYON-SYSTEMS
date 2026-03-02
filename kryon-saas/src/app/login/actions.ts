@@ -12,9 +12,17 @@ import { translateSupabaseError } from '@/utils/error_handling'
  * Used by both login (password) and verifyOtp (code).
  */
 async function handlePostLogin(user: User, supabase: SupabaseClient) {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!url || !serviceRoleKey) {
+    console.error('DEBUG LOGIN: Missing Admin Environment Variables for handlePostLogin');
+    return { error: 'Erro interno ao processar sua conta. Por favor, tente novamente.' };
+  }
+
   const supabaseAdmin = createClientSSR(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    url,
+    serviceRoleKey,
     {
       cookies: {
         getAll() { return [] },
@@ -24,24 +32,44 @@ async function handlePostLogin(user: User, supabase: SupabaseClient) {
   )
 
   try {
-    // 1. Validar Usuário Autenticado (Já recebido via parâmetro)
-    console.log('DEBUG LOGIN: Processando pós-login para:', user.email)
+    console.log('DEBUG LOGIN: Starting post-login for:', user.email, 'ID:', user.id)
 
-    // 2. Buscar Shop pelo owner_id
+    // 1. Buscar Perfil para obter Contexto de Organização e Loja
+    const { data: profile, error: profileError } = await supabaseAdmin
+      .from('profiles')
+      .select('organization_id, shop_id, role, is_super_admin')
+      .eq('id', user.id)
+      .maybeSingle()
+
+    if (profileError) {
+      console.error('DEBUG LOGIN: Profile Error:', profileError)
+    }
+
+    const orgId = profile?.organization_id
+    const shopIdFromProfile = profile?.shop_id
+
+    console.log('DEBUG LOGIN: Contexto - Org:', orgId, 'Shop (Profile):', shopIdFromProfile, 'Role:', profile?.role)
+
+    // 1.5 Super Admin bypass
+    if (profile?.is_super_admin) {
+      console.log('DEBUG LOGIN: Super Admin detected. Redirecting to /super-admin')
+      return { success: true, redirect: '/super-admin' }
+    }
+
+    // 2. Buscar Shop pelo owner_id ou shop_id do profile
     const { data: shop, error: shopError } = await supabaseAdmin
       .from('shops')
       .select('*')
-      .eq('owner_id', user.id)
+      .or(`owner_id.eq.${user.id},id.eq.${shopIdFromProfile || '00000000-0000-0000-0000-000000000000'}`)
       .maybeSingle()
 
     if (shopError) {
-      console.error('DEBUG LOGIN: Erro ao buscar Shop:', shopError)
-      return { error: 'Erro ao validar sua loja. Por favor, tente novamente.' }
+      console.error('DEBUG LOGIN: Shop Fetch Error:', shopError)
     }
 
-    // Onboarding: Se não existe shop, cria um padrão (Legacy support)
+    // Onboarding: Se não existe shop, cria um padrão
     if (!shop) {
-      console.log('DEBUG LOGIN: Shop não encontrado, criando novo para:', user.id)
+      console.log('DEBUG LOGIN: No shop found. Creating default onboarding shop.')
       const { data: newShop, error: createError } = await supabaseAdmin
         .from('shops')
         .insert({
@@ -55,59 +83,105 @@ async function handlePostLogin(user: User, supabase: SupabaseClient) {
         .single()
 
       if (createError) {
-        console.error('DEBUG LOGIN: Erro ao criar Shop:', createError)
+        console.error('DEBUG LOGIN: Error creating initial shop:', createError)
         return { error: 'Erro ao configurar sua conta inicial.' }
       }
       
+      console.log('DEBUG LOGIN: New shop created:', newShop.id)
       return { success: true, redirect: '/app/agenda-facil' }
     }
 
-    // 3. Buscar Subscription pelo shop_id
-    const { data: sub, error: subError } = await supabaseAdmin
-      .from('subscriptions')
-      .select('*')
-      .eq('shop_id', shop.id)
-      .in('status', ['active', 'trial'])
-      .maybeSingle()
+    console.log('DEBUG LOGIN: Shop Found:', shop.id, 'StoreType:', shop.store_type)
 
-    // 4. Se não encontrar pelo shop_id, tenta pelo user_id (Migração)
-    let activeSub = sub
-    if (!activeSub) {
-        const { data: userSub } = await supabaseAdmin
-            .from('subscriptions')
-            .select('*')
-            .eq('user_id', user.id)
-            .in('status', ['active', 'trial'])
-            .maybeSingle()
-        activeSub = userSub
+    // 3. Buscar Assinaturas Ativas (Arquitetura Nova: via Organization ID)
+    let activeSubs: any[] = []
+    if (orgId) {
+       const { data: orgSubs, error: orgSubError } = await supabaseAdmin
+          .from('subscriptions')
+          .select('*, products(slug)')
+          .eq('organization_id', orgId)
+          .in('status', ['active', 'trial'])
+       
+       if (orgSubError) console.error('DEBUG LOGIN: Org Subscription Query Error:', orgSubError)
+       if (orgSubs) activeSubs = [...activeSubs, ...orgSubs]
     }
 
-    // 5. Permitir acesso se status for active ou trial
+    // 4. Fallback: Buscar Assinaturas via Shop ID (Arquitetura Legada)
+    if (activeSubs.length === 0) {
+      const { data: shopSubs } = await supabaseAdmin
+        .from('subscriptions')
+        .select('*, products(slug)')
+        .eq('shop_id', shop.id)
+        .in('status', ['active', 'trial'])
+      if (shopSubs) activeSubs = [...activeSubs, ...shopSubs]
+    }
+
+    // 5. Fallback: Buscar Assinaturas via User ID
+    if (activeSubs.length === 0) {
+        const { data: userSubs } = await supabaseAdmin
+            .from('subscriptions')
+            .select('*, products(slug)')
+            .eq('user_id', user.id)
+            .in('status', ['active', 'trial'])
+        if (userSubs) activeSubs = [...activeSubs, ...userSubs]
+    }
+
+    // Prioritizar Concrete ERP se estiver entre as assinaturas ativas
+    const concreteSub = activeSubs.find(sub => 
+        sub.products?.slug === 'concrete-erp' || 
+        sub.product_slug === 'concrete-erp' ||
+        sub.products?.slug === 'industrial' ||
+        sub.product_slug === 'industrial'
+    );
+    
+    // Escolher a assinatura "principal" (se for concrete, usamos ela)
+    const activeSub = concreteSub || (activeSubs.length > 0 ? activeSubs[0] : null);
+    const hasMultipleSubs = activeSubs.length > 1;
+
+    console.log('DEBUG LOGIN: Active Subscriptions Found:', activeSubs.length, 'Main Sub Product:', activeSub?.products?.slug)
+
+    // 6. Determinar Redirecionamento
     if (activeSub || shop.plan === 'pro' || shop.plan === 'trial') {
-      // 6. Redirecionar para /app/{store_type} ou rotas específicas
       let redirectPath = ''
       
-      if (shop.store_type === 'concrete_erp' || shop.store_type === 'industrial') {
-        redirectPath = '/concrete'
-      } else if (shop.store_type === 'agenda_facil_ai') {
-        redirectPath = '/app/agenda-facil'
-      } else if (shop.store_type === 'fashion_store_ai') {
-        redirectPath = '/fashion/dashboard'
-      } else {
-        redirectPath = `/app/${shop.store_type}`
+      // Se tivermos múltiplas assinaturas autivas, mandamos para o seletor, 
+      // A MENOS que uma delas seja o Concrete ERP (que priorizamos).
+      if (hasMultipleSubs && !concreteSub) {
+        console.log('DEBUG LOGIN: Multiple subscriptions found. Redirecting to /select-system');
+        return { success: true, redirect: '/select-system' }
       }
 
-      console.log('DEBUG LOGIN: Acesso liberado. Redirecionando para:', redirectPath)
+      const productSlug = activeSub?.products?.slug || activeSub?.product_slug;
+      
+      console.log('DEBUG LOGIN: Processing Product:', productSlug, 'ShopType:', shop.store_type);
+
+      if (productSlug === 'fashion-ai' || productSlug === 'fashion-store-ai' || productSlug === 'loja-roupas' || shop.store_type === 'fashion_store_ai') {
+        redirectPath = '/fashion/dashboard'
+      } else if (productSlug === 'concrete-erp' || productSlug === 'industrial' || shop.store_type === 'concrete_erp' || shop.store_type === 'industrial') {
+        redirectPath = '/concrete'
+      } else if (productSlug === 'agenda-facil' || productSlug === 'agenda-facil-ai' || shop.store_type === 'agenda_facil_ai') {
+        redirectPath = '/app/agenda-facil'
+      } else {
+        // Fallback para seleção se o produto não for reconhecido
+        redirectPath = '/select-system'
+      }
+
+      // Proteção extra contra caminhos inválidos
+      if (!redirectPath || redirectPath === '/app/' || redirectPath === '/app/undefined') {
+        redirectPath = '/select-system'
+      }
+
+      console.log('DEBUG LOGIN: Success. Final Redirect Path:', redirectPath)
       return { success: true, redirect: redirectPath }
     }
 
-    // Se chegar aqui, não tem assinatura ativa
-    console.warn('DEBUG LOGIN: Bloqueado por falta de assinatura ativa.')
-    return { error: 'Login realizado, mas você não possui uma assinatura ativa. Por favor, entre em contato com o suporte.' }
+    // 7. Se tem loja mas não tem assinatura, manda para seleção ou dashboard
+    console.warn('DEBUG LOGIN: No active subscription found for shop/org. Falling back to /select-system')
+    return { success: true, redirect: '/select-system' }
 
   } catch (err: any) {
     console.error('CRITICAL POST-LOGIN ERROR:', err)
-    return { error: 'Erro inesperado no login.' }
+    return { error: 'Erro inesperado no login (Flow Error).' }
   }
 }
 
@@ -149,10 +223,11 @@ export async function login(prevState: any, formData: FormData) {
       return result
   } catch (err: any) {
       if (err.digest?.startsWith('NEXT_REDIRECT')) throw err
+      // Log full error object for debugging in the backend
       console.error('CRITICAL LOGIN ACTION ERROR:', err)
-      // Log full error object for debugging
       console.dir(err, { depth: null })
-      return { error: 'Erro crítico ao tentar entrar: ' + (err.message || 'Erro desconhecido') }
+
+      return { error: 'Não foi possível processar o login no momento. Por favor, tente novamente mais tarde.' }
   }
 }
 

@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import Link from 'next/link'
 
 export default async function BillingPage() {
   const supabase = await createClient()
@@ -19,7 +20,20 @@ export default async function BillingPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Fluxo de Caixa (SaaS Global)</h1>
+      <div className="flex flex-col gap-4">
+        <h1 className="text-2xl font-bold">Fluxo de Caixa (SaaS Global)</h1>
+        
+        {/* Tab Navigation */}
+        <div className="flex border-b border-slate-700">
+            <Link href="/super-admin/financial" className="px-6 py-3 border-b-2 border-emerald-500 text-emerald-400 text-sm font-bold">
+                Fluxo de Caixa
+            </Link>
+            <Link href="/super-admin/financial/subscriptions" className="px-6 py-3 text-slate-400 hover:text-white transition text-sm font-medium">
+                Assinaturas Ativas
+            </Link>
+        </div>
+      </div>
+      
       <p className="text-slate-400">Monitoramento de entradas financeiras em todas as clínicas.</p>
       
       <div className="bg-slate-800 rounded-lg overflow-hidden border border-slate-700">

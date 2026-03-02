@@ -13,20 +13,49 @@ export async function checkSuperAdmin() {
   const { data: { user } } = await supabase.auth.getUser()
   
   if (!user) {
-      console.log('SUPER ADMIN CHECK: No user')
+      console.log('SUPER ADMIN CHECK: No authenticated user found.')
       return false
   }
 
-  const { data: profile, error } = await supabase
+  // Use Admin Client to bypass RLS issues in Super Admin area
+  const { createServerClient } = await import('@supabase/ssr')
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+
+  if (!url || !serviceRoleKey) {
+      console.error('SUPER ADMIN CHECK ERROR: Missing service role key.')
+      // Fallback to public client if service role is missing (should not happen in prod)
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('is_super_admin')
+        .eq('id', user.id)
+        .single()
+      return profile?.is_super_admin === true
+  }
+
+  const supabaseAdmin = createServerClient(url, serviceRoleKey, {
+      cookies: { getAll: () => [], setAll: () => {} }
+  })
+
+  const { data: profile, error } = await supabaseAdmin
     .from('profiles')
     .select('is_super_admin')
     .eq('id', user.id)
     .single()
 
-  if (error) console.error('SUPER ADMIN CHECK ERROR:', error)
-  console.log('SUPER ADMIN CHECK RESULT:', { id: user.id, is_super: profile?.is_super_admin })
+  if (error) {
+    console.error('SUPER ADMIN CHECK ERROR (Admin Query):', error)
+  }
+  
+  const isSuper = profile?.is_super_admin === true
+  console.log('SUPER ADMIN CHECK RESULT:', { 
+    userId: user.id, 
+    email: user.email,
+    isSuperResult: isSuper,
+    profileFound: !!profile
+  })
 
-  return profile?.is_super_admin === true
+  return isSuper
 }
 
 /**

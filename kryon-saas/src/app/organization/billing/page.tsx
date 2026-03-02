@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { Check, Zap, Shield } from 'lucide-react'
 import { MercadoPagoService } from '@/lib/mercadopago' 
@@ -10,7 +10,7 @@ import { createSubscriptionPreference } from './actions' // Note: This needs to 
 export default function BillingPage() {
   const [currentPlan, setCurrentPlan] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
     async function fetchSub() {

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { useCashRegister } from './CashRegisterContext';
 import { Product, CartItem, Payment } from '@/types/erp';
@@ -19,7 +19,7 @@ const SalesTerminal: React.FC = () => {
     const [showCheckoutModal, setShowCheckoutModal] = useState(false);
     const [showCloseRegisterModal, setShowCloseRegisterModal] = useState(false);
     const searchInputRef = useRef<HTMLInputElement>(null);
-    const supabase = createClient();
+    const supabase = useMemo(() => createClient(), []);
 
     useEffect(() => {
         const init = async () => {

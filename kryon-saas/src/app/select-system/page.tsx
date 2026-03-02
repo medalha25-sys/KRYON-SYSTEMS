@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic'
 
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense, useEffect, useState, useMemo } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
@@ -34,7 +34,7 @@ function SelectSystemContent() {
   const [loading, setLoading] = useState(true)
   const router = useRouter()
   const searchParams = useSearchParams()
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
     const message = searchParams.get('message')
@@ -45,52 +45,110 @@ function SelectSystemContent() {
 
   useEffect(() => {
     async function fetchProducts() {
-      const { data: { user } } = await supabase.auth.getUser()
-      
-      if (!user) {
-        router.push('/login')
-        return
-      }
+      try {
+        setLoading(true)
+        const { data: { user } } = await supabase.auth.getUser()
+        
+        if (!user) {
+          console.warn('SELECT SYSTEM: No user found, redirecting to login.')
+          router.push('/login')
+          return
+        }
 
-      // 1. Get Organization ID
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('organization_id, is_super_admin')
-        .eq('id', user.id)
-        .single()
+        // 1. Get Organization ID
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('organization_id, is_super_admin')
+          .eq('id', user.id)
+          .maybeSingle()
 
-      if (!profile?.organization_id) {
-         console.log('No organization found for user:', user.id)
-         router.push('/login?message=Organizacao%20nao%20encontrada') 
-         return
-      }
+        if (profileError) {
+            console.error('SELECT SYSTEM: Profile fetch error:', profileError)
+        }
 
-      // 1.5 Check Super Admin
-      if (profile?.is_super_admin) {
-           router.push('/super-admin')
+        if (!profile?.organization_id && !profile?.is_super_admin) {
+           console.warn('SELECT SYSTEM: No organization found for user:', user.id)
+           router.push('/login?message=Organização não encontrada. Por favor, entre em contato com o suporte.') 
            return
+        }
+
+        // 1.5 Handle Super Admin (Only redirect if they don't have a specific org context they are trying to access)
+        // If they are strictly super admin and just want the dashboard
+        if (profile?.is_super_admin && !profile?.organization_id) {
+             console.log('SELECT SYSTEM: Super Admin bypass to dashboard')
+             router.push('/super-admin')
+             return
+        }
+
+        // 2. Fetch subscriptions with product details for this organization
+        // Resolve PGRST201 by specifying the foreign key (product_id)
+        const { data: subscriptions, error: subError } = await supabase
+          .from('subscriptions')
+          .select('*, products!subscriptions_product_id_fkey(*)')
+          .eq('organization_id', profile?.organization_id || '00000000-0000-0000-0000-000000000000')
+          .in('status', ['active', 'trial'])
+
+        if (subError) {
+          console.error('SELECT SYSTEM: Subscription fetch error:', subError)
+        }
+
+        const productsData = (subscriptions || [])
+          .map(sub => {
+              if (sub.products) return sub.products;
+              // Fallback se o produto sumiu mas a assinatura existe
+              if (sub.product_slug) return { 
+                  id: sub.id, 
+                  slug: sub.product_slug, 
+                  name: sub.product_slug.replace(/-/g, ' ').toUpperCase(),
+                  description: 'Acesso via assinatura'
+              };
+              return null;
+          })
+          .filter(p => p !== null) as Product[]
+
+        console.log('SELECT SYSTEM: Products found:', productsData.length, productsData)
+
+        // 3. Automatic Redirections (Guard Clauses)
+        const concreteProduct = productsData.find(p => p.slug === 'concrete-erp' || p.slug === 'industrial');
+
+        if (concreteProduct || productsData.length === 1) {
+            const product = concreteProduct || productsData[0]
+            let targetPath = `/app/${product.slug}`
+            
+            // Custom routing for specific products
+            if (product.slug === 'fashion-ai' || product.slug === 'fashion-store-ai') {
+              targetPath = '/fashion/dashboard'
+            } else if (product.slug === 'concrete-erp' || product.slug === 'industrial') {
+              targetPath = '/concrete'
+            } else if (product.slug === 'agenda-facil-ai') {
+              targetPath = '/app/agenda-facil'
+            }
+
+            console.log('SELECT SYSTEM: Priority system found, redirecting to:', targetPath)
+            router.replace(targetPath)
+            return
+        }
+
+        if (productsData.length === 0) {
+            // Case 1: Super Admin with no products can still go to super-admin
+            if (profile?.is_super_admin) {
+                router.push('/super-admin')
+                return
+            }
+            // Case 2: Regular user with no products
+            console.warn('SELECT SYSTEM: No active subscriptions found.')
+            router.push('/login?message=Nenhuma assinatura ativa encontrada para sua conta.')
+            return
+        }
+
+        // More than 1 system: show selection
+        setProducts(productsData)
+      } catch (err) {
+        console.error('SELECT SYSTEM: Unexpected error:', err)
+        toast.error('Ocorreu um erro ao carregar seus sistemas.')
+      } finally {
+        setLoading(false)
       }
-
-      // 2. Fetch subscriptions with product details for this organization
-      const { data: subscriptions, error: subError } = await supabase
-        .from('subscriptions')
-        .select('*, products(*)')
-        .eq('organization_id', profile.organization_id)
-        .in('status', ['active', 'trial'])
-
-      if (subError || !subscriptions || subscriptions.length === 0) {
-        console.log('No active subscriptions found for org:', profile.organization_id)
-        router.push('/login?message=Nenhuma%20assinatura%20ativa%20encontrada') // Redirect to login if no access
-        return
-      }
-
-      // Map joined data to products state
-      const productsData = subscriptions
-        .map(sub => sub.products)
-        .filter(p => p !== null) as Product[]
-
-      setProducts(productsData)
-      setLoading(false)
     }
 
     fetchProducts()

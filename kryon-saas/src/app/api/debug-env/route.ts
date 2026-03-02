@@ -17,6 +17,14 @@ export async function GET() {
         length: supabaseKey?.length || 0,
         prefix: supabaseKey ? `${supabaseKey.substring(0, 5)}...` : 'N/A',
       },
+      SUPABASE_SERVICE_ROLE_KEY: {
+        exists: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+        length: process.env.SUPABASE_SERVICE_ROLE_KEY?.length || 0,
+      },
+      SERVICE_ROLE_KEY: {
+        exists: !!process.env.SERVICE_ROLE_KEY,
+        length: process.env.SERVICE_ROLE_KEY?.length || 0,
+      },
       NODE_ENV: process.env.NODE_ENV,
     },
     timestamp: new Date().toISOString(),

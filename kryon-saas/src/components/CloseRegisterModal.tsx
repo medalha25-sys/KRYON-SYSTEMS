@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { useCashRegister } from './CashRegisterContext';
 
@@ -26,7 +26,7 @@ const CloseRegisterModal: React.FC<CloseRegisterModalProps> = ({ isOpen, onClose
     const [loading, setLoading] = useState(true);
     const [finishing, setFinishing] = useState(false);
     const [countedCash, setCountedCash] = useState('');
-    const supabase = createClient();
+    const supabase = useMemo(() => createClient(), []);
 
     useEffect(() => {
         if (isOpen && sessionId) {

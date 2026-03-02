@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { StockItem, ServiceOrder } from '@/types/erp';
 import { createClient } from '@/utils/supabase/client';
@@ -11,7 +11,7 @@ const ERPDashboard: React.FC = () => {
   const [lowStockItems, setLowStockItems] = useState<StockItem[]>([]);
   const [recentOrders, setRecentOrders] = useState<ServiceOrder[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
     const fetchData = async () => {

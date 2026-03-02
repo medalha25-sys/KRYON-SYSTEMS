@@ -20,8 +20,16 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Kryon Systems",
   description: "Plataforma de gestão integrada Kryon Systems.",
+  manifest: "/manifest.json",
+  themeColor: "#1e293b",
   icons: {
     icon: "/logo-clinica.png",
+    apple: "/icon-192x192.png",
+  },
+  appleWebApp: {
+    title: "Kryon ERP",
+    statusBarStyle: "default",
+    capable: true,
   },
 };
 

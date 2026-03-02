@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import { createClient } from '@/utils/supabase/client';
 
@@ -21,7 +21,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose }) => {
     const [notes, setNotes] = useState('');
     const [customCategory, setCustomCategory] = useState('');
     const [isSaving, setIsSaving] = useState(false);
-    const supabase = createClient();
+    const supabase = useMemo(() => createClient(), []);
 
     useEffect(() => {
         if (showScanner && isOpen) {

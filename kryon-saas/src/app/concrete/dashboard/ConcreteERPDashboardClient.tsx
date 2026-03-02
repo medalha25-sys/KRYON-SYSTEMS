@@ -4,31 +4,23 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { 
   Building2, 
-  Truck, 
-  ClipboardList, 
-  Activity, 
-  Box, 
-  Navigation,
   CheckCircle2,
-  Clock,
   Plus,
   DollarSign,
   TrendingUp,
-  ShoppingCart,
-  Factory,
-  Cog,
   ShoppingBag,
-  User,
   LayoutDashboard,
-  AlertTriangle,
-  Beaker,
-  History as HistoryIcon,
-  FileText
+  Factory,
+  Box,
+  Cog,
+  ShoppingCart,
+  Truck,
+  Eye,
+  EyeOff
 } from 'lucide-react'
 import Link from 'next/link'
-import { seedInitialDataAction } from '../actions'
-import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 interface Props {
   stats: any
@@ -36,247 +28,251 @@ interface Props {
 
 export default function ConcreteERPDashboardClient({ stats }: Props) {
   const router = useRouter()
-  const [loading, setLoading] = React.useState(false)
+  const [showRevenue, setShowRevenue] = React.useState(true)
 
-  const handleImportData = async () => {
-    setLoading(true)
-    const res = await seedInitialDataAction()
-    setLoading(false)
-    if (res.success) {
-      toast.success(res.message || 'Base populada com sucesso!')
-      router.refresh()
-    } else {
-      toast.error(res.error || 'Erro ao popular banco')
-    }
-  }
-
-  if (!stats) return <div className="p-10 text-center">Carregando dados...</div>
+  if (!stats) return (
+    <div className="min-h-screen bg-neutral-950 flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-orange-500/20 border-t-orange-500 rounded-full animate-spin"></div>
+    </div>
+  )
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 p-6 md:p-10 font-sans">
-      <div className="max-w-7xl mx-auto">
-        <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-neutral-800 rounded-lg">
-                <Building2 className="w-6 h-6 text-orange-500" />
-              </div>
-              <h1 className="text-3xl font-bold tracking-tight uppercase italic">Concrete ERP</h1>
-            </div>
-            <p className="text-neutral-400 font-mono text-sm tracking-wider">BATTERY PLANT CONTROL SYSTEMS // BRASIL</p>
-          </div>
+    <div className="min-h-screen bg-neutral-950 text-neutral-100 p-4 md:p-10 font-sans selection:bg-orange-500/30 pb-24">
+      <div className="max-w-7xl mx-auto space-y-10">
+        
+        {/* Header - Minimalist & High Contrast */}
+        <header className="flex flex-col md:flex-row md:items-center justify-between gap-8 pt-4">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+          >
+            <h1 className="text-4xl md:text-5xl font-black tracking-tightest uppercase italic text-white leading-none">
+              Portal de <span className="text-orange-500">Vendas</span>
+            </h1>
+            <p className="text-neutral-500 text-xs mt-2 font-bold uppercase tracking-[0.3em]">Operação Comercial Ativa</p>
+          </motion.div>
           
-          <div className="flex gap-4">
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="flex"
+          >
              <button 
                onClick={() => router.push('/concrete/pedidos/novo')}
-               className="flex items-center gap-2 bg-white text-black hover:bg-neutral-200 px-6 py-3 rounded-md font-bold transition active:scale-95 uppercase text-sm tracking-widest"
+               className="w-full md:w-auto flex items-center justify-center gap-4 bg-orange-600 text-black hover:bg-orange-500 px-10 py-5 rounded-[2rem] font-black transition-all active:scale-95 uppercase text-sm tracking-widest shadow-2xl shadow-orange-600/40"
              >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-6 h-6 stroke-[3px]" />
                 Novo Pedido
             </button>
-          </div>
+          </motion.div>
         </header>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-12">
+        {/* Highlight Stats - Glassmorphism & Micro-animations */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard 
-            icon={<DollarSign className="w-5 h-5" />} 
-            label="Receita Global" 
-            value={`R$ ${stats.receita_total.toLocaleString('pt-BR', { minimumFractionDigits: 0 })}`} 
-            sub="Faturamento"
+            icon={<DollarSign className="w-6 h-6 text-black" />} 
+            label="Faturamento do Dia" 
+            value={showRevenue 
+              ? `R$ ${(stats.faturamento_dia || 0).toLocaleString('pt-BR', { minimumFractionDigits: 0 })}`
+              : 'R$ •••••'
+            } 
+            sub="Ver detalhes"
+            href="/concrete/financeiro/contas-receber"
             isActive
+            delay={0.1}
+            onToggleVisibility={() => setShowRevenue(!showRevenue)}
+            showVisibilityToggle={true}
+            isVisible={showRevenue}
           />
           <StatCard 
-            icon={<Navigation className="w-5 h-5" />} 
-            label="Em Transporte" 
-            value={stats.entregas_em_transporte.toString()} 
-            sub="Cargas na rua"
-            isActive
+            icon={<ShoppingBag className="w-6 h-6 text-orange-500" />} 
+            label="Pedidos em Aberto" 
+            value={(stats.pedidos_em_andamento || 0).toString()} 
+            sub="Em andamento"
+            href="/concrete/pedidos"
+            delay={0.2}
           />
           <StatCard 
-            icon={<CheckCircle2 className="w-5 h-5 text-emerald-400" />} 
-            label="Concluídas" 
+            icon={<CheckCircle2 className="w-6 h-6 text-emerald-400" />} 
+            label="Concluídos" 
             value={stats.entregas_concluidas.toString()} 
-            sub="Entregas"
+            sub="Prontos p/ Entrega"
+            delay={0.3}
           />
           <StatCard 
-            icon={<FileText className="w-5 h-5 text-blue-400" />} 
-            label="NF-e Emitidas" 
-            value={stats.total_notas_emitidas?.toString() || '0'} 
-            sub="Simulado"
-          />
-          <StatCard 
-            icon={<ShoppingBag className="w-5 h-5" />} 
-            label="Pendentes" 
-            value={stats.pedidos_pendentes.toString()} 
-            sub="Produção"
+            icon={<TrendingUp className="w-6 h-6 text-blue-400" />} 
+            label="Alcance da Meta" 
+            value="85%" 
+            sub="Desempenho Atual"
+            delay={0.4}
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Internal vs External Chart (Mock visualization for now) */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Alertas Críticos */}
-          {stats.itens_estoque_baixo > 0 && (
-            <motion.div 
-               initial={{ opacity: 0, y: 20 }}
-               animate={{ opacity: 1, y: 0 }}
-               className="mt-8 bg-red-900/10 border border-red-500/30 p-6 rounded-3xl flex items-center justify-between"
-            >
-               <div className="flex items-center gap-6">
-                 <div className="p-4 bg-red-900/40 rounded-2xl animate-pulse">
-                    <AlertTriangle className="w-8 h-8 text-red-500" />
-                 </div>
-                 <div>
-                    <h4 className="text-lg font-black text-white px-1 uppercase italic tracking-tighter">Atenção: Insumos Críticos</h4>
-                    <p className="text-sm text-red-400/80 font-medium px-1">Existem {stats.itens_estoque_baixo} itens com estoque abaixo do limite de segurança.</p>
-                 </div>
-               </div>
-               <Link 
-                 href="/concrete/estoque" 
-                 className="bg-red-600 hover:bg-red-500 text-black px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition shadow-lg shadow-red-500/20"
-               >
-                 Verificar Estoque
-               </Link>
-            </motion.div>
-          )}
-
-            <div className="bg-neutral-900 border border-neutral-800 p-8 rounded-lg">
-                <h2 className="text-xs font-bold tracking-[0.2em] uppercase text-neutral-500 mb-8 border-b border-neutral-800 pb-4">
-                    Distribuição de Carga (m³)
+        {/* Product Catalog - Highly Intuitive Cards */}
+        <section>
+            <div className="flex items-center gap-4 mb-8">
+                <h2 className="text-[10px] font-black tracking-[0.4em] uppercase text-neutral-600 whitespace-nowrap">
+                    Catálogo de Produtos
                 </h2>
-                <div className="flex flex-col gap-8">
-                    <div>
-                        <div className="flex justify-between items-center mb-2">
-                             <span className="text-sm font-bold uppercase italic">Concreto Externo (Venda)</span>
-                             <span className="font-mono text-orange-500 font-bold">{stats.total_m3_externo.toFixed(1)} m³</span>
-                        </div>
-                        <div className="w-full bg-black h-4 rounded-full overflow-hidden border border-neutral-800">
-                             <div 
-                                className="bg-orange-600 h-full transition-all duration-1000" 
-                                style={{ width: `${(stats.total_m3_externo / (stats.total_m3_externo + stats.total_m3_interno + 0.1)) * 100}%` }} 
-                             />
-                        </div>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="bg-slate-900/50 border border-slate-800 p-6 rounded-3xl relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                            <Clock className="w-16 h-16 text-orange-500" />
-                        </div>
-                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-2">A Receber</p>
-                        <h3 className="text-2xl font-black font-mono text-orange-400">R$ {stats.total_a_receber.toLocaleString('pt-BR')}</h3>
-                    </div>
-
-                    <div className="bg-emerald-600/5 border border-emerald-500/20 p-6 rounded-3xl relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                            <CheckCircle2 className="w-16 h-16 text-emerald-500" />
-                        </div>
-                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500/60 mb-2">Total Recebido</p>
-                        <h3 className="text-2xl font-black font-mono text-emerald-400">R$ {stats.total_recebido.toLocaleString('pt-BR')}</h3>
-                    </div>
-                    </div>
-                    <div>
-                        <div className="flex justify-between items-center mb-2">
-                             <span className="text-sm font-bold uppercase italic">Concreto Interno (Obras)</span>
-                             <span className="font-mono text-blue-500 font-bold">{stats.total_m3_interno.toFixed(1)} m³</span>
-                        </div>
-                        <div className="w-full bg-black h-4 rounded-full overflow-hidden border border-neutral-800">
-                             <div 
-                                className="bg-blue-600 h-full transition-all duration-1000" 
-                                style={{ width: `${(stats.total_m3_interno / (stats.total_m3_externo + stats.total_m3_interno + 0.1)) * 100}%` }} 
-                             />
-                        </div>
-                    </div>
-                </div>
+                <div className="h-[1px] w-full bg-neutral-900"></div>
             </div>
+            
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+                <ProductShortcut 
+                    href="/concrete/produtos?category=concreto"
+                    icon={<Factory className="w-10 h-10 text-blue-500" />}
+                    title="Concreto"
+                    desc="Usinado m³"
+                    color="blue"
+                    delay={0.5}
+                />
+                
+                <ProductShortcut 
+                    href="/concrete/produtos?category=premoldados"
+                    icon={<Box className="w-10 h-10 text-emerald-500" />}
+                    title="Pré-moldado"
+                    desc="Estruturas"
+                    color="emerald"
+                    delay={0.6}
+                />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                 <Link href="/concrete/estoque" className="bg-neutral-900 border border-neutral-800 p-6 rounded hover:border-emerald-500 transition group">
-                    <h3 className="text-sm font-bold uppercase mb-2 group-hover:text-emerald-400">Estoque de Insumos</h3>
-                    <p className="text-xs text-neutral-500 leading-relaxed">Controle de cimento, areia e brita com baixa automática.</p>
-                 </Link>
-                 <Link href="/concrete/producao" className="bg-neutral-900 border border-neutral-800 p-6 rounded hover:border-blue-500 transition group">
-                    <h3 className="text-sm font-bold uppercase mb-2 group-hover:text-blue-400">Linha de Produção</h3>
-                    <p className="text-xs text-neutral-500 leading-relaxed">Gestão industrial em tempo real e controle de ordens de serviço.</p>
-                 </Link>
-                 <Link href="/concrete/entregas" className="bg-neutral-900 border border-neutral-800 p-6 rounded hover:border-emerald-500 transition group">
-                    <h3 className="text-sm font-bold uppercase mb-2 group-hover:text-emerald-400">Logística</h3>
-                    <p className="text-xs text-neutral-500 leading-relaxed">Controle de entregas, rastreamento e confirmação de recebimento.</p>
-                 </Link>
-                 <Link href="/concrete/caminhoes" className="bg-neutral-900 border border-neutral-800 p-6 rounded hover:border-orange-500 transition group">
-                    <h3 className="text-sm font-bold uppercase mb-2 group-hover:text-orange-500">Gestão de Frota</h3>
-                    <p className="text-xs text-neutral-500 leading-relaxed">Cadastro de caminhões, manutenção e capacidade de carga.</p>
-                 </Link>
-                 <Link href="/concrete/motoristas" className="bg-neutral-900 border border-neutral-800 p-6 rounded hover:border-blue-500 transition group">
-                    <h3 className="text-sm font-bold uppercase mb-2 group-hover:text-blue-500">Motoristas</h3>
-                    <p className="text-xs text-neutral-500 leading-relaxed">Controle de equipe operacional e licenças de condução.</p>
-                 </Link>
+                <ProductShortcut 
+                    href="/concrete/produtos?category=manilhas"
+                    icon={<Cog className="w-10 h-10 text-orange-500" />}
+                    title="Manilhas"
+                    desc="Tubulação"
+                    color="orange"
+                    delay={0.7}
+                />
+
+                <ProductShortcut 
+                    href="/concrete/produtos?category=bloquetes"
+                    icon={<LayoutDashboard className="w-10 h-10 text-purple-500" />}
+                    title="Bloquetes"
+                    desc="Pavimentação"
+                    color="purple"
+                    delay={0.8}
+                />
             </div>
-          </div>
+        </section>
 
-          {/* Sidebar: Batch Control */}
-          <div className="space-y-6">
-             <div className="bg-neutral-900 border border-neutral-800 p-6 rounded shadow-xl">
-               <h3 className="text-xs font-bold tracking-[0.2em] uppercase text-neutral-500 mb-6 flex items-center gap-2">
-                  Status da Usina
-               </h3>
-               <div className="space-y-6">
-                  <StatusItem label="Misturador 01" status="Produtivo" color="emerald" pulse />
-                  <StatusItem label="Silos de Cimento" status="65% Estocado" color="blue" />
-                  <StatusItem label="Balança de Agregados" status="Calibrada" color="emerald" />
-               </div>
-             </div>
+        {/* Quick Actions Sections */}
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+             <ActionCard 
+                href="/concrete/clientes"
+                icon={<ShoppingCart className="w-7 h-7" />}
+                title="Gestão de Clientes"
+                desc="Acompanhe sua carteira e histórico de vendas."
+                delay={0.9}
+             />
 
-             <div className="bg-orange-600 p-6 rounded shadow-xl text-black">
-                <h3 className="font-black italic text-xl uppercase mb-2">Suporte Industrial</h3>
-                <p className="text-sm font-bold opacity-80 mb-6 font-mono uppercase tracking-tighter">Ambiente de Testes Ativo</p>
-                <button 
-                  onClick={handleImportData}
-                  disabled={loading}
-                  className="w-full bg-black text-white p-3 rounded text-[10px] font-black uppercase tracking-widest hover:bg-neutral-900 transition flex items-center justify-center gap-2 shadow-2xl active:scale-95"
-                >
-                  {loading ? 'Populando...' : 'Popular Banco para Testes'}
-                </button>
-             </div>
-          </div>
-        </div>
+             <ActionCard 
+                href="/concrete/entregas"
+                icon={<Truck className="w-7 h-7" />}
+                title="Status de Entrega"
+                desc="Monitore o frete dos seus pedidos em tempo real."
+                delay={1.0}
+             />
+        </section>
+
       </div>
     </div>
   )
 }
 
-function StatCard({ icon, label, value, sub, isActive }: any) {
+function StatCard({ icon, label, value, sub, isActive, delay, href, onToggleVisibility, showVisibilityToggle, isVisible }: any) {
   return (
     <motion.div 
-      whileHover={{ y: -2 }}
-      className={`p-6 rounded border transition-all ${
-        isActive 
-        ? 'bg-orange-600 text-black border-orange-500 shadow-lg shadow-orange-900/20' 
-        : 'bg-neutral-900 border-neutral-800 text-neutral-100'
-      }`}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay }}
+      whileHover={{ scale: 1.02 }}
+      className="block cursor-pointer"
+      onClick={() => href && window.location.assign(href)}
     >
-      <div className="flex items-center gap-4 mb-4">
-        <div className={`p-2 rounded-md ${isActive ? 'bg-black/10' : 'bg-neutral-800'}`}>
-          {icon}
+      <div className={`relative p-8 rounded-[2rem] border overflow-hidden backdrop-blur-md transition-all duration-300 ${
+        isActive 
+        ? 'bg-orange-600 text-black border-orange-400 shadow-[0_20px_50px_rgba(234,88,12,0.3)]' 
+        : 'bg-neutral-900/40 border-neutral-800 text-neutral-100 hover:bg-neutral-800/60'
+      }`}>
+        {/* Visibility Toggle Button */}
+        {showVisibilityToggle && (
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleVisibility?.();
+            }}
+            className="absolute top-6 right-6 p-2 rounded-full bg-black/10 hover:bg-black/20 transition-colors z-10"
+          >
+            {isVisible ? <EyeOff size={16} /> : <Eye size={16} />}
+          </button>
+        )}
+
+        <div className="flex items-center gap-5 mb-6">
+          <div className={`p-3 rounded-2xl ${isActive ? 'bg-black/10' : 'bg-neutral-950/50'}`}>
+            {icon}
+          </div>
+          <span className={`text-[10px] uppercase tracking-[0.25em] font-black ${isActive ? 'text-black/60' : 'text-neutral-500'}`}>{label}</span>
         </div>
-        <span className={`text-[10px] uppercase tracking-widest font-bold ${isActive ? 'text-black/60' : 'text-neutral-500'}`}>{label}</span>
-      </div>
-      <div>
-        <span className="text-4xl font-black font-mono tracking-tighter">{value}</span>
-        <p className={`text-xs mt-1 font-medium ${isActive ? 'text-black/70' : 'text-neutral-500'}`}>{sub}</p>
+        <div>
+          <span className="text-4xl font-black font-mono tracking-tighter leading-none">{value}</span>
+          <p className={`text-xs mt-3 font-bold uppercase tracking-wider flex items-center gap-2 ${isActive ? 'text-black/70' : 'text-neutral-500'}`}>
+            {sub}
+            <Plus className="w-3 h-3" />
+          </p>
+        </div>
+        {isActive && (
+            <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-black opacity-5 rounded-full blur-3xl"></div>
+        )}
       </div>
     </motion.div>
   )
 }
 
-function StatusItem({ label, status, color, pulse }: any) {
-  return (
-    <div className="flex items-center justify-between">
-      <span className="text-sm text-neutral-300">{label}</span>
-      <div className="flex items-center gap-2">
-        <span className={`text-xs font-bold text-${color}-500/80`}>{status}</span>
-        <div className={`w-2 h-2 rounded-full bg-${color}-500 ${pulse ? 'animate-pulse' : ''}`} />
-      </div>
-    </div>
-  )
+function ProductShortcut({ href, icon, title, desc, color, delay }: any) {
+    const colorClasses: any = {
+        blue: 'hover:border-blue-500/50 hover:bg-blue-500/5',
+        emerald: 'hover:border-emerald-500/50 hover:bg-emerald-500/5',
+        orange: 'hover:border-orange-500/50 hover:bg-orange-500/5',
+        purple: 'hover:border-purple-500/50 hover:bg-purple-500/5'
+    }
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay }}
+        >
+            <Link href={href} className={`block bg-neutral-900/60 border border-neutral-800 p-6 md:p-10 rounded-[2.5rem] transition-all group backdrop-blur-sm active:scale-95 ${colorClasses[color]}`}>
+                <div className={`p-6 rounded-[1.5rem] mb-6 transition-all group-hover:scale-110 inline-block ${color === 'blue' ? 'bg-blue-500/10' : color === 'emerald' ? 'bg-emerald-500/10' : color === 'orange' ? 'bg-orange-500/10' : 'bg-purple-500/10'}`}>
+                    {icon}
+                </div>
+                <h3 className="text-xl font-black uppercase italic mb-1 tracking-tighter leading-none">{title}</h3>
+                <p className="text-[10px] text-neutral-600 font-black uppercase tracking-widest">{desc}</p>
+            </Link>
+        </motion.div>
+    )
+}
+
+function ActionCard({ href, icon, title, desc, delay }: any) {
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay }}
+        >
+            <Link href={href} className="flex flex-col bg-neutral-900/40 border border-neutral-800 p-8 rounded-[2rem] hover:bg-neutral-800/60 transition group overflow-hidden relative">
+                <div className="flex items-center gap-5 mb-4">
+                    <div className="p-4 bg-neutral-950 rounded-2xl group-hover:bg-white group-hover:text-black transition-all">
+                        {icon}
+                    </div>
+                    <h3 className="text-2xl font-black tracking-tightest group-hover:text-white transition-colors uppercase italic">{title}</h3>
+                </div>
+                <p className="text-sm text-neutral-500 font-medium leading-relaxed max-w-xs">{desc}</p>
+                <div className="absolute right-8 bottom-8 opacity-0 group-hover:opacity-10 transition-opacity">
+                    {icon}
+                </div>
+            </Link>
+        </motion.div>
+    )
 }

@@ -4,6 +4,30 @@ import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { translateSupabaseError } from '@/utils/error_handling'
 
+export async function updateOrgNameAction(newName: string) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { error: 'Unauthorized' }
+
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('organization_id')
+        .eq('id', user.id)
+        .single()
+
+    if (!profile || !profile.organization_id) return { error: 'Org not found' }
+
+    const { error } = await supabase
+        .from('organizations')
+        .update({ name: newName })
+        .eq('id', profile.organization_id)
+
+    if (error) return { error: translateSupabaseError(error) }
+
+    revalidatePath('/concrete')
+    return { success: true }
+}
+
 export async function createConcreteQuote(data: {
     client_id: string,
     product_id: string,
@@ -324,11 +348,13 @@ export async function getDashboardMetrics() {
             total_m3_externo: 0,
             total_m3_interno: 0,
             receita_total: 0,
+            faturamento_dia: 0,
             orcamentos_fechados: 0,
             orcamentos_perdidos: 0,
             lucro_total: 0,
             total_orcamentos: 0,
-            orcamentos_aprovados: 0
+            orcamentos_aprovados: 0,
+            pedidos_em_andamento: 0
         }
     }
     const orgId = profile.organization_id
@@ -342,7 +368,7 @@ export async function getDashboardMetrics() {
     // New metrics (erp_budgets)
     const { data: budgets } = await supabase
         .from('erp_budgets')
-        .select('valor_total, lucro_total, status')
+        .select('valor_total, lucro_total, status, created_at')
         .eq('organization_id', orgId)
 
     const legacyMetrics = {
@@ -419,12 +445,17 @@ export async function getDashboardMetrics() {
         total_vencido: ar?.filter(a => a.status === 'vencido').reduce((acc, curr) => acc + Number(curr.valor), 0) || 0
     }
 
+    const today = new Date().toISOString().split('T')[0]
+    const faturamento_dia = budgets?.filter(b => b.status === 'aprovado' && b.created_at?.startsWith(today)).reduce((acc, curr) => acc + Number(curr.valor_total), 0) || 0
+
     return {
         ...legacyMetrics,
         receita_total: legacyMetrics.receita_total + budgetMetrics.faturamento_novo,
+        faturamento_dia,
         lucro_total: budgetMetrics.lucro_novo,
         total_orcamentos: budgetMetrics.total_orcamentos,
         orcamentos_aprovados: budgetMetrics.orcamentos_aprovados,
+        pedidos_em_andamento: orderMetrics.pedidos_pendentes,
         ...orderMetrics,
         ...fiscalMetrics,
         ...financeMetrics

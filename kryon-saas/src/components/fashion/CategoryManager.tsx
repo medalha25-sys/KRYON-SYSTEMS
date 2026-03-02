@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { toast } from 'sonner';
 import { translateSupabaseError } from '@/utils/error_handling';
@@ -20,7 +20,7 @@ export default function CategoryManager({ onClose, onCategoryAdded }: CategoryMa
     const [newCategoryName, setNewCategoryName] = useState('');
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
-    const supabase = createClient();
+    const supabase = useMemo(() => createClient(), []);
 
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 

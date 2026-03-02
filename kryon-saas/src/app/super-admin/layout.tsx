@@ -25,27 +25,36 @@ export default async function SuperAdminLayout({
         </div>
         
         <nav className="flex-1 p-4 space-y-2">
-          <Link href="/super-admin" className="block px-4 py-2 rounded hover:bg-slate-700 transition">
+          <Link href="/super-admin" className="block px-4 py-2 rounded hover:bg-slate-700 transition flex items-center gap-2">
+            <span className="material-symbols-outlined text-sm opacity-70">dashboard</span>
             Dashboard
           </Link>
-          <Link href="/super-admin/clinics" className="block px-4 py-2 rounded hover:bg-slate-700 transition">
-            Clínicas (Organizations)
+          <Link href="/super-admin/systems" className="block px-4 py-2 rounded hover:bg-slate-700 transition flex items-center gap-2 font-bold text-emerald-400">
+            <span className="material-symbols-outlined text-sm">widgets</span>
+            Meus Sistemas (SaaS)
           </Link>
-          <Link href="/super-admin/users" className="block px-4 py-2 rounded hover:bg-slate-700 transition">
-            Usuários
+          <Link href="/super-admin/clinics" className="block px-4 py-2 rounded hover:bg-slate-700 transition flex items-center gap-2">
+            <span className="material-symbols-outlined text-sm opacity-70">corporate_fare</span>
+            Organizações / Inquilinos
           </Link>
-          <Link href="/super-admin/financial" className="block px-4 py-2 rounded hover:bg-slate-700 transition">
+          <Link href="/super-admin/users" className="block px-4 py-2 rounded hover:bg-slate-700 transition flex items-center gap-2">
+            <span className="material-symbols-outlined text-sm opacity-70">group</span>
+            Gestão de Usuários
+          </Link>
+          <Link href="/super-admin/financial" className="block px-4 py-2 rounded hover:bg-slate-700 transition flex items-center gap-2">
+            <span className="material-symbols-outlined text-sm opacity-70">payments</span>
             Financeiro SaaS
           </Link>
-          <Link href="/super-admin/logs" className="block px-4 py-2 rounded hover:bg-slate-700 transition">
+          <Link href="/super-admin/logs" className="block px-4 py-2 rounded hover:bg-slate-700 transition flex items-center gap-2">
+            <span className="material-symbols-outlined text-sm opacity-70">history_edu</span>
             Audit Logs
           </Link>
           
           <div className="pt-4 mt-4 border-t border-slate-700">
-            <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-2 px-4">Módulos Ativos</p>
-            <Link href="/concrete/dashboard" className="block px-4 py-2 rounded text-blue-400 hover:bg-slate-700 transition flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.6)]"></span>
-              Concrete ERP
+            <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-2 px-4 italic">Links Rápidos</p>
+            <Link href="/" className="block px-4 py-2 rounded text-slate-400 hover:bg-slate-700 transition flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-slate-500"></span>
+              Página Inicial
             </Link>
           </div>
         </nav>

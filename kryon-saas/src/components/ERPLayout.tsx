@@ -36,7 +36,7 @@ const ERPLayout: React.FC<LayoutProps> = ({ children, userEmail }) => {
     { id: '2', title: 'Nova Venda', message: 'Venda #1254 finalizada com sucesso.', time: '1 hora atrás', type: 'success' },
     { id: '3', title: 'Sistema', message: 'Backup diário realizado com sucesso.', time: '3 horas atrás', type: 'info' },
   ]);
-  const supabase = createClient();
+  const supabase = React.useMemo(() => createClient(), []);
 
   useEffect(() => {
     async function loadUserData() {

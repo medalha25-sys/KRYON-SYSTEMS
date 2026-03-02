@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Payment } from '@/types/erp';
 import { createClient } from '@/utils/supabase/client';
 import { QRCodeCanvas } from 'qrcode.react';
@@ -32,7 +32,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ subtotal, onClose, onFina
     const [requireCardInfo, setRequireCardInfo] = useState(false);
     const [transactionId, setTransactionId] = useState('');
     const [transactionDate, setTransactionDate] = useState(new Date().toISOString().split('T')[0]);
-    const supabase = createClient();
+    const supabase = useMemo(() => createClient(), []);
 
     useEffect(() => {
         const fetchData = async () => {

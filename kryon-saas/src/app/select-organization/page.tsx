@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
@@ -19,7 +19,7 @@ export default function SelectOrganizationPage() {
   const [updateLoading, setUpdateLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const router = useRouter()
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
     async function fetchOrgs() {

@@ -17,7 +17,7 @@ import { createClient } from '@/utils/supabase/client'
 
 export default function DriverDashboardClient({ initialData, driverName }: { initialData: any[], driverName: string }) {
     const [deliveries] = useState(initialData)
-    const supabase = createClient()
+    const supabase = React.useMemo(() => createClient(), [])
 
     const getStatusColor = (status: string) => {
         switch (status) {

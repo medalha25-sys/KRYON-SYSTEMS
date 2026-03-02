@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { createClient } from '@/utils/supabase/client';
 
 interface UserModalProps {
@@ -16,7 +16,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, shopId, onSucces
     const [role, setRole] = useState('operator');
     const [isSaving, setIsSaving] = useState(false);
     const [inviteLink, setInviteLink] = useState('');
-    const supabase = createClient();
+    const supabase = useMemo(() => createClient(), []);
 
     if (!isOpen) return null;
 

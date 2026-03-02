@@ -1,4 +1,5 @@
 'use client'
+import { useMemo } from 'react'
 
 import { useSearchParams } from 'next/navigation'
 import { signUpForTrial, getProductDetails } from './actions'
@@ -154,7 +155,7 @@ function RegisterForm() {
   console.log('SUPABASE ANON:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
   
   const searchParams = useSearchParams()
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const [productSlug, setProductSlug] = useState('')
   const [productData, setProductData] = useState<any>(null)
   const [errorMsg, setErrorMsg] = useState('')

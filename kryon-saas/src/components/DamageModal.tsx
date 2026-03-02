@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { createClient } from '@/utils/supabase/client';
 
 interface Product {
@@ -19,7 +19,7 @@ const DamageModal: React.FC<DamageModalProps> = ({ isOpen, onClose, product }) =
     const [quantity, setQuantity] = useState('1');
     const [reason, setReason] = useState('');
     const [isSaving, setIsSaving] = useState(false);
-    const supabase = createClient();
+    const supabase = useMemo(() => createClient(), []);
 
     if (!isOpen || !product) return null;
 
