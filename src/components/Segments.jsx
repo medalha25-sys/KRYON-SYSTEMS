@@ -53,9 +53,9 @@ const segments = [
     },
     {
         title: "Lava Rápido",
-        product: "Agendamento Online (Em Breve)",
+        product: "Kryon Lava Rápido",
         slug: "lava-rapido",
-        desc: "Gestão de filas, agendamento de lavagens e controle financeiro.",
+        desc: "Agendamento online inteligente, gestão de OS e controle financeiro completo para seu lava jato.",
         icon: <Car size={28} />,
         color: "#2e6aff"
     },

@@ -223,6 +223,7 @@ const Pricing = () => {
                         features={[
                             "Cadastro de clientes: Ilimitado",
                             "Cadastro de produtos: 2.000",
+                            "Agendamento Online",
                             "Contas a pagar e receber",
                             "Catálogo Digital Grátis!",
                             "Importação XML",
@@ -242,6 +243,7 @@ const Pricing = () => {
                         features={[
                             "Cadastro de clientes: Ilimitado",
                             "Cadastro de produtos: Ilimitado",
+                            "Agendamento Online",
                             "Contas a pagar e receber",
                             "Catálogo Digital Grátis!",
                             "Controle de Ordens de Serviço",
