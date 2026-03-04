@@ -5,7 +5,7 @@ import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ArrowRight, Calendar, Dog, Scale, Building2 } from 'lucide-react'
+import { ArrowRight, Calendar, Dog, Scale, Building2, Car } from 'lucide-react'
 
 type Product = {
   id: string
@@ -119,6 +119,8 @@ function getIconForProduct(slug: string) {
       return <Scale className="w-6 h-6 text-amber-500" />
     case 'concrete-erp':
       return <Building2 className="w-6 h-6 text-orange-600" />
+    case 'lava-rapido':
+      return <Car className="w-6 h-6 text-blue-500" />
     default:
       return <Calendar className="w-6 h-6 text-gray-400" />
   }

@@ -107,13 +107,12 @@ const Solutions = () => {
 
                     {/* Agendamento Online (Lava Rápido) */}
                     <ProductCard 
-                        title="Agendamento Online (Em Breve)"
+                        title="Agendamento Online"
                         subtitle="LAVA RÁPIDO"
                         icon={<Droplets className="w-8 h-8 text-blue-600" />}
-                        desc="Gestão de filas, agendamento de lavagens e controle financeiro."
+                        desc="Gestão de filas, agendamento de lavagens e controle financeiro completo."
                         features={[]}
-                        link="#"
-                        disabled
+                        link="/trial?product=lava-rapido"
                         color="blue"
                         cta="Teste Grátis"
                     />

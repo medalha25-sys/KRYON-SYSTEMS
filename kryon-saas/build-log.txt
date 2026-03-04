@@ -1,0 +1,640 @@
+﻿Ôû▓ Next.js 16.1.6 (webpack)
+- Environments: .env.local, .env.production, .env
+
+node.exe : ÔÜá The "middleware" 
+file convention is deprecated. 
+Please use "proxy" instead. 
+Learn more: https://nextjs.org/do
+cs/messages/middleware-to-proxy
+No linha:1 caractere:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program Files\nodejs/node_mo 
+...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo          : No 
+   tSpecified: (ÔÜá The "middle  
+  ...leware-to-proxy:String) [   
+ ], RemoteException
+    + FullyQualifiedErrorId : Na 
+   tiveCommandError
+ 
+  Creating an optimized production build ...
+> [PWA] Compile server
+> [PWA] Compile server
+> [PWA] Compile client (static)
+> [PWA] Auto register service worker with: D:\DOCUMENTOS\kryon systems landing page\kryon-saas\node_modules\next-pwa\register.js
+> [PWA] Service worker: D:\DOCUMENTOS\kryon systems landing page\kryon-saas\public\sw.js
+> [PWA]   url: /sw.js
+> [PWA]   scope: /
+Ô£ô Compiled successfully in 11.0s
+  Skipping validation of types
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/67) ...
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/admin/finance. Please move it 
+to viewport export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/admin/settings. Please move it 
+to viewport export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in /admin/users. 
+Please move it to viewport 
+export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in /_not-found. 
+Please move it to viewport 
+export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/api/client-test. Please move it 
+to viewport export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/agenda-facil. Please move it to 
+viewport export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/products/gestao-pet. Please 
+move it to viewport export 
+instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/products/gestao-pet/pets. 
+Please move it to viewport 
+export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/products/kryon-law. Please move 
+it to viewport export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/products/gestao-pet/tutores. 
+Please move it to viewport 
+export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/products/kryon-law/prazos. 
+Please move it to viewport 
+export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/products/kryon-law/processos. 
+Please move it to viewport 
+export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in /products. 
+Please move it to viewport 
+export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in /register. 
+Please move it to viewport 
+export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/concrete/pedidos. Please move 
+it to viewport export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/fashion/clientes. Please move 
+it to viewport export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/fashion/configuracoes. Please 
+move it to viewport export 
+instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/fashion/dashboard. Please move 
+it to viewport export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/fashion/estoque. Please move it 
+to viewport export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in /fashion/ia. 
+Please move it to viewport 
+export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/fashion/produtos. Please move 
+it to viewport export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/fashion/relatorios. Please move 
+it to viewport export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/reset-password. Please move it 
+to viewport export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/select-organization. Please 
+move it to viewport export 
+instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/super-admin/clinics. Please 
+move it to viewport export 
+instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/select-system. Please move it 
+to viewport export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/super-admin/financial. Please 
+move it to viewport export 
+instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in /super-admin/f
+inancial/subscriptions. Please 
+move it to viewport export 
+instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/super-admin/logs. Please move 
+it to viewport export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in /super-admin. 
+Please move it to viewport 
+export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/super-admin/systems. Please 
+move it to viewport export 
+instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/super-admin/users. Please move 
+it to viewport export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in /trial. 
+Please move it to viewport 
+export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in /upgrade. 
+Please move it to viewport 
+export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in /systems. 
+Please move it to viewport 
+export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+SUPABASE URL: https://pgpobxvkojawrstadrel.supabase.co
+SUPABASE ANON: sb_publishable_h_jUlGNJUrwN3rYUYEfvqQ_M3g4un-i
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/fashion/vendas. Please move it 
+to viewport export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/forgot-password. Please move it 
+to viewport export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in /login. 
+Please move it to viewport 
+export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/organization/billing. Please 
+move it to viewport export 
+instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in /pricing. 
+Please move it to viewport 
+export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in /. Please 
+move it to viewport export 
+instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in /assinar. 
+Please move it to viewport 
+export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in /auth/verify. 
+Please move it to viewport 
+export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+  Generating static pages using 15 workers (16/67) 
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/products/agenda-facil/clientes. 
+Please move it to viewport 
+export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/concrete/configuracoes. Please 
+move it to viewport export 
+instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in /concrete. 
+Please move it to viewport 
+export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/concrete/estoque/entrada. 
+Please move it to viewport 
+export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/concrete/dashboard. Please move 
+it to viewport export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/concrete/entregas/novo. Please 
+move it to viewport export 
+instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/concrete/orcamentos/novo. 
+Please move it to viewport 
+export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/concrete/pedidos/novo. Please 
+move it to viewport export 
+instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in /products/agen
+da-facil/financeiro/comissoes. 
+Please move it to viewport 
+export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/products/agenda-facil/landing. 
+Please move it to viewport 
+export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in /products/agen
+da-facil/profissionais. Please 
+move it to viewport export 
+instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/products/agenda-facil. Please 
+move it to viewport export 
+instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/products/agenda-facil/servicos. 
+Please move it to viewport 
+export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in 
+/products/agenda-facil/settings. 
+Please move it to viewport 
+export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+ÔÜá Unsupported metadata 
+themeColor is configured in 
+metadata export in /products/gest
+ao-pet/agendamentos. Please move 
+it to viewport export instead.
+Read more: https://nextjs.org/doc
+s/app/api-reference/functions/gen
+erate-viewport
+  Generating static pages using 15 workers (33/67) 
+  Generating static pages using 15 workers (50/67) 
+Ô£ô Generating static pages using 15 workers (67/67) in 659.0ms
+  Finalizing page optimization ...
+  Collecting build traces ...
+
+Route (app)
+Ôöî ãÆ /
+Ôö£ ãÆ /_not-found
+Ôö£ ãÆ /admin/finance
+Ôö£ ãÆ /admin/settings
+Ôö£ ãÆ /admin/users
+Ôö£ ãÆ /agenda-facil
+Ôö£ ãÆ /agendar/[slug]
+Ôö£ ãÆ /api/client-test
+Ôö£ ãÆ /api/create-payment
+Ôö£ ãÆ /api/cron
+Ôö£ ãÆ /api/cron/send-grace-emails
+Ôö£ ãÆ /api/debug-env
+Ôö£ ãÆ /api/public/booking/availability
+Ôö£ ãÆ /api/public/booking/request
+Ôö£ ãÆ /api/solicitar-acesso
+Ôö£ ãÆ /api/webhook/mercadopago
+Ôö£ ãÆ /api/webhooks/mercadopago
+Ôö£ ãÆ /assinar
+Ôö£ ãÆ /auth/callback
+Ôö£ ãÆ /auth/verify
+Ôö£ ãÆ /book/[slug]
+Ôö£ ãÆ /concrete
+Ôö£ ãÆ /concrete/caminhoes
+Ôö£ ãÆ /concrete/clientes
+Ôö£ ãÆ /concrete/configuracoes
+Ôö£ ãÆ /concrete/dashboard
+Ôö£ ãÆ /concrete/entregas
+Ôö£ ãÆ /concrete/entregas/[id]
+Ôö£ ãÆ /concrete/entregas/novo
+Ôö£ ãÆ /concrete/estoque
+Ôö£ ãÆ /concrete/estoque/entrada
+Ôö£ ãÆ /concrete/estoque/movimentacoes
+Ôö£ ãÆ /concrete/executivo
+Ôö£ ãÆ /concrete/financeiro/contas-receber
+Ôö£ ãÆ /concrete/fiscal/nfe
+Ôö£ ãÆ /concrete/motoristas
+Ôö£ ãÆ /concrete/orcamentos
+Ôö£ ãÆ /concrete/orcamentos/[id]
+Ôö£ ãÆ /concrete/orcamentos/novo
+Ôö£ ãÆ /concrete/pedidos
+Ôö£ ãÆ /concrete/pedidos/[id]
+Ôö£ ãÆ /concrete/pedidos/novo
+Ôö£ ãÆ /concrete/producao
+Ôö£ ãÆ /concrete/producao/[id]
+Ôö£ ãÆ /concrete/produtos
+Ôö£ ãÆ /concrete/produtos/[id]/receita
+Ôö£ ãÆ /fashion/clientes
+Ôö£ ãÆ /fashion/configuracoes
+Ôö£ ãÆ /fashion/dashboard
+Ôö£ ãÆ /fashion/estoque
+Ôö£ ãÆ /fashion/ia
+Ôö£ ãÆ /fashion/produtos
+Ôö£ ãÆ /fashion/relatorios
+Ôö£ ãÆ /fashion/vendas
+Ôö£ ãÆ /forgot-password
+Ôö£ ãÆ /invite/[token]
+Ôö£ ãÆ /login
+Ôö£ ãÆ /motorista
+Ôö£ ãÆ /motorista/[id]
+Ôö£ ãÆ /organization/billing
+Ôö£ ãÆ /pricing
+Ôö£ ãÆ /products
+Ôö£ ãÆ /products/[slug]
+Ôö£ ãÆ /products/[slug]/configuracoes
+Ôö£ ãÆ /products/[slug]/estoque
+Ôö£ ãÆ /products/[slug]/financeiro
+Ôö£ ãÆ /products/[slug]/relatorios
+Ôö£ ãÆ /products/[slug]/servicos
+Ôö£ ãÆ /products/[slug]/usuarios
+Ôö£ ãÆ /products/[slug]/vendas
+Ôö£ ãÆ /products/agenda-facil
+Ôö£ ãÆ /products/agenda-facil/clientes
+Ôö£ ãÆ /products/agenda-facil/clientes/[id]
+Ôö£ ãÆ /products/agenda-facil/financeiro
+Ôö£ ãÆ /products/agenda-facil/financeiro/comissoes
+Ôö£ ãÆ /products/agenda-facil/landing
+Ôö£ ãÆ /products/agenda-facil/profissionais
+Ôö£ ãÆ /products/agenda-facil/servicos
+Ôö£ ãÆ /products/agenda-facil/settings
+Ôö£ ãÆ /products/gestao-pet
+Ôö£ ãÆ /products/gestao-pet/agendamentos
+Ôö£ ãÆ /products/gestao-pet/pets
+Ôö£ ãÆ /products/gestao-pet/tutores
+Ôö£ ãÆ /products/kryon-law
+Ôö£ ãÆ /products/kryon-law/prazos
+Ôö£ ãÆ /products/kryon-law/processos
+Ôö£ ãÆ /register
+Ôö£ ãÆ /reset-password
+Ôö£ ãÆ /select-organization
+Ôö£ ãÆ /select-system
+Ôö£ ãÆ /super-admin
+Ôö£ ãÆ /super-admin/clinics
+Ôö£ ãÆ /super-admin/clinics/[id]
+Ôö£ ãÆ /super-admin/financial
+Ôö£ ãÆ /super-admin/financial/subscriptions
+Ôö£ ãÆ /super-admin/logs
+Ôö£ ãÆ /super-admin/systems
+Ôö£ ãÆ /super-admin/users
+Ôö£ ãÆ /systems
+Ôö£ ãÆ /trial
+Ôöö ãÆ /upgrade
+
+
+ãÆ Proxy (Middleware)
+
+ãÆ  (Dynamic)  server-rendered on demand
+
