@@ -113,15 +113,17 @@ function SelectSystemContent() {
 
         if (concreteProduct || productsData.length === 1) {
             const product = concreteProduct || productsData[0]
-            let targetPath = `/app/${product.slug}`
+            let targetPath = product.slug === 'concrete-erp' ? '/concrete' : `/products/${product.slug}`
             
-            // Custom routing for specific products
+            // Custom routing overrides
             if (product.slug === 'fashion-ai' || product.slug === 'fashion-store-ai') {
               targetPath = '/fashion/dashboard'
             } else if (product.slug === 'concrete-erp' || product.slug === 'industrial') {
               targetPath = '/concrete'
-            } else if (product.slug === 'agenda-facil-ai') {
-              targetPath = '/app/agenda-facil'
+            } else if (product.slug === 'agenda-facil' || product.slug === 'agenda-facil-ai') {
+              targetPath = '/products/agenda-facil'
+            } else if (product.slug === 'lava-rapido') {
+              targetPath = '/products/lava-rapido'
             }
 
             console.log('SELECT SYSTEM: Priority system found, redirecting to:', targetPath)
@@ -220,6 +222,8 @@ function getIconForProduct(slug: string) {
       return <Calendar className="w-8 h-8 text-blue-400" />
     case 'gestao-pet':
       return <Dog className="w-8 h-8 text-orange-400" />
+    case 'lava-rapido':
+      return <motion.div animate={{ rotate: [0, 10, -10, 0] }} transition={{ repeat: Infinity, duration: 2 }}><Calendar className="w-8 h-8 text-blue-500" /></motion.div>
     default:
       return <Calendar className="w-8 h-8 text-gray-400" />
   }

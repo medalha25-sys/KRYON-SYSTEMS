@@ -88,7 +88,7 @@ async function handlePostLogin(user: User, supabase: SupabaseClient) {
       }
       
       console.log('DEBUG LOGIN: New shop created:', newShop.id)
-      return { success: true, redirect: '/app/agenda-facil' }
+      return { success: true, redirect: '/products/agenda-facil' }
     }
 
     console.log('DEBUG LOGIN: Shop Found:', shop.id, 'StoreType:', shop.store_type)
@@ -160,7 +160,9 @@ async function handlePostLogin(user: User, supabase: SupabaseClient) {
       } else if (productSlug === 'concrete-erp' || productSlug === 'industrial' || shop.store_type === 'concrete_erp' || shop.store_type === 'industrial') {
         redirectPath = '/concrete'
       } else if (productSlug === 'agenda-facil' || productSlug === 'agenda-facil-ai' || shop.store_type === 'agenda_facil_ai') {
-        redirectPath = '/app/agenda-facil'
+        redirectPath = '/products/agenda-facil'
+      } else if (productSlug === 'lava-rapido' || shop.store_type === 'lava_rapido') {
+        redirectPath = '/products/lava-rapido'
       } else {
         // Fallback para seleção se o produto não for reconhecido
         redirectPath = '/select-system'
