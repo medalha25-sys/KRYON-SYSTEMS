@@ -181,12 +181,12 @@ export async function updateSession(request: NextRequest) {
     // 3.5. System Isolation (Cross-System Protection)
     if (!isSuperAdmin) {
         const storeType = shop?.store_type;
-        if (storeType === 'agenda_facil_ai' && (request.nextUrl.pathname.startsWith('/fashion') || request.nextUrl.pathname.startsWith('/mobile') || request.nextUrl.pathname.startsWith('/products/lava-rapido'))) {
+        if (storeType === 'agenda_facil_ai' && (request.nextUrl.pathname.startsWith('/fashion') || request.nextUrl.pathname.startsWith('/mobile') || request.nextUrl.pathname.startsWith('/products/lava-rapido') || request.nextUrl.pathname.startsWith('/app/lava-rapido') || request.nextUrl.pathname.startsWith('/app/agenda-facil'))) {
             const url = request.nextUrl.clone();
             url.pathname = '/products/agenda-facil';
             return NextResponse.redirect(url);
         }
-        if (storeType === 'lava_rapido' && (request.nextUrl.pathname.startsWith('/fashion') || request.nextUrl.pathname.startsWith('/mobile') || request.nextUrl.pathname.startsWith('/products/agenda-facil') || request.nextUrl.pathname.startsWith('/app/agenda-facil'))) {
+        if (storeType === 'lava_rapido' && (request.nextUrl.pathname.startsWith('/fashion') || request.nextUrl.pathname.startsWith('/mobile') || request.nextUrl.pathname.startsWith('/products/agenda-facil') || request.nextUrl.pathname.startsWith('/app/agenda-facil') || request.nextUrl.pathname.startsWith('/app/lava-rapido'))) {
             const url = request.nextUrl.clone();
             url.pathname = '/products/lava-rapido';
             return NextResponse.redirect(url);
