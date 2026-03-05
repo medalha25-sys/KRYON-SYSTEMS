@@ -43,7 +43,7 @@ export default async function BillingPage() {
                     <th className="px-6 py-3">Data</th>
                     <th className="px-6 py-3">Sistema / Org</th>
                     <th className="px-6 py-3">Descrição</th>
- underwater                    <th className="px-6 py-3">Valor</th>
+                    <th className="px-6 py-3">Valor</th>
                     <th className="px-6 py-3">Status</th>
                 </tr>
             </thead>

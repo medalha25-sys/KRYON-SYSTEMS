@@ -88,7 +88,7 @@ async function handlePostLogin(user: User, supabase: SupabaseClient) {
       }
       
       console.log('DEBUG LOGIN: New shop created:', newShop.id)
-      return { success: true, redirect: '/products/agenda-facil' }
+      return { success: true, redirect: user.user_metadata?.product_slug === 'lava-rapido' ? '/products/lava-rapido' : '/products/agenda-facil' }
     }
 
     console.log('DEBUG LOGIN: Shop Found:', shop.id, 'StoreType:', shop.store_type)

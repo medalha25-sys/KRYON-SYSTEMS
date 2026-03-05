@@ -34,10 +34,11 @@ export default async function UsersAdminPage() {
     { cookies: { getAll: () => [], setAll: () => {} } }
   )
 
-  const { data: { users: authUsers }, error: authError } = await supabaseAdmin.auth.admin.listUsers()
+  const { data: authData, error: authError } = await supabaseAdmin.auth.admin.listUsers()
+  const authUsers = authData?.users || []
   
   if (authError) {
-      console.error('AUTH ERROR:', authError)
+      console.error('AUTH ERROR FETCHING USERS:', authError)
   }
 
   // 4. Logic to identify duplicate emails (if any) and multiple system access

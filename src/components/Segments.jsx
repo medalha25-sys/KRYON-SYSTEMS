@@ -53,7 +53,7 @@ const segments = [
     },
     {
         title: "Lava Rápido",
-        product: "Kryon Lava Rápido",
+        product: "Agendamento Online",
         slug: "lava-rapido",
         desc: "Agendamento online inteligente, gestão de OS e controle financeiro completo para seu lava jato.",
         icon: <Car size={28} />,

@@ -76,6 +76,34 @@ export async function updateSession(request: NextRequest) {
             .eq('id', profile.shop_id)
             .maybeSingle();
         shop = shopData;
+    } else {
+        // If no shop_id, create a new shop for the user
+        const { data: newShop, error: newShopError } = await supabase
+            .from('shops')
+            .insert({
+                slug: `shop-${user.id.slice(0, 8)}`,
+                store_type: user.user_metadata?.product_slug === 'lava-rapido' ? 'lava_rapido' : 'agenda_facil_ai',
+                plan: 'trial'
+            })
+            .select('id, plan, trial_ate, store_type')
+            .single();
+
+        if (newShopError) {
+            console.error('MIDDLEWARE ERROR: Failed to create new shop:', newShopError.message);
+            // Handle error, maybe redirect to an error page or login
+            const url = request.nextUrl.clone();
+            url.pathname = '/login';
+            url.searchParams.set('message', 'Erro ao criar loja. Tente novamente.');
+            return NextResponse.redirect(url);
+        }
+
+        // Update the user's profile with the new shop_id
+        await supabase
+            .from('profiles')
+            .update({ shop_id: newShop.id })
+            .eq('id', user.id);
+        
+        shop = newShop;
     }
 
     if (profileError) {
@@ -153,19 +181,14 @@ export async function updateSession(request: NextRequest) {
     // 3.5. System Isolation (Cross-System Protection)
     if (!isSuperAdmin) {
         const storeType = shop?.store_type;
-        if (storeType === 'fashion_store_ai' && (request.nextUrl.pathname.startsWith('/mobile') || request.nextUrl.pathname.startsWith('/products/agenda-facil'))) {
-            const url = request.nextUrl.clone();
-            url.pathname = '/fashion/dashboard';
-            return NextResponse.redirect(url);
-        }
-        if (storeType === 'mobile_store_ai' && (request.nextUrl.pathname.startsWith('/fashion') || request.nextUrl.pathname.startsWith('/products/agenda-facil'))) {
-            const url = request.nextUrl.clone();
-            url.pathname = '/mobile/dashboard';
-            return NextResponse.redirect(url);
-        }
-        if (storeType === 'agenda_facil_ai' && (request.nextUrl.pathname.startsWith('/fashion') || request.nextUrl.pathname.startsWith('/mobile'))) {
+        if (storeType === 'agenda_facil_ai' && (request.nextUrl.pathname.startsWith('/fashion') || request.nextUrl.pathname.startsWith('/mobile') || request.nextUrl.pathname.startsWith('/products/lava-rapido'))) {
             const url = request.nextUrl.clone();
             url.pathname = '/products/agenda-facil';
+            return NextResponse.redirect(url);
+        }
+        if (storeType === 'lava_rapido' && (request.nextUrl.pathname.startsWith('/fashion') || request.nextUrl.pathname.startsWith('/mobile') || request.nextUrl.pathname.startsWith('/products/agenda-facil'))) {
+            const url = request.nextUrl.clone();
+            url.pathname = '/products/lava-rapido';
             return NextResponse.redirect(url);
         }
         if ((storeType === 'concrete_erp' || storeType === 'industrial') && !request.nextUrl.pathname.startsWith('/concrete')) {
