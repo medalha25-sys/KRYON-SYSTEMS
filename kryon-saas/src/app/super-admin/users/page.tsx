@@ -26,30 +26,31 @@ export default async function UsersAdminPage() {
       return <div className="p-4 bg-red-500/10 text-red-500 rounded-lg">Erro ao carregar perfis: {pError.message}</div>
   }
 
-  // 3. SECURE: Fetch emails from auth.users using Admin Client (since profiles doesn't have email)
-  const { createServerClient } = await import('@supabase/ssr')
-  const supabaseAdmin = createServerClient(
+  // 3. SECURE: Fetch emails from auth.users using standard Supabase Admin Client
+  // This is more stable for Auth operations than the SSR helper in some environments.
+  const { createClient: createAdminClient } = await import('@supabase/supabase-js')
+  const supabaseAdmin = createAdminClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { cookies: { getAll: () => [], setAll: () => {} } }
+    { auth: { autoRefreshToken: false, persistSession: false } }
   )
 
-  let authData = null
+  let authUsers: any[] = []
   let authError = null
 
   try {
+      // Use listUsers sparingly as it can fail in large databases or config issues
       const { data, error } = await supabaseAdmin.auth.admin.listUsers()
-      authData = data
-      authError = error
+      if (error) {
+          console.error('AUTH_ADMIN_ERROR_LIST:', error)
+          authError = error
+      } else {
+          authUsers = data?.users || []
+      }
   } catch (err: any) {
-      console.error('CRITICAL AUTH ERROR (Crashed):', err)
-      authError = { message: 'Erro crítico na API de Auth: ' + err.message }
-  }
-  
-  const authUsers = authData?.users || []
-  
-  if (authError) {
-      console.error('AUTH ERROR FETCHING USERS:', authError)
+      console.error('AUTH_ADMIN_CRASH_LIST:', err)
+      // Final fallback: page continues with whatever we have
+      authUsers = []
   }
 
   // 4. Logic to identify duplicate emails (if any) and multiple system access
