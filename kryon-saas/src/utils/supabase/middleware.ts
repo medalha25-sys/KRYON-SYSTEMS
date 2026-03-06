@@ -53,7 +53,9 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname.startsWith('/auth') ||
     request.nextUrl.pathname.startsWith('/pricing') ||
     request.nextUrl.pathname.startsWith('/products/agenda-facil/landing') ||
-    request.nextUrl.pathname.startsWith('/agenda-facil');
+    request.nextUrl.pathname.startsWith('/agenda-facil') ||
+    request.nextUrl.pathname.startsWith('/agendar-lavagem') ||
+    request.nextUrl.pathname.startsWith('/agendar');
 
   const isFlowPage = 
     request.nextUrl.pathname === '/select-organization' ||

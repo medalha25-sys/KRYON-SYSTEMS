@@ -5,18 +5,42 @@ import { createClient } from '@/utils/supabase/server'
 export async function getLavaRapidoShopData(tenantId: string) {
   const supabase = await createClient()
   
-  // Get Shop Info
-  const { data: shop } = await supabase
+  // Get Shop Info (Try by ID, then fallback to Organization ID, then Slug)
+  let { data: shop, error: shopError } = await supabase
     .from('shops')
     .select('*')
     .eq('id', tenantId)
-    .single()
+    .maybeSingle()
 
-  // Get Services
+  if (shopError) {
+      console.error('LAVA_RAPIDO_FETCH_SHOP_ERROR:', shopError)
+  }
+
+  // Fallback 1: Try by Organization ID (in case the user was given the Org ID)
+  if (!shop) {
+      const { data: shopByOrg } = await supabase
+        .from('shops')
+        .select('*')
+        .eq('organization_id', tenantId) // If tenant_id in URL is actually an Org ID
+        .maybeSingle()
+      if (shopByOrg) shop = shopByOrg
+  }
+
+  // Fallback 2: Try by Slug
+  if (!shop) {
+      const { data: shopBySlug } = await supabase
+        .from('shops')
+        .select('*')
+        .eq('slug', tenantId)
+        .maybeSingle()
+      if (shopBySlug) shop = shopBySlug
+  }
+
+  // Get Services (Always use the found shop's ID)
   const { data: services } = await supabase
     .from('lava_rapido_services')
     .select('*')
-    .eq('tenant_id', tenantId)
+    .eq('tenant_id', shop?.id)
     .eq('active', true)
 
   return {
