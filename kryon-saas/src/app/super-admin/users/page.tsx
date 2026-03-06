@@ -1,5 +1,5 @@
 import { createClient } from '@/utils/supabase/server'
-import { startImpersonation } from '../actions'
+import { startImpersonation, toggleSubscriptionStatus } from '../actions'
 import Link from 'next/link'
 
 export default async function UsersAdminPage() {
@@ -34,7 +34,18 @@ export default async function UsersAdminPage() {
     { cookies: { getAll: () => [], setAll: () => {} } }
   )
 
-  const { data: authData, error: authError } = await supabaseAdmin.auth.admin.listUsers()
+  let authData = null
+  let authError = null
+
+  try {
+      const { data, error } = await supabaseAdmin.auth.admin.listUsers()
+      authData = data
+      authError = error
+  } catch (err: any) {
+      console.error('CRITICAL AUTH ERROR (Crashed):', err)
+      authError = { message: 'Erro crítico na API de Auth: ' + err.message }
+  }
+  
   const authUsers = authData?.users || []
   
   if (authError) {
@@ -42,9 +53,9 @@ export default async function UsersAdminPage() {
   }
 
   // 4. Logic to identify duplicate emails (if any) and multiple system access
-  const processedUsers = profiles?.map(p => {
+  const processedUsers = profiles?.map((p: any) => {
       // Find email from authUsers
-      const authUser = authUsers?.find(u => u.id === p.id)
+      const authUser = authUsers?.find((u: any) => u.id === p.id)
       const email = authUser?.email || 'N/A'
 
       // Find subscriptions for this user OR their organization
@@ -53,21 +64,26 @@ export default async function UsersAdminPage() {
         (s.organization_id && s.organization_id === p.organization_id)
       ) || []
       
-      const distinctSystems = new Set(userSubs.map((s: any) => {
-          if (s.product_slug?.includes('concrete') || s.product_slug?.includes('industrial')) return 'Concrete ERP'
-          if (s.product_slug?.includes('fashion') || s.product_slug?.includes('loja')) return 'Fashion AI'
-          return 'Clínica Serena' // Fallback for standard app
+      const distinctSystems = userSubs.map((s: any) => ({
+          name: s.product_slug?.includes('concrete') || s.product_slug?.includes('industrial') ? 'Concrete ERP' :
+                s.product_slug?.includes('fashion') || s.product_slug?.includes('loja') ? 'Fashion AI' :
+                s.product_slug?.includes('lava') ? 'Lava Rápido' : 'Clínica Serena',
+          slug: s.product_slug,
+          status: s.status
       }))
+
+      // Filter uniques
+      const uniqueSystems = distinctSystems.filter((v: any, i: number, a: any[]) => a.findIndex((t: any) => t.name === v.name) === i)
 
       // Check for actual duplicate emails in the list
       // Note: Since emails are unique in auth, duplicates here would mean something is wrong or they have different IDs but same email
       const isEmailDuplicate = authUsers?.filter(u => u.email === email).length > 1
-      const hasMultipleSystems = distinctSystems.size > 1
+      const hasMultipleSystems = uniqueSystems.length > 1
 
       return {
           ...p,
           email,
-          systems: Array.from(distinctSystems),
+          systems: uniqueSystems,
           hasAlert: isEmailDuplicate || hasMultipleSystems,
           alertType: isEmailDuplicate ? 'E-mail Duplicado' : 'Múltiplas Contas'
       }
@@ -147,10 +163,20 @@ export default async function UsersAdminPage() {
                         <td className="px-6 py-4">
                             <div className="flex flex-wrap gap-1">
                                 {user.systems.length > 0 ? (
-                                    user.systems.map((sys: string) => (
-                                        <span key={sys} className="bg-blue-500/10 text-blue-400 text-[10px] px-2 py-0.5 rounded-full border border-blue-500/20">
-                                            {sys}
-                                        </span>
+                                    user.systems.map((sys: any) => (
+                                        <div key={sys.slug} className="flex items-center gap-2 mb-1 last:mb-0">
+                                            <span className={`text-[10px] px-2 py-0.5 rounded-full border ${sys.status === 'active' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`}>
+                                                {sys.name} ({sys.status === 'active' ? 'Ativo' : 'Inativo'})
+                                            </span>
+                                            <form action={async () => {
+                                                'use server'
+                                                await toggleSubscriptionStatus(user.organization_id, sys.slug, sys.status)
+                                            }}>
+                                                <button type="submit" className="text-[9px] text-slate-500 hover:text-white underline decoration-slate-600 transition">
+                                                    {sys.status === 'active' ? 'Desativar' : 'Ativar'}
+                                                </button>
+                                            </form>
+                                        </div>
                                     ))
                                 ) : (
                                     <span className="text-slate-600 italic text-xs">Nenhum sistema detectado</span>

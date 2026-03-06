@@ -104,6 +104,7 @@ export async function startImpersonation(targetUserId: string, reason: string) {
   )
 
   const { data: { user: targetUser }, error } = await supabaseAdmin.auth.admin.getUserById(targetUserId)
+
   
   if (error || !targetUser) {
     throw new Error('Usuário alvo não encontrado')
@@ -210,4 +211,34 @@ export async function updateOrganization(orgId: string, data: { manual_status?: 
     })
 
     redirect('/super-admin/clinics')
+}
+
+/**
+ * Toggles a subscription status (active/inactive)
+ */
+export async function toggleSubscriptionStatus(orgId: string, productSlug: string, currentStatus: string) {
+    const isSuper = await checkSuperAdmin()
+    if (!isSuper) throw new Error('Não autorizado')
+
+    const supabase = await createClient()
+    const newStatus = currentStatus === 'active' ? 'inactive' : 'active'
+    
+    const { error } = await supabase
+        .from('subscriptions')
+        .update({ status: newStatus })
+        .match({ organization_id: orgId, product_slug: productSlug })
+
+    if (error) throw new Error(error.message)
+
+    // Log it
+    const { data: { user } } = await supabase.auth.getUser()
+    await supabase.from('super_admin_logs').insert({
+        admin_id: user?.id,
+        action: 'toggle_subscription',
+        target_type: 'subscription',
+        target_id: `${orgId}:${productSlug}`,
+        details: { oldStatus: currentStatus, newStatus }
+    })
+
+    return { success: true, newStatus }
 }

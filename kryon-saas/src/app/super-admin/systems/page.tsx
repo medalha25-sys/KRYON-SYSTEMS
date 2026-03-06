@@ -35,6 +35,17 @@ export default async function SystemsPage() {
       adminPath: '/fashion/dashboard',
       active: false,
       stats: 'Aguardando Lançamento'
+    },
+    {
+      id: 'lava-rapido',
+      name: 'Lava Rápido',
+      description: 'Gestão de agendamentos, serviços e financeiro para lava-jatos.',
+      icon: 'local_car_wash',
+      color: 'text-blue-500',
+      bgColor: 'bg-blue-500/10',
+      adminPath: '/products/lava-rapido',
+      active: true,
+      stats: 'Sistema Ativo'
     }
   ]
 
