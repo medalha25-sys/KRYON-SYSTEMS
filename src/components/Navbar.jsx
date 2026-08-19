@@ -17,7 +17,9 @@ const Navbar = () => {
   const menuItems = [
     { name: 'Quem Somos', link: '/#quem-somos' },
     { name: 'Sistemas', link: '/#sistemas' },
-    { name: 'Diferenciais', link: '/#contato' }
+    { name: 'Diferenciais', link: '/#diferenciais' },
+    { name: 'Preços', link: '/#precos' },
+    { name: 'Contato', link: '/#contato' }
   ];
 
   return (

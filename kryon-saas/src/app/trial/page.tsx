@@ -237,15 +237,6 @@ function RegisterForm() {
 
   return (
     <>
-      <div className="fixed top-0 left-0 w-full bg-yellow-500 text-black text-center py-2 font-bold z-[100] text-sm">
-        {/* DEBUG TEMPORÁRIO – NÃO REMOVER AINDA */}
-        <p style={{ fontSize: 12, opacity: 0.7 }}>
-          Produto recebido da URL: <b>{productSlug || '(vazio)'}</b>
-        </p>
-        <span className={errorMsg ? "text-red-800" : "text-green-800"}>
-          Status DB: {errorMsg ? errorMsg : `Produto: ${productData?.name || 'Carregando...'}`}
-        </span>
-      </div>
       {showConfirmEmail ? (
         <ConfirmEmailCard email={registeredEmail} />
       ) : (

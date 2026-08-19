@@ -233,44 +233,42 @@ const PlanCard = ({ name, cycle, price, basePrice, fiscalPrice, totalSix, featur
                     {price}
                 </div>
                 
-                {/* Breakdown Logic */}
-                <div className="flex items-center justify-center gap-2 text-[11px] text-slate-400 mt-2 flex-wrap">
-                    <span>Plano: R$ {basePrice.toFixed(2).replace('.', ',')}</span>
-                    {fiscalPrice > 0 && (
-                        <>
-                            <span>+</span>
-                            <span className="text-cyan-300 font-semibold">Fiscal: R$ {fiscalPrice.toFixed(2).replace('.', ',')}/mês</span>
-                        </>
-                    )}
-                </div>
+                {/* Breakdown Logic (Aparece apenas se adicionou notas fiscais) */}
+                {fiscalPrice > 0 && (
+                    <div className="flex items-center justify-center gap-2 text-[11px] text-slate-400 mt-2 flex-wrap bg-cyan-500/10 border border-cyan-500/20 py-1 px-3 rounded-lg">
+                        <span>Plano: R$ {basePrice.toFixed(2).replace('.', ',')}</span>
+                        <span>+</span>
+                        <span className="text-cyan-300 font-bold">Fiscal: R$ {fiscalPrice.toFixed(2).replace('.', ',')}/mês</span>
+                    </div>
+                )}
             </div>
 
             {cycle === 'semestral' && (
-                <div className="text-xs sm:text-sm text-slate-300 font-medium bg-white/5 py-1.5 px-3 rounded-lg inline-block">
-                   Ou R$ {totalSix} à vista
+                <div className="text-xs sm:text-sm text-cyan-300 font-semibold bg-cyan-500/10 border border-cyan-500/20 py-1.5 px-4 rounded-full inline-block">
+                   Total: R$ {totalSix} à vista
                 </div>
             )}
         </div>
 
         <div className="w-full h-px bg-white/10 mb-6" />
 
-        <ul className="space-y-3 mb-8 flex-1">
+        <ul className="space-y-3.5 mb-8 flex-1">
             {features.map((feat, i) => (
-                <li key={i} className="flex items-center gap-3 text-slate-300 text-xs sm:text-sm">
-                    <Check size={16} className={highlight ? "text-cyan-400 flex-shrink-0" : "text-slate-500 flex-shrink-0"} />
+                <li key={i} className="flex items-center gap-3 text-slate-200 text-xs sm:text-sm">
+                    <Check size={16} className="text-emerald-400 flex-shrink-0" />
                     <span>{feat}</span>
                 </li>
             ))}
         </ul>
 
         <a 
-            href={`https://app.kryonsystems.com.br/trial?product=${slug}`}
+            href={`https://app.kryonsystems.com.br/trial?plan=${slug}`}
             target="_blank"
             rel="noopener noreferrer"
             className={`w-full py-3.5 px-6 rounded-xl font-extrabold text-sm sm:text-base text-center transition-all flex items-center justify-center gap-2 no-underline active:scale-[0.98] ${
                 highlight 
-                    ? 'bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 shadow-lg shadow-cyan-500/25' 
-                    : 'bg-white/10 hover:bg-white/15 text-white border border-white/15'
+                    ? 'bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-slate-950 shadow-xl shadow-cyan-500/30' 
+                    : 'bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-cyan-400/50 shadow-lg'
             }`}
         >
             TESTAR 30 DIAS GRÁTIS
