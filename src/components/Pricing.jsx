@@ -17,8 +17,8 @@ const Pricing = () => {
 
     // Base Prices
     const basePrices = {
-        semestral: { basic: 38.32, essential: 59.92, pro: 77.59 },
-        monthly: { basic: 47.90, essential: 74.90, pro: 96.99 }
+        semestral: { basic: 23.92, essential: 59.92, pro: 77.59 },
+        monthly: { basic: 29.90, essential: 74.90, pro: 96.99 }
     };
 
     const getPrice = (plan) => {
@@ -147,8 +147,8 @@ const Pricing = () => {
                         fiscalPrice={wantsFiscal ? fiscalOptions[fiscalTier].price : 0}
                         totalSix={getTotalSemestral('basic')}
                         features={[
-                            "Cadastro de clientes: 100",
-                            "Cadastro de produtos: 500",
+                            "Cadastro de clientes: 30",
+                            "Cadastro de produtos: 100",
                             "Contas a receber",
                             "Frente de caixa PDV",
                             "Controle de Vendas",
