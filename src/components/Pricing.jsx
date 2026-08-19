@@ -17,8 +17,8 @@ const Pricing = () => {
 
     // Base Prices
     const basePrices = {
-        semestral: { basic: 23.92, essential: 59.92, pro: 77.59 },
-        monthly: { basic: 29.90, essential: 74.90, pro: 96.99 }
+        semestral: { basic: 23.92, essential: 39.99, pro: 77.59 },
+        monthly: { basic: 29.90, essential: 49.99, pro: 96.99 }
     };
 
     const getPrice = (plan) => {
@@ -167,8 +167,8 @@ const Pricing = () => {
                         totalSix={getTotalSemestral('essential')}
                         highlight
                         features={[
-                            "Cadastro de clientes: Ilimitado",
-                            "Cadastro de produtos: 2.000",
+                            "Cadastro de clientes: 100",
+                            "Cadastro de produtos: 500",
                             "Agendamento Online",
                             "Contas a pagar e receber",
                             "Catálogo Digital Grátis!",
