@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, HelpCircle, FileText } from 'lucide-react';
+import { Check, ShieldCheck, Unlock, MessageSquare, Sparkles } from 'lucide-react';
 
 const Pricing = () => {
     // State (Abre direto no Mensal por padrao)
@@ -21,6 +21,18 @@ const Pricing = () => {
         monthly: { basic: 29.90, essential: 49.99, pro: 59.99 }
     };
 
+    // Preços de referência/ancoragem (riscado)
+    const originalPrices = {
+        monthly: { basic: '49,90', essential: '79,90', pro: '99,90' },
+        semestral: { basic: '39,90', essential: '64,90', pro: '79,90' }
+    };
+
+    // Custo por dia aproximado
+    const dailyPrices = {
+        monthly: { basic: '0,99', essential: '1,66', pro: '1,99' },
+        semestral: { basic: '0,79', essential: '1,33', pro: '1,59' }
+    };
+
     const getPrice = (plan) => {
         const base = basePrices[billingCycle][plan];
         const fiscal = wantsFiscal ? fiscalOptions[fiscalTier].price : 0;
@@ -35,14 +47,17 @@ const Pricing = () => {
 
     return (
         <section className="section py-16 md:py-24 bg-[#08080c] relative overflow-hidden" id="precos">
-             {/* Background Effects */}
-             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle,rgba(112,0,255,0.06)_0%,rgba(0,0,0,0)_70%)] pointer-events-none" />
+            {/* Background Glow */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle,rgba(112,0,255,0.06)_0%,rgba(0,0,0,0)_70%)] pointer-events-none" />
 
             <div className="container-custom relative z-10">
                 <div className="text-center mb-12 md:mb-16">
+                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-bold uppercase tracking-wider mb-4">
+                        <Sparkles size={14} /> Planos Sem Pegadinhas
+                    </div>
                     <h2 className="title text-3xl sm:text-4xl md:text-5xl">Planos e Preços</h2>
                     <p className="subtitle mx-auto text-base sm:text-lg mt-3 text-slate-400 max-w-2xl">
-                        Transparência total. Escolha o plano ideal para a sua empresa sem custos escondidos.
+                        Escolha o plano ideal para a sua empresa. Sem taxas escondidas e com 30 dias grátis para testar.
                     </p>
 
                     {/* Controls Container */}
@@ -136,13 +151,16 @@ const Pricing = () => {
                 </div>
 
                 {/* Cards Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch">
                     {/* PLAN: BASIC */}
                     <PlanCard 
                         name="Básico"
                         slug="basic"
+                        tagline="Ideal para MEIs, autônomos e quem está saindo do caderno."
                         cycle={billingCycle}
                         price={getPrice('basic')}
+                        originalPrice={originalPrices[billingCycle].basic}
+                        dailyPrice={dailyPrices[billingCycle].basic}
                         basePrice={basePrices[billingCycle].basic}
                         fiscalPrice={wantsFiscal ? fiscalOptions[fiscalTier].price : 0}
                         totalSix={getTotalSemestral('basic')}
@@ -156,12 +174,15 @@ const Pricing = () => {
                         ]}
                     />
 
-                     {/* PLAN: ESSENTIAL */}
-                     <PlanCard 
+                    {/* PLAN: ESSENTIAL */}
+                    <PlanCard 
                         name="Essencial"
                         slug="essential"
+                        tagline="Perfeito para pequenos comércios que precisam de agendamento e controle."
                         cycle={billingCycle}
                         price={getPrice('essential')}
+                        originalPrice={originalPrices[billingCycle].essential}
+                        dailyPrice={dailyPrices[billingCycle].essential}
                         basePrice={basePrices[billingCycle].essential}
                         fiscalPrice={wantsFiscal ? fiscalOptions[fiscalTier].price : 0}
                         totalSix={getTotalSemestral('essential')}
@@ -172,17 +193,20 @@ const Pricing = () => {
                             "Agendamento Online",
                             "Contas a pagar e receber",
                             "Catálogo Digital Grátis!",
-                            "Importação XML",
+                            "Exportação de relatório em XML",
                             "3 Usuários"
                         ]}
                     />
 
-                     {/* PLAN: PRO */}
-                     <PlanCard 
+                    {/* PLAN: PRO */}
+                    <PlanCard 
                         name="Pro"
                         slug="pro"
+                        tagline="Para lojas e empresas que buscam controle total e máxima escala."
                         cycle={billingCycle}
                         price={getPrice('pro')}
+                        originalPrice={originalPrices[billingCycle].pro}
+                        dailyPrice={dailyPrices[billingCycle].pro}
                         basePrice={basePrices[billingCycle].pro}
                         fiscalPrice={wantsFiscal ? fiscalOptions[fiscalTier].price : 0}
                         totalSix={getTotalSemestral('pro')}
@@ -193,10 +217,43 @@ const Pricing = () => {
                             "Contas a pagar e receber",
                             "Catálogo Digital Grátis!",
                             "Controle de Ordens de Serviço",
-                            "Exportação de relatórios em XML",
+                            "Exportação de relatório em XML",
                             "5 Usuários"
                         ]}
                     />
+                </div>
+
+                {/* 3 Selos de Confiança (Risco Zero) */}
+                <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                    <div className="flex items-center gap-4 p-5 rounded-2xl bg-white/[0.02] border border-white/5">
+                        <div className="p-3 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex-shrink-0">
+                            <ShieldCheck size={24} />
+                        </div>
+                        <div>
+                            <h4 className="text-white font-bold text-sm">Teste 30 Dias Grátis</h4>
+                            <p className="text-slate-400 text-xs mt-0.5">Sem precisar cadastrar cartão de crédito.</p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 p-5 rounded-2xl bg-white/[0.02] border border-white/5">
+                        <div className="p-3 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 flex-shrink-0">
+                            <Unlock size={24} />
+                        </div>
+                        <div>
+                            <h4 className="text-white font-bold text-sm">Sem Contrato de Fidelidade</h4>
+                            <p className="text-slate-400 text-xs mt-0.5">Cancele quando quiser com apenas 1 clique.</p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 p-5 rounded-2xl bg-white/[0.02] border border-white/5">
+                        <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex-shrink-0">
+                            <MessageSquare size={24} />
+                        </div>
+                        <div>
+                            <h4 className="text-white font-bold text-sm">Suporte no WhatsApp</h4>
+                            <p className="text-slate-400 text-xs mt-0.5">Atendimento humanizado direto no Brasil.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -204,39 +261,52 @@ const Pricing = () => {
 };
 
 // Subcomponent PlanCard
-const PlanCard = ({ name, cycle, price, basePrice, fiscalPrice, totalSix, features, highlight, slug }) => (
+const PlanCard = ({ name, tagline, cycle, price, originalPrice, dailyPrice, basePrice, fiscalPrice, totalSix, features, highlight, slug }) => (
     <motion.div
         whileHover={{ y: -5 }}
         className={`card relative flex flex-col justify-between p-6 sm:p-8 ${
-            highlight ? 'border-cyan-400/80 shadow-2xl shadow-cyan-500/10' : ''
+            highlight ? 'border-cyan-400/80 shadow-2xl shadow-cyan-500/15' : ''
         }`}
     >
         {highlight && (
-            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 px-4 py-1 rounded-full text-xs font-black tracking-wider uppercase shadow-lg">
+            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 px-4 py-1 rounded-full text-xs font-black tracking-wider uppercase shadow-lg whitespace-nowrap">
                 MAIS ESCOLHIDO
             </div>
         )}
 
         <div className="text-center mb-6">
-            <h3 className="text-xs sm:text-sm font-bold uppercase tracking-widest text-slate-400 mb-2">
+            <h3 className="text-xs sm:text-sm font-bold uppercase tracking-widest text-slate-400 mb-1.5">
                 PLANO {name} {cycle === 'semestral' ? 'SEMESTRAL' : 'MENSAL'}
             </h3>
+            <p className="text-xs text-slate-400 mb-3 min-h-[32px]">{tagline}</p>
+            
             {cycle === 'semestral' && (
-                <p className="text-[11px] text-slate-500 mb-4">(COBRADO A CADA 6 MESES)</p>
+                <p className="text-[11px] text-cyan-300 font-semibold mb-2">(COBRADO A CADA 6 MESES • ECONOMIZE 20%)</p>
             )}
 
-            <div className="my-4">
-                <span className="text-xs sm:text-sm text-slate-400">
-                    {cycle === 'semestral' ? 'Por apenas 6x' : 'Mensalidade'}
-                </span>
+            {/* Preço Ancorado & Valor Principal */}
+            <div className="my-3">
+                <div className="flex items-center justify-center gap-2">
+                    <span className="text-xs text-slate-500 line-through">De R$ {originalPrice}</span>
+                    <span className="text-[10px] uppercase font-extrabold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full">
+                        Oferta
+                    </span>
+                </div>
+
                 <div className="text-4xl sm:text-5xl font-black text-white my-1 flex items-center justify-center gap-1">
                     <span className="text-xl sm:text-2xl text-slate-400 font-bold">R$</span>
                     {price}
+                    <span className="text-xs text-slate-400 font-normal self-end mb-1.5">/mês</span>
+                </div>
+
+                {/* Preço por Dia */}
+                <div className="inline-block mt-1 text-[11px] font-bold text-cyan-300 bg-cyan-500/10 border border-cyan-500/20 py-0.5 px-3 rounded-full">
+                    Apenas R$ {dailyPrice} por dia
                 </div>
                 
                 {/* Breakdown Logic (Aparece apenas se adicionou notas fiscais) */}
                 {fiscalPrice > 0 && (
-                    <div className="flex items-center justify-center gap-2 text-[11px] text-slate-400 mt-2 flex-wrap bg-cyan-500/10 border border-cyan-500/20 py-1 px-3 rounded-lg">
+                    <div className="flex items-center justify-center gap-2 text-[11px] text-slate-400 mt-2.5 flex-wrap bg-white/5 border border-white/10 py-1 px-3 rounded-lg">
                         <span>Plano: R$ {basePrice.toFixed(2).replace('.', ',')}</span>
                         <span>+</span>
                         <span className="text-cyan-300 font-bold">Fiscal: R$ {fiscalPrice.toFixed(2).replace('.', ',')}/mês</span>
@@ -245,7 +315,7 @@ const PlanCard = ({ name, cycle, price, basePrice, fiscalPrice, totalSix, featur
             </div>
 
             {cycle === 'semestral' && (
-                <div className="text-xs sm:text-sm text-cyan-300 font-semibold bg-cyan-500/10 border border-cyan-500/20 py-1.5 px-4 rounded-full inline-block">
+                <div className="text-xs sm:text-sm text-slate-300 font-semibold bg-white/5 py-1.5 px-4 rounded-lg inline-block mt-1">
                    Total: R$ {totalSix} à vista
                 </div>
             )}
