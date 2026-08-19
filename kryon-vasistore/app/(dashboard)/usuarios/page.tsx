@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { UserCheck, Plus, Edit3, Trash2, ShieldAlert, Check, User, Mail, Shield, Phone } from 'lucide-react';
+import { UserCheck, Plus, Edit3, Trash2, ShieldAlert, Check, User, Mail, Shield, Phone, Lock } from 'lucide-react';
 import { useStore } from '../../../contexts/StoreContext';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useToast } from '../../../contexts/ToastContext';
@@ -16,7 +16,7 @@ import { Modal } from '../../../components/ui/Modal';
 
 export default function UsersPage() {
   const { store } = useStore();
-  const { user: currentUser, refreshUsers } = useAuth();
+  const { user: currentUser, isSuperAdmin: currentIsSuper, refreshUsers } = useAuth();
   const { success, error } = useToast();
 
   const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -29,6 +29,12 @@ export default function UsersPage() {
   const [password, setPassword] = useState('123');
   const [role, setRole] = useState<UserRole>('caixa');
   const [active, setActive] = useState(true);
+
+  const isCurrentSuperAdmin = currentIsSuper || currentUser?.role === 'super_admin' || currentUser?.email?.toLowerCase() === 'medalha25@gmail.com';
+
+  const isSuperAdminProfile = (p: Profile) => {
+    return p.role === 'super_admin' || p.email.toLowerCase() === 'medalha25@gmail.com';
+  };
 
   const loadData = () => {
     setProfiles(db.getProfiles(store.id));
@@ -50,6 +56,12 @@ export default function UsersPage() {
   };
 
   const handleOpenEdit = (p: Profile) => {
+    // Regra de segurança estrita: Apenas o Super Administrador pode editar o Super Administrador
+    if (isSuperAdminProfile(p) && !isCurrentSuperAdmin) {
+      error('Acesso Restrito', 'Apenas o Super Administrador tem permissão para visualizar ou alterar seus dados e senha.');
+      return;
+    }
+
     setEditingProfile(p);
     setFullName(p.full_name);
     setEmail(p.email);
@@ -71,6 +83,12 @@ export default function UsersPage() {
       return;
     }
 
+    // Bloqueia alteração se tentar salvar perfil super_admin sem ser super_admin
+    if (editingProfile && isSuperAdminProfile(editingProfile) && !isCurrentSuperAdmin) {
+      error('Acesso Negado', 'Você não tem permissão para alterar os dados do Super Administrador.');
+      return;
+    }
+
     try {
       if (editingProfile) {
         db.updateProfile(editingProfile.id, {
@@ -80,8 +98,8 @@ export default function UsersPage() {
           password,
           role,
           active,
-        });
-        success('Funcionário atualizado com sucesso!');
+        }, currentUser?.id);
+        success('Usuário atualizado com sucesso!');
       } else {
         db.createProfile({
           store_id: store.id,
@@ -89,17 +107,17 @@ export default function UsersPage() {
           email,
           phone,
           password,
-          role,
+          role: role === 'super_admin' && !isCurrentSuperAdmin ? 'admin' : role,
           active,
         });
-        success('Funcionário cadastrado com sucesso!');
+        success('Usuário cadastrado com sucesso!');
       }
 
       setIsModalOpen(false);
       loadData();
       refreshUsers();
     } catch (err: any) {
-      error('Erro ao salvar funcionário', err.message);
+      error('Erro ao salvar usuário', err.message);
     }
   };
 
@@ -109,16 +127,27 @@ export default function UsersPage() {
       return;
     }
 
+    if (isSuperAdminProfile(p)) {
+      error('Ação Proibida', 'O Super Administrador é protegido e não pode ser excluído do sistema.');
+      return;
+    }
+
     if (confirm(`Deseja realmente excluir o funcionário "${p.full_name}"?`)) {
-      db.deleteProfile(p.id);
-      success('Funcionário excluído!');
-      loadData();
-      refreshUsers();
+      try {
+        db.deleteProfile(p.id, currentUser?.id);
+        success('Funcionário excluído!');
+        loadData();
+        refreshUsers();
+      } catch (err: any) {
+        error('Erro ao excluir', err.message);
+      }
     }
   };
 
   const getRoleLabel = (r: UserRole) => {
     switch (r) {
+      case 'super_admin':
+        return '⭐ Super ADM';
       case 'caixa':
         return 'Operador de caixa';
       case 'vendedor':
@@ -134,6 +163,8 @@ export default function UsersPage() {
 
   const getRoleBadgeVariant = (r: UserRole): 'default' | 'success' | 'warning' | 'danger' | 'info' | 'purple' => {
     switch (r) {
+      case 'super_admin':
+        return 'danger';
       case 'admin':
         return 'purple';
       case 'gerente':
@@ -152,10 +183,10 @@ export default function UsersPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight font-display">
-            Equipe & Funcionários da Loja
+            Equipe & Usuários do Sistema
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Opções de cargo: Operador de caixa, Vendedor, Gerente e ADM.
+            Controle de acessos com proteção e isolamento de segurança para o Super Administrador.
           </p>
         </div>
         <Button
@@ -164,20 +195,26 @@ export default function UsersPage() {
           onClick={handleOpenNew}
           className="shadow-emerald-600/30"
         >
-          Cadastrar Funcionário
+          Cadastrar Usuário
         </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {profiles.map((p) => {
           const isMe = p.id === currentUser?.id;
+          const isTargetSuper = isSuperAdminProfile(p);
+          const canEdit = isCurrentSuperAdmin || (!isTargetSuper);
 
           return (
-            <Card key={p.id} className="p-5 flex flex-col justify-between">
+            <Card key={p.id} className={`p-5 flex flex-col justify-between ${isTargetSuper ? 'border-amber-500/40 bg-amber-500/[0.02]' : ''}`}>
               <div>
                 <div className="flex items-start justify-between">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold text-lg uppercase shadow-md shadow-emerald-600/20">
-                    {p.full_name.charAt(0)}
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-lg uppercase shadow-md ${
+                    isTargetSuper 
+                      ? 'bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-amber-500/30' 
+                      : 'bg-emerald-600 text-white shadow-emerald-600/20'
+                  }`}>
+                    {isTargetSuper ? '⭐' : p.full_name.charAt(0)}
                   </div>
                   <Badge variant={getRoleBadgeVariant(p.role)} size="sm">
                     {getRoleLabel(p.role)}
@@ -185,8 +222,8 @@ export default function UsersPage() {
                 </div>
 
                 <div className="mt-3">
-                  <h3 className="font-bold text-slate-900 dark:text-white text-base">
-                    {p.full_name} {isMe && <span className="text-emerald-600 dark:text-emerald-400 font-medium">(Você)</span>}
+                  <h3 className="font-bold text-slate-900 dark:text-white text-base flex items-center gap-1.5">
+                    {p.full_name} {isMe && <span className="text-emerald-600 dark:text-emerald-400 font-medium text-xs">(Você)</span>}
                   </h3>
                   <p className="text-xs text-slate-500 dark:text-slate-400">{p.email}</p>
                   {p.phone && <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">{formatPhone(p.phone)}</p>}
@@ -200,18 +237,33 @@ export default function UsersPage() {
                   <p className="text-[10px] text-slate-400 dark:text-slate-500">
                     Cadastrado em {formatDateTime(p.created_at)}
                   </p>
+
+                  {/* Aviso de Proteção de Segurança */}
+                  {isTargetSuper && !isCurrentSuperAdmin && (
+                    <div className="mt-2 p-2 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/50 flex items-center gap-2 text-[11px] text-amber-800 dark:text-amber-300 font-medium">
+                      <Lock className="w-3.5 h-3.5 flex-shrink-0" />
+                      <span>Senha e dados protegidos pelo sistema.</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
               <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-1.5">
-                <Button variant="outline" size="sm" onClick={() => handleOpenEdit(p)}>
-                  Editar
-                </Button>
-                {!isMe && (
+                {canEdit ? (
+                  <Button variant="outline" size="sm" onClick={() => handleOpenEdit(p)}>
+                    Editar
+                  </Button>
+                ) : (
+                  <span className="text-xs text-slate-400 font-semibold px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center gap-1">
+                    <Lock className="w-3 h-3" /> Bloqueado
+                  </span>
+                )}
+
+                {!isMe && !isTargetSuper && (
                   <button
                     onClick={() => handleDelete(p)}
                     className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
-                    title="Excluir Funcionário"
+                    title="Excluir Usuário"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -226,8 +278,8 @@ export default function UsersPage() {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={editingProfile ? 'Editar Funcionário' : 'Cadastrar Funcionário'}
-        subtitle="Defina os dados, contato e o cargo na loja"
+        title={editingProfile ? 'Editar Usuário' : 'Cadastrar Usuário'}
+        subtitle="Defina os dados, contato e o cargo no sistema"
         maxWidth="md"
       >
         <form onSubmit={handleSave} className="space-y-4">
@@ -244,7 +296,7 @@ export default function UsersPage() {
             <Input
               label="E-mail de Acesso *"
               type="email"
-              placeholder="funcionario@donalar.com.br"
+              placeholder="funcionario@empresa.com.br"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -273,17 +325,21 @@ export default function UsersPage() {
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {[
+                ...(isCurrentSuperAdmin
+                  ? [
+                      {
+                        id: 'super_admin',
+                        title: '⭐ Super ADM',
+                        desc: 'Acesso soberano total, segurança e controle máximo',
+                        icon: '⭐',
+                      },
+                    ]
+                  : []),
                 {
-                  id: 'caixa',
-                  title: 'Operador de caixa',
-                  desc: 'Acesso rápido ao PDV, abertura e fechamento de caixa',
-                  icon: '🛒',
-                },
-                {
-                  id: 'vendedor',
-                  title: 'Vendedor',
-                  desc: 'Acesso ao PDV, cadastro de clientes e consulta de vendas',
-                  icon: '💼',
+                  id: 'admin',
+                  title: 'ADM',
+                  desc: 'Acesso total a rotinas, estoque, caixa e relatórios',
+                  icon: '👑',
                 },
                 {
                   id: 'gerente',
@@ -292,10 +348,16 @@ export default function UsersPage() {
                   icon: '👔',
                 },
                 {
-                  id: 'admin',
-                  title: 'ADM',
-                  desc: 'Acesso total, configurações, exclusões e equipe',
-                  icon: '👑',
+                  id: 'vendedor',
+                  title: 'Vendedor',
+                  desc: 'Acesso ao PDV, cadastro de clientes e consulta de vendas',
+                  icon: '💼',
+                },
+                {
+                  id: 'caixa',
+                  title: 'Operador de caixa',
+                  desc: 'Acesso rápido ao PDV, abertura e fechamento de caixa',
+                  icon: '🛒',
                 },
               ].map((opt) => (
                 <button
@@ -325,7 +387,7 @@ export default function UsersPage() {
               onChange={(e) => setActive(e.target.checked)}
               className="w-4 h-4 text-emerald-600 rounded"
             />
-            Funcionário Ativo no Sistema
+            Usuário Ativo no Sistema
           </label>
 
           <div className="flex justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
@@ -333,7 +395,7 @@ export default function UsersPage() {
               Cancelar
             </Button>
             <Button type="submit" variant="primary" size="sm" leftIcon={<Check className="w-4 h-4" />}>
-              Salvar Funcionário
+              Salvar Usuário
             </Button>
           </div>
         </form>

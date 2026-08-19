@@ -92,8 +92,8 @@ export class DatabaseService {
     if (typeof window === 'undefined') return;
 
     const currentVersion = localStorage.getItem(KEYS.DATA_VERSION);
-    if (currentVersion !== 'v8_suriel_aguilar_adm') {
-      // Atualiza catálogo de produtos, categorias e perfis (incluindo Suriel Aguilar ADM)
+    if (currentVersion !== 'v9_super_adm_medalha25') {
+      // Atualiza catálogo de produtos, categorias e perfis (incluindo Wesley Medalha Super ADM)
       storage.set(KEYS.PRODUCTS, INITIAL_PRODUCTS);
       storage.set(KEYS.CATEGORIES, INITIAL_CATEGORIES);
       storage.set(KEYS.PROFILES, INITIAL_PROFILES);
@@ -110,7 +110,7 @@ export class DatabaseService {
       if (!localStorage.getItem(KEYS.CUSTOMERS)) storage.set(KEYS.CUSTOMERS, []);
       if (!localStorage.getItem(KEYS.SUPPLIERS)) storage.set(KEYS.SUPPLIERS, []);
 
-      localStorage.setItem(KEYS.DATA_VERSION, 'v8_suriel_aguilar_adm');
+      localStorage.setItem(KEYS.DATA_VERSION, 'v9_super_adm_medalha25');
       return;
     }
 
@@ -228,10 +228,18 @@ export class DatabaseService {
     return newProfile;
   }
 
-  public updateProfile(id: string, data: Partial<Profile>): Profile {
+  public updateProfile(id: string, data: Partial<Profile>, requesterUserId?: string): Profile {
     const profiles = storage.get<Profile[]>(KEYS.PROFILES, INITIAL_PROFILES);
     const index = profiles.findIndex(p => p.id === id);
     if (index === -1) throw new Error('Usuário não encontrado');
+
+    const target = profiles[index];
+    const isTargetSuper = target.role === 'super_admin' || target.email.toLowerCase() === 'medalha25@gmail.com';
+    
+    // Se o alvo for o Super Administrador, bloqueia qualquer tentativa de outros usuários
+    if (isTargetSuper && requesterUserId && requesterUserId !== target.id) {
+      throw new Error('Acesso Negado: Apenas o Super Administrador pode alterar seus dados ou sua senha.');
+    }
 
     const updated = { ...profiles[index], ...data };
     profiles[index] = updated;
@@ -239,8 +247,15 @@ export class DatabaseService {
     return updated;
   }
 
-  public deleteProfile(id: string): void {
+  public deleteProfile(id: string, requesterUserId?: string): void {
     const profiles = storage.get<Profile[]>(KEYS.PROFILES, INITIAL_PROFILES);
+    const target = profiles.find(p => p.id === id);
+    if (!target) return;
+
+    if (target.role === 'super_admin' || target.email.toLowerCase() === 'medalha25@gmail.com') {
+      throw new Error('Acesso Negado: O Super Administrador não pode ser excluído do sistema.');
+    }
+
     const filtered = profiles.filter(p => p.id !== id);
     storage.set(KEYS.PROFILES, filtered);
   }

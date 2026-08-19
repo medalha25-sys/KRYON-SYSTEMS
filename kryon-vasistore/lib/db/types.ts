@@ -1,4 +1,4 @@
-export type UserRole = 'admin' | 'gerente' | 'vendedor' | 'caixa';
+export type UserRole = 'super_admin' | 'admin' | 'gerente' | 'vendedor' | 'caixa';
 
 export interface Store {
   id: string;

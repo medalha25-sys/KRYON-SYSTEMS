@@ -9,6 +9,7 @@ interface AuthContextType {
   user: Profile | null;
   role: UserRole;
   isAuthenticated: boolean;
+  isSuperAdmin: boolean;
   isAdmin: boolean;
   isManager: boolean;
   isSeller: boolean;
@@ -169,10 +170,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const role: UserRole = user?.role || 'caixa';
-  const isAdmin = role === 'admin';
-  const isManager = role === 'admin' || role === 'gerente';
-  const isSeller = role === 'admin' || role === 'gerente' || role === 'vendedor';
-  const isCashier = role === 'admin' || role === 'gerente' || role === 'vendedor' || role === 'caixa';
+  const isSuperAdmin = role === 'super_admin' || user?.email?.toLowerCase() === 'medalha25@gmail.com';
+  const isAdmin = isSuperAdmin || role === 'admin';
+  const isManager = isSuperAdmin || role === 'admin' || role === 'gerente';
+  const isSeller = isSuperAdmin || role === 'admin' || role === 'gerente' || role === 'vendedor';
+  const isCashier = isSuperAdmin || role === 'admin' || role === 'gerente' || role === 'vendedor' || role === 'caixa';
   const storeId = user?.store_id || 'store-1';
 
   return (
@@ -181,6 +183,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user,
         role,
         isAuthenticated: !!user,
+        isSuperAdmin,
         isAdmin,
         isManager,
         isSeller,
