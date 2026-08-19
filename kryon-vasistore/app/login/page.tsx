@@ -294,7 +294,7 @@ export default function LoginPage() {
 
               <button
                 type="button"
-                onClick={() => handleSelectUser('suriel@donalar.com.br', 'Suriel')}
+                onClick={() => handleSelectUser('aguilarsuriel6@gmail.com', 'Suriel Aguilar (ADM)')}
                 className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-950/40 text-slate-700 dark:text-slate-300 hover:text-purple-800 dark:hover:text-purple-300 transition-all text-xs font-semibold flex flex-col items-center gap-1 group cursor-pointer"
               >
                 <div className="w-7 h-7 rounded-lg bg-purple-100 dark:bg-purple-900/60 group-hover:bg-purple-600 text-purple-700 dark:text-purple-300 group-hover:text-white flex items-center justify-center transition-colors font-bold">

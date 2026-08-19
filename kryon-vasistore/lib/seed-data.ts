@@ -51,8 +51,8 @@ export const INITIAL_PROFILES: Profile[] = [
   {
     id: 'user-admin',
     store_id: 'store-1',
-    email: 'suriel@donalar.com.br',
-    full_name: 'Suriel (ADM)',
+    email: 'aguilarsuriel6@gmail.com',
+    full_name: 'Suriel Aguilar (ADM)',
     role: 'admin',
     phone: '',
     password: '123',
