@@ -64,7 +64,7 @@ const segments = [
     },
     {
         title: "Loja de Decoração",
-        product: "Decor Manager (Em Breve)",
+        product: "Decor Manager",
         slug: "decor-manager",
         desc: "Controle de estoque, orçamentos personalizados e gestão de entregas.",
         icon: <Armchair size={24} />,
@@ -72,7 +72,7 @@ const segments = [
     },
     {
         title: "Oficina Mecânica",
-        product: "Auto Gestor (Em Breve)",
+        product: "Auto Gestor",
         slug: "mechanic",
         desc: "Ordens de serviço, controle de peças e histórico de manutenção veicular.",
         icon: <Wrench size={24} />,
@@ -80,7 +80,7 @@ const segments = [
     },
     {
         title: "Advogados",
-        product: "Legal Desk (Em Breve)",
+        product: "Legal Desk",
         slug: "legal-desk",
         desc: "Gestão de processos, agenda de audiências e controle de prazos.",
         icon: <Scale size={24} />,

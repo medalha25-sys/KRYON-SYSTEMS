@@ -61,7 +61,7 @@ const Subscribe = () => {
         },
         {
             category: "LOJA DE DECORAÇÃO",
-            title: "Decor Manager (Em Breve)",
+            title: "Decor Manager",
             slug: "decor-manager",
             description: "Gestão sob medida para projetos e orçamentos. Controle entregas, encomendas e o financeiro da sua loja de decoração com precisão e elegância.",
             icon: <Armchair size={28} />,
