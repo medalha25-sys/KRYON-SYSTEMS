@@ -12,6 +12,7 @@ const segments = [
         color: "#ff7b00",
         badge: "✨ NOVIDADE",
         logo: "/vasistore-logo.png",
+        directUrl: "https://utillar-gestao.vercel.app/login",
         trialText: "Testar 30 Dias Grátis \u2192"
     },
     {
@@ -20,7 +21,8 @@ const segments = [
         slug: "agenda-facil",
         desc: "Sistema de agendamento online simples e eficiente para terapeutas e profissionais da saúde.",
         icon: <Stethoscope size={24} />,
-        color: "#00f0ff"
+        color: "#00f0ff",
+        directUrl: "https://app.kryonsystems.com.br/products/agenda-facil"
     },
     {
         title: "Pet Shop",
@@ -28,7 +30,8 @@ const segments = [
         slug: "gestao-pet",
         desc: "Agendamento de serviços, controle de clientes e organização completa dos atendimentos.",
         icon: <Dog size={24} />,
-        color: "#ff0070"
+        color: "#ff0070",
+        directUrl: "https://app.kryonsystems.com.br/products/gestao-pet"
     },
     {
         title: "Loja de Celulares",
@@ -36,7 +39,8 @@ const segments = [
         slug: "tech-assist",
         desc: "Controle de estoque, ordens de serviço e gestão completa da assistência técnica.",
         icon: <Smartphone size={24} />,
-        color: "#7000ff"
+        color: "#7000ff",
+        directUrl: "https://app.kryonsystems.com.br/products/tech-assist"
     },
     {
         title: "Loja de Roupas",
@@ -44,7 +48,8 @@ const segments = [
         slug: "fashion-manager",
         desc: "Controle de produtos, vendas e organização do negócio.",
         icon: <ShoppingBag size={24} />,
-        color: "#ffbd2e"
+        color: "#ffbd2e",
+        directUrl: "https://app.kryonsystems.com.br/products/fashion-manager"
     },
     {
         title: "Fotógrafos",
@@ -52,7 +57,8 @@ const segments = [
         slug: "galeria-pro",
         desc: "Galeria online segura com marca d'água automática e seleção de fotos sem download.",
         icon: <Camera size={24} />,
-        color: "#27c93f"
+        color: "#27c93f",
+        directUrl: "https://app.kryonsystems.com.br/products/galeria-pro"
     },
     {
         title: "Lava Rápido",
@@ -60,7 +66,8 @@ const segments = [
         slug: "lava-rapido",
         desc: "Agendamento online inteligente, gestão de OS e controle financeiro completo para seu lava jato.",
         icon: <Car size={24} />,
-        color: "#2e6aff"
+        color: "#2e6aff",
+        directUrl: "https://app.kryonsystems.com.br/products/lava-rapido"
     },
     {
         title: "Loja de Decoração",
@@ -68,7 +75,8 @@ const segments = [
         slug: "decor-manager",
         desc: "Controle de estoque, orçamentos personalizados e gestão de entregas.",
         icon: <Armchair size={24} />,
-        color: "#ff8c00"
+        color: "#ff8c00",
+        directUrl: "https://app.kryonsystems.com.br/products/decor-manager"
     },
     {
         title: "Oficina Mecânica",
@@ -76,7 +84,8 @@ const segments = [
         slug: "mechanic",
         desc: "Ordens de serviço, controle de peças e histórico de manutenção veicular.",
         icon: <Wrench size={24} />,
-        color: "#ff3d00"
+        color: "#ff3d00",
+        directUrl: "https://app.kryonsystems.com.br/products/mechanic"
     },
     {
         title: "Advogados",
@@ -84,7 +93,8 @@ const segments = [
         slug: "legal-desk",
         desc: "Gestão de processos, agenda de audiências e controle de prazos.",
         icon: <Scale size={24} />,
-        color: "#8c52ff"
+        color: "#8c52ff",
+        directUrl: "https://app.kryonsystems.com.br/products/legal-desk"
     }
 ];
 
@@ -173,7 +183,7 @@ const Segments = () => {
                             </div>
 
                             <a 
-                                href={`https://app.kryonsystems.com.br/trial?product=${item.slug}`} 
+                                href={item.directUrl || `https://app.kryonsystems.com.br/products/${item.slug}`} 
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="w-full py-3 sm:py-3.5 px-5 rounded-xl font-bold text-sm sm:text-base text-center transition-all flex items-center justify-center gap-2 no-underline active:scale-[0.98]"

@@ -12,7 +12,7 @@ const Subscribe = () => {
             icon: <ShoppingCart size={28} />,
             color: "#ff7b00", // Bright Orange
             badge: "✨ NOVIDADE",
-            link: "https://app.kryonsystems.com.br/trial?product=vasistore"
+            link: "https://utillar-gestao.vercel.app/login"
         },
         {
             category: "SAÚDE E ATENDIMENTO",
@@ -21,7 +21,7 @@ const Subscribe = () => {
             description: "Elimine faltas com lembretes automáticos e organize sua agenda. Ideal para focar no atendimento enquanto o sistema cuida da burocracia do seu consultório.",
             icon: <Stethoscope size={28} />,
             color: "#00f0ff", // Cyan
-            link: "https://app.kryonsystems.com.br/trial?product=agenda-facil"
+            link: "https://app.kryonsystems.com.br/products/agenda-facil"
         },
         {
             category: "PET SHOP",
@@ -30,7 +30,7 @@ const Subscribe = () => {
             description: "Gerencie banho, tosa e vendas com facilidade. Tenha o histórico completo de cada pet e fidelize clientes com um atendimento personalizado e organizado.",
             icon: <PawPrint size={28} />,
             color: "#ff007f", // Pink
-            link: "https://app.kryonsystems.com.br/trial?product=gestao-pet"
+            link: "https://app.kryonsystems.com.br/products/gestao-pet"
         },
         {
             category: "LOJA DE CELULARES",
@@ -39,7 +39,7 @@ const Subscribe = () => {
             description: "Organize sua assistência técnica do início ao fim. Controle ordens de serviço, estoque de peças e comunique o status do reparo para o cliente automaticamente.",
             icon: <Smartphone size={28} />,
             color: "#9d4edd", // Purple
-            link: "https://app.kryonsystems.com.br/trial?product=tech-assist"
+            link: "https://app.kryonsystems.com.br/products/tech-assist"
         },
         {
             category: "LOJA DE ROUPAS",
@@ -48,7 +48,7 @@ const Subscribe = () => {
             description: "Domine seu estoque de grade e cor. Controle condicional, vendas e crediário de forma simples, garantindo que sua loja de roupas nunca perca uma venda.",
             icon: <ShoppingBag size={28} />,
             color: "#ffaa00", // Gold/Orange
-            link: "https://app.kryonsystems.com.br/trial?product=fashion-manager"
+            link: "https://app.kryonsystems.com.br/products/fashion-manager"
         },
         {
             category: "FOTÓGRAFOS",
@@ -57,7 +57,7 @@ const Subscribe = () => {
             description: "Agilize a aprovação de fotos com seus clientes. Uma galeria segura e profissional para seleção de imagens, protegendo seu trabalho e valorizando seu portfólio.",
             icon: <Camera size={28} />,
             color: "#00ff41", // Green
-            link: "https://app.kryonsystems.com.br/trial?product=galeria-pro"
+            link: "https://app.kryonsystems.com.br/products/galeria-pro"
         },
         {
             category: "LOJA DE DECORAÇÃO",
@@ -66,7 +66,7 @@ const Subscribe = () => {
             description: "Gestão sob medida para projetos e orçamentos. Controle entregas, encomendas e o financeiro da sua loja de decoração com precisão e elegância.",
             icon: <Armchair size={28} />,
             color: "#ff6b00", // Deep Orange
-            link: "https://app.kryonsystems.com.br/trial?product=decor-manager"
+            link: "https://app.kryonsystems.com.br/products/decor-manager"
         }
     ];
 
