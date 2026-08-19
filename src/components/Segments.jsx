@@ -10,7 +10,7 @@ const segments = [
         desc: "Gestão completa para lojas de utilidades: controle total de vendas e estoque, frente de caixa PDV e organização para fazer seu negócio crescer.",
         icon: <ShoppingCart size={24} />,
         color: "#ff7b00",
-        badge: "30 Dias Grátis",
+        badge: "✨ NOVIDADE",
         logo: "/vasistore-logo.png",
         trialText: "Testar 30 Dias Grátis \u2192"
     },
@@ -150,11 +150,11 @@ const Segments = () => {
                                             </span>
                                             {item.badge && (
                                                 <span 
-                                                    className="text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider whitespace-nowrap"
+                                                    className="text-[10px] px-2.5 py-0.5 rounded-full font-extrabold uppercase tracking-wider whitespace-nowrap shadow-sm shadow-orange-500/20"
                                                     style={{
-                                                        background: 'rgba(255, 123, 0, 0.15)',
-                                                        color: item.color,
-                                                        border: `1px solid ${item.color}60`
+                                                        background: 'linear-gradient(135deg, rgba(255, 123, 0, 0.25), rgba(255, 60, 0, 0.2))',
+                                                        color: '#ffaa44',
+                                                        border: '1px solid rgba(255, 123, 0, 0.6)'
                                                     }}
                                                 >
                                                     {item.badge}

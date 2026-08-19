@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Check, HelpCircle, FileText } from 'lucide-react';
 
 const Pricing = () => {
-    // State
-    const [billingCycle, setBillingCycle] = useState('semestral'); // 'monthly' | 'semestral'
+    // State (Abre direto no Mensal por padrao)
+    const [billingCycle, setBillingCycle] = useState('monthly'); // 'monthly' | 'semestral'
     const [wantsFiscal, setWantsFiscal] = useState(false);
     const [fiscalTier, setFiscalTier] = useState(0); // 0: 100 notas, 1: 200 notas, 2: 500 notas
 

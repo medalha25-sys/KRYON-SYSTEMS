@@ -11,7 +11,7 @@ const Subscribe = () => {
             description: "Gestão completa para lojas de utilidades. Controle total de estoque, vendas rápidas no PDV e relatórios inteligentes para organizar, controlar e fazer seu negócio crescer.",
             icon: <ShoppingCart size={28} />,
             color: "#ff7b00", // Bright Orange
-            badge: "30 Dias Grátis",
+            badge: "✨ NOVIDADE",
             link: "https://app.kryonsystems.com.br/trial?product=vasistore"
         },
         {
