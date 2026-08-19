@@ -15,6 +15,7 @@ interface AuthContextType {
   isCashier: boolean;
   storeId: string;
   login: (emailOrName: string, password?: string) => Promise<{ success: boolean; message?: string }>;
+  loginWithGoogle: (googleUser?: { name?: string; email?: string }) => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
   switchUser: (userId: string) => void;
   switchUserWithPassword: (userId: string, password: string) => { success: boolean; message?: string };
@@ -95,6 +96,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { success: true };
   };
 
+  const loginWithGoogle = async (googleUser?: { name?: string; email?: string }): Promise<{ success: boolean; message?: string }> => {
+    const users = db.getProfiles('store-1');
+    const userEmail = googleUser?.email || 'admin@utillar.com.br';
+    const userName = googleUser?.name || 'Administrador (Google)';
+
+    let target = users.find(u => u.email.toLowerCase() === userEmail.toLowerCase());
+    if (!target) {
+      target = users[0] || {
+        id: 'user-admin-1',
+        store_id: 'store-1',
+        full_name: userName,
+        email: userEmail,
+        role: 'admin',
+        active: true,
+        created_at: new Date().toISOString()
+      };
+    }
+
+    setUser(target);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('utillar_active_user_id', target.id);
+      localStorage.setItem('utillar_active_store_id', target.store_id);
+    }
+    return { success: true };
+  };
+
   const switchUser = (userId: string) => {
     const target = availableUsers.find(u => u.id === userId && u.active);
     if (target) {
@@ -160,6 +187,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isCashier,
         storeId,
         login,
+        loginWithGoogle,
         logout,
         switchUser,
         switchUserWithPassword,
