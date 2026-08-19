@@ -1,9 +1,19 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Stethoscope, PawPrint, Smartphone, ShoppingBag, Camera, Armchair, ArrowRight } from 'lucide-react';
+import { Stethoscope, PawPrint, Smartphone, ShoppingBag, Camera, Armchair, ShoppingCart, ArrowRight } from 'lucide-react';
 
 const Subscribe = () => {
     const systems = [
+        {
+            category: "LOJA DE UTILIDADES",
+            title: "Sistema VasiStore",
+            slug: "vasistore",
+            description: "Gestão completa para lojas de utilidades. Controle total de estoque, vendas rápidas no PDV e relatórios inteligentes para organizar, controlar e fazer seu negócio crescer.",
+            icon: <ShoppingCart size={28} />,
+            color: "#ff7b00", // Bright Orange
+            badge: "30 Dias Grátis",
+            link: "https://app.kryonsystems.com.br/trial?product=vasistore"
+        },
         {
             category: "SAÚDE E ATENDIMENTO",
             title: "Agenda Fácil",
@@ -128,14 +138,33 @@ const Subscribe = () => {
                             {/* Text Content */}
                             <div style={{ marginBottom: 'auto' }}>
                                 <div style={{ 
-                                    fontSize: '0.75rem', 
-                                    textTransform: 'uppercase', 
-                                    letterSpacing: '1px', 
-                                    color: 'var(--text-muted)', 
-                                    marginBottom: '0.5rem',
-                                    fontWeight: '600'
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    marginBottom: '0.5rem'
                                 }}>
-                                    {system.category}
+                                    <span style={{ 
+                                        fontSize: '0.75rem', 
+                                        textTransform: 'uppercase', 
+                                        letterSpacing: '1px', 
+                                        color: 'var(--text-muted)', 
+                                        fontWeight: '600'
+                                    }}>
+                                        {system.category}
+                                    </span>
+                                    {system.badge && (
+                                        <span style={{
+                                            fontSize: '0.65rem',
+                                            background: 'rgba(255, 123, 0, 0.2)',
+                                            color: system.color,
+                                            padding: '2px 6px',
+                                            borderRadius: '6px',
+                                            fontWeight: 'bold',
+                                            border: `1px solid ${system.color}40`
+                                        }}>
+                                            {system.badge}
+                                        </span>
+                                    )}
                                 </div>
                                 <h3 style={{ 
                                     fontSize: '1.5rem', 
@@ -178,7 +207,7 @@ const Subscribe = () => {
                                     if(system.link !== '#') e.currentTarget.style.gap = '6px';
                                 }}
                             >
-                                {system.link === '#' ? 'Em Breve' : 'Saiba mais'} 
+                                {system.link === '#' ? 'Em Breve' : 'Teste Grátis'} 
                                 {system.link !== '#' && <ArrowRight size={16} />}
                             </a>
 

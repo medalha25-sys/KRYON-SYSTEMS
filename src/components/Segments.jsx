@@ -1,8 +1,19 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Stethoscope, Dog, Smartphone, ShoppingBag, Camera, Armchair, Car, Wrench, Scale } from 'lucide-react';
+import { Stethoscope, Dog, Smartphone, ShoppingBag, Camera, Armchair, Car, Wrench, Scale, ShoppingCart } from 'lucide-react';
 
 const segments = [
+    {
+        title: "Loja de Utilidades",
+        product: "Sistema VasiStore",
+        slug: "vasistore",
+        desc: "Gestão completa para lojas de utilidades: controle total de vendas e estoque, frente de caixa PDV e organização para fazer seu negócio crescer.",
+        icon: <ShoppingCart size={28} />,
+        color: "#ff7b00",
+        badge: "30 Dias Grátis",
+        logo: "/vasistore-logo.png",
+        trialText: "Teste Grátis 30 Dias →"
+    },
     {
         title: "Saúde e Atendimento",
         product: "Agenda Fácil",
@@ -44,20 +55,20 @@ const segments = [
         color: "#27c93f"
     },
     {
-        title: "Loja de Decoração",
-        product: "Decor Manager (Em Breve)",
-        slug: "decor-manager",
-        desc: "Controle de estoque, orçamentos personalizados e gestão de entregas.",
-        icon: <Armchair size={28} />,
-        color: "#ff8c00"
-    },
-    {
         title: "Lava Rápido",
         product: "Agendamento Online",
         slug: "lava-rapido",
         desc: "Agendamento online inteligente, gestão de OS e controle financeiro completo para seu lava jato.",
         icon: <Car size={28} />,
         color: "#2e6aff"
+    },
+    {
+        title: "Loja de Decoração",
+        product: "Decor Manager (Em Breve)",
+        slug: "decor-manager",
+        desc: "Controle de estoque, orçamentos personalizados e gestão de entregas.",
+        icon: <Armchair size={28} />,
+        color: "#ff8c00"
     },
     {
         title: "Oficina Mecânica",
@@ -100,11 +111,13 @@ const Segments = () => {
                             initial={{ opacity: 0, scale: 0.95 }}
                             whileInView={{ opacity: 1, scale: 1 }}
                             viewport={{ once: true }}
-                            transition={{ delay: index * 0.1 }}
+                            transition={{ delay: index * 0.08 }}
                             style={{
                                 position: 'relative',
                                 overflow: 'hidden',
-                                borderTop: `1px solid ${item.color}`
+                                borderTop: `2px solid ${item.color}`,
+                                display: 'flex',
+                                flexDirection: 'column'
                             }}
                         >
                             <div style={{
@@ -114,25 +127,51 @@ const Segments = () => {
                                 width: '100%',
                                 height: '4px',
                                 background: item.color,
-                                boxShadow: `0 0 10px ${item.color}`
+                                boxShadow: `0 0 12px ${item.color}`
                             }} />
 
                             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
                                 <div style={{
-                                    background: 'rgba(255,255,255,0.1)',
-                                    padding: '10px',
-                                    borderRadius: '10px',
-                                    color: item.color
+                                    background: 'rgba(255,255,255,0.08)',
+                                    padding: item.logo ? '6px' : '10px',
+                                    borderRadius: '12px',
+                                    color: item.color,
+                                    width: '54px',
+                                    height: '54px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    flexShrink: 0,
+                                    border: `1px solid ${item.color}40`
                                 }}>
-                                    {item.icon}
+                                    {item.logo ? (
+                                        <img src={item.logo} alt={item.product} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                                    ) : (
+                                        item.icon
+                                    )}
                                 </div>
-                                <div>
-                                    <h4 style={{ fontSize: '0.9rem', color: '#aaa', textTransform: 'uppercase', letterSpacing: '1px' }}>{item.title}</h4>
-                                    <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{item.product}</h3>
+                                <div style={{ flex: 1 }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                        <h4 style={{ fontSize: '0.85rem', color: '#aaa', textTransform: 'uppercase', letterSpacing: '1px' }}>{item.title}</h4>
+                                        {item.badge && (
+                                            <span style={{
+                                                fontSize: '0.7rem',
+                                                background: 'linear-gradient(135deg, rgba(255, 123, 0, 0.25), rgba(14, 165, 233, 0.25))',
+                                                color: '#ff9d42',
+                                                padding: '2px 8px',
+                                                borderRadius: '12px',
+                                                fontWeight: 'bold',
+                                                border: `1px solid ${item.color}60`
+                                            }}>
+                                                {item.badge}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>{item.product}</h3>
                                 </div>
                             </div>
 
-                            <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>{item.desc}</p>
+                            <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', flex: 1 }}>{item.desc}</p>
 
                             <a href={`https://app.kryonsystems.com.br/trial?product=${item.slug}`} 
                                 target="_blank"
@@ -156,7 +195,7 @@ const Segments = () => {
                                 onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
                                 onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                             >
-                                Teste Grátis &rarr;
+                                {item.trialText || "Teste Grátis \u2192"}
                             </a>
                         </motion.div>
                     ))}
