@@ -207,7 +207,7 @@ const Subscribe = () => {
                                     if(system.link !== '#') e.currentTarget.style.gap = '6px';
                                 }}
                             >
-                                {system.link === '#' ? 'Em Breve' : 'Teste Grátis'} 
+                                {system.link === '#' ? 'Em Breve' : 'Testar 30 Dias Grátis'} 
                                 {system.link !== '#' && <ArrowRight size={16} />}
                             </a>
 

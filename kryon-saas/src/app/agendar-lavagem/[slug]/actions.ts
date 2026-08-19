@@ -9,22 +9,14 @@ export async function getLavaRapidoShopData(tenantId: string) {
   let { data: shop, error: shopError } = await supabase
     .from('shops')
     .select('*')
-    .eq('id', tenantId)
+    .or(`id.eq.${tenantId},slug.eq.${tenantId}`)
     .maybeSingle()
 
   if (shopError) {
       console.error('LAVA_RAPIDO_FETCH_SHOP_ERROR:', shopError)
   }
 
-  // Fallback 1: Try by Organization ID (in case the user was given the Org ID)
-  if (!shop) {
-      const { data: shopByOrg } = await supabase
-        .from('shops')
-        .select('*')
-        .eq('organization_id', tenantId) // If tenant_id in URL is actually an Org ID
-        .maybeSingle()
-      if (shopByOrg) shop = shopByOrg
-  }
+  // No fallback to organization_id since it does not exist in the shops table.
 
   // Fallback 2: Try by Slug
   if (!shop) {

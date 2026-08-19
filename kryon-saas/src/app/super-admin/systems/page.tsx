@@ -21,7 +21,7 @@ export default async function SystemsPage() {
       icon: 'medical_services',
       color: 'text-emerald-400',
       bgColor: 'bg-emerald-500/10',
-      adminPath: '/app/dashboard',
+      adminPath: '/products/agenda-facil',
       active: true,
       stats: '8 Clientes Ativos'
     },
@@ -46,6 +46,17 @@ export default async function SystemsPage() {
       adminPath: '/products/lava-rapido',
       active: true,
       stats: 'Sistema Ativo'
+    },
+    {
+      id: 'vasistore',
+      name: 'Sistema VasiStore',
+      description: 'Gestão para lojas de utilidades, controle de vendas, estoque e frente de caixa PDV.',
+      icon: 'shopping_cart',
+      color: 'text-orange-400',
+      bgColor: 'bg-orange-500/10',
+      adminPath: '/products/vasistore',
+      active: true,
+      stats: '30 Dias Grátis Ativo'
     }
   ]
 

@@ -61,7 +61,33 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname === '/select-organization' ||
     request.nextUrl.pathname === '/select-system';
 
-  if (user && !isPublicPath && !isFlowPage) {
+  // 3.0. Explicit legacy path redirection (Fix for /app/ 404s)
+  if (request.nextUrl.pathname.startsWith('/app/')) {
+    const url = request.nextUrl.clone();
+    if (request.nextUrl.pathname === '/app/agenda-facil') {
+      url.pathname = '/products/agenda-facil';
+      return NextResponse.redirect(url);
+    }
+    if (request.nextUrl.pathname === '/app/lava-rapido') {
+      url.pathname = '/products/lava-rapido';
+      return NextResponse.redirect(url);
+    }
+    // General fallback for /app/ dashboard to new product dashboards
+    if (request.nextUrl.pathname.startsWith('/app/dashboard')) {
+       url.pathname = '/select-system';
+       return NextResponse.redirect(url);
+    }
+  }
+
+  // 3.1 Unauthenticated access protection
+  if (!user && !isPublicPath) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/login';
+    // Optional: save intended destination
+    url.searchParams.set('next', request.nextUrl.pathname);
+    return NextResponse.redirect(url);
+  }
+  if (user && !isFlowPage) {
     // 3. Fetch Profile (Fixed: Separate queries to avoid ambiguous relationship joins in production)
     const { data: profile, error: profileError } = await supabase
       .from('profiles')

@@ -365,7 +365,7 @@ const PlanCard = ({ name, cycle, price, basePrice, fiscalPrice, totalSix, featur
                 border: highlight ? 'none' : '1px solid var(--glass-border)'
             }}
         >
-            TESTE GRÁTIS
+            TESTAR 30 DIAS GRÁTIS
         </a>
     </motion.div>
 );

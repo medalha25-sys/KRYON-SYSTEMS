@@ -40,3 +40,5 @@ dist-ssr
 .vercel
 kryon-saas/.next
 kryon-erp/.next
+kryon-vasistore/.next
+kryon-vasistore/node_modules

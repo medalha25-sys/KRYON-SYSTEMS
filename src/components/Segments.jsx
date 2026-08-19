@@ -195,7 +195,7 @@ const Segments = () => {
                                 onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
                                 onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                             >
-                                {item.trialText || "Teste Grátis \u2192"}
+                                {item.trialText || "Testar 30 Dias Grátis \u2192"}
                             </a>
                         </motion.div>
                     ))}

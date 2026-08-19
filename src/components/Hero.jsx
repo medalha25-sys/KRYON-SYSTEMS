@@ -39,7 +39,7 @@ const Hero = () => {
                                 className="btn-premium no-underline shadow-2xl shadow-blue-500/30"
                             >
                                 <span className="flex items-center gap-3">
-                                    Começar Teste Grátis <Rocket size={20} />
+                                    Testar 30 Dias Grátis <Rocket size={20} />
                                 </span>
                             </a>
                             <a 

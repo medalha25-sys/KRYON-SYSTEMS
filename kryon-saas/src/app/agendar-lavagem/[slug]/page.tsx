@@ -10,47 +10,62 @@ export default async function LavaRapidoBookingPage({ params }: { params: Promis
   
   // No Lava Rápido, 'slug' é o ID do tenant (usuário) 
   // para obter os dados do lava-jato específico.
-  const shopData = await getLavaRapidoShopData(slug)
+  let shopData = null;
+  let errorDetail = "";
 
-  if (!shopData || !shopData.shop) {
-    return notFound()
+  try {
+    shopData = await getLavaRapidoShopData(slug);
+  } catch (e: any) {
+    console.error("ERRO AO BUSCAR LOJA:", e);
+    errorDetail = e?.message || "Erro desconhecido ao carregar dados";
   }
 
-  const { shop, services } = shopData
+  if (!shopData || !shopData.shop) {
+    return (
+      <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center p-4">
+        <div className="bg-red-900/20 border border-red-900/50 p-8 rounded-[2rem] max-w-md w-full text-center">
+          <h1 className="text-2xl font-bold text-red-500 mb-4">Loja Não Encontrada</h1>
+          <p className="text-gray-400 mb-6 font-mono text-sm break-all">ID: {slug}</p>
+          {errorDetail && <p className="text-red-400/70 text-xs mb-6 italic">{errorDetail}</p>}
+          <a href="/" className="bg-white/10 hover:bg-white/20 text-white px-6 py-2 rounded-xl transition-all">
+            Voltar ao início
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  const { shop, services } = shopData;
 
   return (
-    <div className="min-h-screen bg-gray-950 flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8 font-sans text-white">
-      <div className="max-w-md w-full space-y-8 bg-gray-900/50 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-gray-800 relative overflow-hidden">
-        {/* Decorative background gradient */}
-        <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-600/10 blur-[80px]" />
-        
-        <div className="text-center relative z-10">
-            <div className="relative w-20 h-20 mx-auto mb-4">
-              <img 
-                src="/branding/logo_character.png" 
-                alt="Papa Léguas" 
-                className="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(37,99,235,0.4)]"
-              />
-            </div>
-            <h2 className="text-3xl font-black italic uppercase tracking-tighter text-blue-400">
-                Papa Léguas
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] shadow-2xl border border-gray-200 dark:border-gray-800">
+        <div className="text-center">
+            {shop.logo_url ? (
+                <img src={shop.logo_url} alt={shop.name} className="mx-auto h-24 w-24 rounded-full object-cover mb-4 ring-4 ring-blue-500/20 shadow-xl" />
+            ) : (
+                 <div className="mx-auto h-24 w-24 rounded-full bg-blue-600/10 flex items-center justify-center text-blue-500 text-3xl font-black mb-4 ring-4 ring-blue-500/5">
+                    {shop.name ? shop.name[0] : 'P'}
+                 </div>
+            )}
+            <h2 className="mt-2 text-3xl font-black text-gray-900 dark:text-white italic tracking-tighter uppercase">
+                {shop.name}
             </h2>
-            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.3em] -mt-1 mb-2">
-                Lava Rápido
-            </p>
-            <p className="mt-4 text-sm text-gray-400">
-                Agende sua lavagem premium em segundos
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 font-medium">
+                Agende sua lavagem online
             </p>
         </div>
 
-        <LavaRapidoPublicBooking
-            tenant_id={slug} 
+        <LavaRapidoPublicBooking 
+            tenant_id={shop.id} 
             shop={shop} 
-            services={services} 
+            services={services || []} 
         />
         
-        <div className="mt-8 text-center text-[10px] text-gray-600 uppercase tracking-widest font-bold">
-            Powered by <Link href="/" className="text-blue-500 hover:text-blue-400">Kryon Systems</Link>
+        <div className="mt-8 text-center">
+            <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">
+                Powered by <a href="https://kryonsystems.com.br" className="text-blue-500 hover:text-blue-600 transition-colors">Kryon Systems</a>
+            </p>
         </div>
       </div>
     </div>

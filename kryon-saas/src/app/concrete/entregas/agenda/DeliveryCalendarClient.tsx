@@ -17,6 +17,15 @@ interface DeliveryCalendarProps {
 export default function DeliveryCalendarClient({ initialDeliveries }: DeliveryCalendarProps) {
     const [events, setEvents] = useState<any[]>([])
 
+    const getStatusColor = (status: string) => {
+        switch (status) {
+            case 'entregue': return '#10b981' // emerald-500
+            case 'em_transporte': return '#3b82f6' // blue-500
+            case 'cancelada': return '#ef4444' // red-500
+            default: return '#f97316' // orange-500 (agendada)
+        }
+    }
+
     useEffect(() => {
         const formattedEvents = initialDeliveries.map(d => ({
             id: d.id,
@@ -33,15 +42,6 @@ export default function DeliveryCalendarClient({ initialDeliveries }: DeliveryCa
         }))
         setEvents(formattedEvents)
     }, [initialDeliveries])
-
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case 'entregue': return '#10b981' // emerald-500
-            case 'em_transporte': return '#3b82f6' // blue-500
-            case 'cancelada': return '#ef4444' // red-500
-            default: return '#f97316' // orange-500 (agendada)
-        }
-    }
 
     const handleEventClick = (info: any) => {
         const props = info.event.extendedProps

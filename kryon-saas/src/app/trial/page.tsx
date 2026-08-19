@@ -34,7 +34,7 @@ function ConfirmEmailCard({ email }: { email: string }) {
         <div className="bg-white/50 rounded-lg p-4 mb-6">
           <p className="text-blue-700 leading-relaxed">
             Abra seu e-mail e clique no link para ativar sua conta e começar
-            seu teste grátis de <strong>15 dias</strong>.
+            seu teste grátis de <strong>30 dias</strong>.
           </p>
         </div>
 
@@ -71,7 +71,7 @@ function SignupForm({ handleSubmit, loading, productSlug }: { handleSubmit: (for
             
             <ul className="space-y-4">
                 <li className="flex items-center gap-3">
-                    <span className="text-green-400 text-xl">✔</span> Teste grátis por 15 dias
+                    <span className="text-green-400 text-xl">✔</span> Teste grátis por 30 dias
                 </li>
                 <li className="flex items-center gap-3">
                     <span className="text-green-400 text-xl">✔</span> Sem cartão de crédito
@@ -138,7 +138,7 @@ function SignupForm({ handleSubmit, loading, productSlug }: { handleSubmit: (for
                     disabled={loading}
                     className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold transition disabled:opacity-50 mt-4 shadow-lg hover:shadow-xl"
                 >
-                    {loading ? 'Criando conta...' : 'Começar Teste Grátis 🚀'}
+                    {loading ? 'Criando conta...' : 'Começar Teste Grátis de 30 Dias 🚀'}
                 </button>
             </form>
              <p className="mt-4 text-xs text-center text-gray-500">

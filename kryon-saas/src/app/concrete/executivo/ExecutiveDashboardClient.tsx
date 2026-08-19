@@ -39,18 +39,18 @@ export default function ExecutiveDashboardClient({ initialMetrics }: { initialMe
     const [period, setPeriod] = useState<'7d' | '30d' | '90d' | 'year'>('30d')
     const [loading, setLoading] = useState(false)
 
-    useEffect(() => {
-        if (period !== '30d') { // Skip initial load since we already have it
-            fetchMetrics()
-        }
-    }, [period])
-
     const fetchMetrics = async () => {
         setLoading(true)
         const data = await getExecutiveMetrics(period)
         if (data) setMetrics(data)
         setLoading(false)
     }
+
+    useEffect(() => {
+        if (period !== '30d') { // Skip initial load since we already have it
+            fetchMetrics()
+        }
+    }, [period])
 
     if (!metrics) return <div className="p-10 text-center">Nenhum dado disponível.</div>
 
