@@ -1,16 +1,24 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, Send, MessageSquare } from 'lucide-react';
+import { Mail, MapPin, Send, MessageSquare, CheckCircle2 } from 'lucide-react';
 
 const Contact = () => {
+    const [name, setName] = useState('');
+    const [company, setCompany] = useState('');
+    const [message, setMessage] = useState('');
     const [formStatus, setFormStatus] = useState('idle');
 
     const handleSubmit = (e) => {
         e.preventDefault();
         setFormStatus('sending');
+
+        const fullMessage = `Olá, equipe Kryon Systems! 👋\n\n*Nome:* ${name}\n*Empresa:* ${company || 'Não informada'}\n*Mensagem:* ${message}\n\n_Vim através do formulário do site kryonsystems.com.br_`;
+        const whatsappUrl = `https://wa.me/5538984257511?text=${encodeURIComponent(fullMessage)}`;
+
         setTimeout(() => {
             setFormStatus('success');
-        }, 1500);
+            window.open(whatsappUrl, '_blank');
+        }, 600);
     };
 
     return (
@@ -24,7 +32,7 @@ const Contact = () => {
                         Fale com um <span className="gradient-text">Especialista</span>
                     </h2>
                     <p className="subtitle mx-auto text-base sm:text-lg mt-3 text-slate-400 max-w-2xl">
-                        Pronto para escalar seu negócio? Entre em contato e vamos construir o futuro da sua empresa.
+                        Pronto para escalar seu negócio? Envie sua mensagem e nossa equipe entrará em contato imediatamente.
                     </p>
                 </div>
 
@@ -37,12 +45,12 @@ const Contact = () => {
                     >
                         <h3 className="text-2xl sm:text-3xl font-bold text-white mb-4">Canais Diretos</h3>
                         <p className="text-slate-400 text-sm sm:text-base leading-relaxed mb-8 max-w-lg">
-                            Nossa equipe está pronta para entender sua necessidade e propor a melhor solução tecnológica.
+                            Nossa equipe está pronta para entender sua necessidade e propor a melhor solução tecnológica para a sua empresa.
                         </p>
 
                         <div className="space-y-6">
-                            <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5">
-                                <div className="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20">
+                            <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-emerald-500/30 transition-all">
+                                <div className="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20 flex-shrink-0">
                                     <MessageSquare size={24} />
                                 </div>
                                 <div className="min-w-0">
@@ -51,25 +59,30 @@ const Contact = () => {
                                         href="https://wa.me/5538984257511" 
                                         target="_blank" 
                                         rel="noopener noreferrer" 
-                                        className="text-base sm:text-lg font-bold text-white hover:text-emerald-400 transition-colors no-underline"
+                                        className="text-base sm:text-lg font-bold text-emerald-400 hover:text-emerald-300 transition-colors no-underline"
                                     >
                                         (38) 98425-7511
                                     </a>
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5">
-                                <div className="p-3 bg-cyan-500/10 text-cyan-400 rounded-xl border border-cyan-500/20">
+                            <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-cyan-500/30 transition-all">
+                                <div className="p-3 bg-cyan-500/10 text-cyan-400 rounded-xl border border-cyan-500/20 flex-shrink-0">
                                     <Mail size={24} />
                                 </div>
                                 <div className="min-w-0">
                                     <h4 className="text-sm font-semibold text-slate-300">E-mail</h4>
-                                    <p className="text-base sm:text-lg font-bold text-white truncate">contato@kryonsystems.com.br</p>
+                                    <a 
+                                        href="mailto:contato@kryonsystems.com.br"
+                                        className="text-base sm:text-lg font-bold text-white hover:text-cyan-400 transition-colors no-underline truncate block"
+                                    >
+                                        contato@kryonsystems.com.br
+                                    </a>
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5">
-                                <div className="p-3 bg-purple-500/10 text-purple-400 rounded-xl border border-purple-500/20">
+                            <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-purple-500/30 transition-all">
+                                <div className="p-3 bg-purple-500/10 text-purple-400 rounded-xl border border-purple-500/20 flex-shrink-0">
                                     <MapPin size={24} />
                                 </div>
                                 <div className="min-w-0">
@@ -93,6 +106,8 @@ const Contact = () => {
                                 <input
                                     type="text"
                                     required
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
                                     placeholder="Ex: João Silva"
                                     className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-cyan-400 transition-colors text-sm sm:text-base"
                                 />
@@ -102,6 +117,8 @@ const Contact = () => {
                                 <label className="block mb-2 text-xs sm:text-sm font-semibold text-slate-300">Nome da Empresa / Negócio</label>
                                 <input
                                     type="text"
+                                    value={company}
+                                    onChange={(e) => setCompany(e.target.value)}
                                     placeholder="Ex: Loja de Utilidades Silva"
                                     className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-cyan-400 transition-colors text-sm sm:text-base"
                                 />
@@ -112,19 +129,21 @@ const Contact = () => {
                                 <textarea
                                     rows="4"
                                     required
-                                    placeholder="Conte um pouco sobre seu negócio ou o que precisa..."
+                                    value={message}
+                                    onChange={(e) => setMessage(e.target.value)}
+                                    placeholder="Gostaria de saber mais sobre..."
                                     className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-cyan-400 transition-colors text-sm sm:text-base resize-none"
                                 ></textarea>
                             </div>
 
                             <button
                                 type="submit"
-                                className="w-full py-4 bg-gradient-to-r from-cyan-400 to-blue-600 hover:from-cyan-300 hover:to-blue-500 text-slate-950 font-bold rounded-xl shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
-                                disabled={formStatus === 'sending' || formStatus === 'success'}
+                                className="w-full py-4 bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-300 hover:to-teal-400 text-slate-950 font-bold rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
+                                disabled={formStatus === 'sending'}
                             >
-                                {formStatus === 'idle' && <>Enviar Mensagem <Send size={18} /></>}
-                                {formStatus === 'sending' && <>Enviando...</>}
-                                {formStatus === 'success' && <>Mensagem Enviada! ✅</>}
+                                {formStatus === 'idle' && <>Enviar via WhatsApp <Send size={18} /></>}
+                                {formStatus === 'sending' && <>Conectando ao WhatsApp...</>}
+                                {formStatus === 'success' && <>Enviando Conversa... <CheckCircle2 size={18} /></>}
                             </button>
                         </form>
                     </motion.div>
