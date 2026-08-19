@@ -15,7 +15,7 @@ const Pricing = () => {
         { count: 500, price: 149 }
     ];
 
-    // Base Prices (Semestral referenced from print, Monthly simulated as ~20% higher)
+    // Base Prices
     const basePrices = {
         semestral: { basic: 38.32, essential: 59.92, pro: 77.59 },
         monthly: { basic: 47.90, essential: 74.90, pro: 96.99 }
@@ -34,112 +34,75 @@ const Pricing = () => {
     };
 
     return (
-        <section className="section" id="precos" style={{ background: 'var(--bg-secondary)', position: 'relative' }}>
+        <section className="section py-16 md:py-24 bg-[#08080c] relative overflow-hidden" id="precos">
              {/* Background Effects */}
-             <div style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: '100%',
-                height: '100%',
-                background: 'radial-gradient(circle, rgba(112,0,255,0.05) 0%, rgba(0,0,0,0) 70%)',
-                pointerEvents: 'none',
-                zIndex: 0
-            }} />
+             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle,rgba(112,0,255,0.06)_0%,rgba(0,0,0,0)_70%)] pointer-events-none" />
 
-            <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-                <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-                    <h2 className="title">Planos e Preços</h2>
-                    <p className="subtitle" style={{ margin: '0 auto 2rem auto' }}>
-                        Transparência total. Sem custos escondidos.
+            <div className="container-custom relative z-10">
+                <div className="text-center mb-12 md:mb-16">
+                    <h2 className="title text-3xl sm:text-4xl md:text-5xl">Planos e Preços</h2>
+                    <p className="subtitle mx-auto text-base sm:text-lg mt-3 text-slate-400 max-w-2xl">
+                        Transparência total. Escolha o plano ideal para a sua empresa sem custos escondidos.
                     </p>
 
                     {/* Controls Container */}
-                    <div className="pricing-controls" style={{ 
-                        background: 'var(--glass)', 
-                        border: '1px solid var(--glass-border)',
-                        borderRadius: '20px',
-                        padding: 'clamp(1rem, 5%, 2rem)',
-                        maxWidth: '900px',
-                        margin: '0 auto 3rem auto',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        gap: '1.5rem'
-                    }}>
+                    <div className="card max-w-3xl mx-auto mt-8 mb-12 p-6 sm:p-8 flex flex-col items-center gap-6">
                         {/* 1. Cycle Toggle */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-                            <span style={{ color: billingCycle === 'monthly' ? '#fff' : 'var(--text-muted)', fontWeight: billingCycle === 'monthly' ? 'bold' : 'normal', cursor: 'pointer', fontSize: '0.9rem' }} onClick={() => setBillingCycle('monthly')}>
+                        <div className="flex items-center gap-3 sm:gap-4 flex-wrap justify-center text-sm sm:text-base">
+                            <span 
+                                className={`cursor-pointer transition-colors ${billingCycle === 'monthly' ? 'text-white font-bold' : 'text-slate-400'}`} 
+                                onClick={() => setBillingCycle('monthly')}
+                            >
                                 Mensal
                             </span>
                             <div 
                                 onClick={() => setBillingCycle(billingCycle === 'semestral' ? 'monthly' : 'semestral')}
+                                className="w-14 h-7 bg-white/10 rounded-full relative cursor-pointer transition-all"
                                 style={{
-                                    width: '56px',
-                                    height: '28px',
-                                    background: billingCycle === 'semestral' ? 'var(--primary)' : 'rgba(255,255,255,0.1)',
-                                    borderRadius: '32px',
-                                    position: 'relative',
-                                    cursor: 'pointer',
-                                    transition: '0.3s'
+                                    backgroundColor: billingCycle === 'semestral' ? '#00f0ff' : 'rgba(255,255,255,0.1)'
                                 }}
                             >
-                                <div style={{
-                                    width: '22px',
-                                    height: '22px',
-                                    background: '#fff',
-                                    borderRadius: '50%',
-                                    position: 'absolute',
-                                    top: '3px',
-                                    left: billingCycle === 'semestral' ? '31px' : '3px',
-                                    transition: '0.3s',
-                                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                                }} />
+                                <div 
+                                    className="w-5 h-5 bg-white rounded-full absolute top-1 transition-all shadow-md"
+                                    style={{
+                                        left: billingCycle === 'semestral' ? '30px' : '4px',
+                                        backgroundColor: billingCycle === 'semestral' ? '#050507' : '#ffffff'
+                                    }}
+                                />
                             </div>
-                            <span style={{ color: billingCycle === 'semestral' ? '#fff' : 'var(--text-muted)', fontWeight: billingCycle === 'semestral' ? 'bold' : 'normal', cursor: 'pointer', fontSize: '0.9rem' }} onClick={() => setBillingCycle('semestral')}>
-                                Semestral <span style={{ fontSize: '0.7em', color: 'var(--primary)', border: '1px solid var(--primary)', padding: '2px 6px', borderRadius: '4px', marginLeft: '4px' }}>-20% OFF</span>
+                            <span 
+                                className={`cursor-pointer transition-colors flex items-center gap-1.5 ${billingCycle === 'semestral' ? 'text-white font-bold' : 'text-slate-400'}`} 
+                                onClick={() => setBillingCycle('semestral')}
+                            >
+                                Semestral 
+                                <span className="text-[11px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-full font-bold">
+                                    -20% OFF
+                                </span>
                             </span>
                         </div>
 
                         {/* Divider */}
-                        <div style={{ width: '100%', height: '1px', background: 'var(--glass-border)' }} />
+                        <div className="w-full h-px bg-white/10" />
 
                         {/* 2. Fiscal Controls */}
-                        <div style={{ 
-                            display: 'flex', 
-                            flexDirection: 'column',
-                            alignItems: 'center', 
-                            gap: '1.5rem',
-                            width: '100%'
-                        }}>
+                        <div className="flex flex-col items-center gap-4 w-full">
                             {/* Toggle Fiscal */}
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', textAlign: 'left' }}>
+                            <div className="flex items-center gap-3 text-left cursor-pointer" onClick={() => setWantsFiscal(!wantsFiscal)}>
                                 <div 
-                                    onClick={() => setWantsFiscal(!wantsFiscal)}
+                                    className="w-11 h-6 rounded-full relative transition-all flex-shrink-0"
                                     style={{
-                                        width: '46px',
-                                        height: '24px',
-                                        background: wantsFiscal ? 'var(--primary)' : 'rgba(255,255,255,0.1)',
-                                        borderRadius: '26px',
-                                        position: 'relative',
-                                        cursor: 'pointer',
-                                        transition: '0.3s',
-                                        flexShrink: 0
+                                        backgroundColor: wantsFiscal ? '#00f0ff' : 'rgba(255,255,255,0.1)'
                                     }}
                                 >
-                                    <div style={{
-                                        width: '18px',
-                                        height: '18px',
-                                        background: wantsFiscal ? '#000' : '#fff',
-                                        borderRadius: '50%',
-                                        position: 'absolute',
-                                        top: '3px',
-                                        left: wantsFiscal ? '25px' : '3px',
-                                        transition: '0.3s'
-                                    }} />
+                                    <div 
+                                        className="w-4 h-4 rounded-full absolute top-1 transition-all"
+                                        style={{
+                                            left: wantsFiscal ? '24px' : '4px',
+                                            backgroundColor: wantsFiscal ? '#050507' : '#ffffff'
+                                        }}
+                                    />
                                 </div>
-                                <span style={{ color: '#fff', fontWeight: '500', fontSize: '0.9rem' }}>Desejo emitir notas (NF-e/NFC-e)</span>
+                                <span className="text-white text-sm sm:text-base font-medium">Desejo emitir notas fiscais (NF-e / NFC-e)</span>
                             </div>
 
                             {/* Note Packs */}
@@ -149,31 +112,20 @@ const Pricing = () => {
                                         initial={{ opacity: 0, y: -10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: -10 }}
-                                        style={{ 
-                                            display: 'flex', 
-                                            gap: '6px', 
-                                            flexWrap: 'wrap', 
-                                            justifyContent: 'center' 
-                                        }}
+                                        className="flex gap-2.5 sm:gap-3 flex-wrap justify-center w-full mt-2"
                                     >
                                         {fiscalOptions.map((opt, idx) => (
                                             <div 
                                                 key={idx}
                                                 onClick={() => setFiscalTier(idx)}
-                                                style={{
-                                                    border: fiscalTier === idx ? '1px solid var(--primary)' : '1px solid var(--glass-border)',
-                                                    background: fiscalTier === idx ? 'rgba(0, 240, 255, 0.1)' : 'transparent',
-                                                    borderRadius: '8px',
-                                                    padding: '6px 10px',
-                                                    cursor: 'pointer',
-                                                    textAlign: 'center',
-                                                    transition: '0.3s',
-                                                    flex: '1 1 80px',
-                                                    minWidth: '80px'
-                                                }}
+                                                className={`p-3 rounded-xl cursor-pointer text-center transition-all flex-1 min-w-[90px] border ${
+                                                    fiscalTier === idx 
+                                                        ? 'bg-cyan-500/10 border-cyan-400 text-cyan-300 shadow-lg shadow-cyan-500/10' 
+                                                        : 'bg-white/[0.03] border-white/10 text-slate-400 hover:border-white/20'
+                                                }`}
                                             >
-                                                <div style={{ fontWeight: 'bold', fontSize: '0.8rem', color: fiscalTier === idx ? 'var(--primary)' : 'var(--text-muted)' }}>{opt.count} Notas</div>
-                                                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>R$ {opt.price}/mês</div>
+                                                <div className="font-bold text-xs sm:text-sm">{opt.count} Notas</div>
+                                                <div className="text-[11px] text-slate-400 mt-0.5">R$ {opt.price}/mês</div>
                                             </div>
                                         ))}
                                     </motion.div>
@@ -183,14 +135,8 @@ const Pricing = () => {
                     </div>
                 </div>
 
-                {/* Cards */}
-                <div className="pricing-grid" style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
-                    gap: '2rem',
-                    maxWidth: '1200px',
-                    margin: '0 auto'
-                }}>
+                {/* Cards Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
                     {/* PLAN: BASIC */}
                     <PlanCard 
                         name="Básico"
@@ -252,102 +198,67 @@ const Pricing = () => {
                     />
                 </div>
             </div>
-
-            <style>{`
-                @media (max-width: 768px) {
-                    .pricing-grid {
-                        grid-template-columns: 1fr !important;
-                        gap: 1.5rem !important;
-                    }
-                    .pricing-controls {
-                        margin-bottom: 2rem !important;
-                    }
-                }
-                @media (max-width: 480px) {
-                    .section {
-                        padding: 40px 0 !important;
-                    }
-                    .title {
-                        font-size: 1.8rem !important;
-                    }
-                }
-            `}</style>
         </section>
     );
 };
 
-// Subcomponent for cleaner code
+// Subcomponent PlanCard
 const PlanCard = ({ name, cycle, price, basePrice, fiscalPrice, totalSix, features, highlight, slug }) => (
     <motion.div
         whileHover={{ y: -5 }}
-        style={{
-            background: highlight ? 'linear-gradient(145deg, rgba(112,0,255,0.1), rgba(0,0,0,0.4))' : 'var(--glass)',
-            border: highlight ? '1px solid var(--primary)' : '1px solid var(--glass-border)',
-            borderRadius: '16px',
-            padding: '2rem',
-            position: 'relative',
-            display: 'flex',
-            flexDirection: 'column'
-        }}
+        className={`card relative flex flex-col justify-between p-6 sm:p-8 ${
+            highlight ? 'border-cyan-400/80 shadow-2xl shadow-cyan-500/10' : ''
+        }`}
     >
         {highlight && (
-            <div style={{
-                position: 'absolute',
-                top: '-12px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                background: 'var(--primary)',
-                color: '#000',
-                padding: '4px 12px',
-                borderRadius: '20px',
-                fontSize: '0.75rem',
-                fontWeight: 'bold'
-            }}>MAIS VENDIDO</div>
+            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 px-4 py-1 rounded-full text-xs font-black tracking-wider uppercase shadow-lg">
+                MAIS ESCOLHIDO
+            </div>
         )}
 
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-            <h3 style={{ fontSize: '1.1rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem' }}>
+        <div className="text-center mb-6">
+            <h3 className="text-xs sm:text-sm font-bold uppercase tracking-widest text-slate-400 mb-2">
                 PLANO {name} {cycle === 'semestral' ? 'SEMESTRAL' : 'MENSAL'}
             </h3>
             {cycle === 'semestral' && (
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>(COBRADO A CADA 6 MESES)</p>
+                <p className="text-[11px] text-slate-500 mb-4">(COBRADO A CADA 6 MESES)</p>
             )}
 
-            <div style={{ margin: '1.5rem 0' }}>
-                <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+            <div className="my-4">
+                <span className="text-xs sm:text-sm text-slate-400">
                     {cycle === 'semestral' ? 'Por apenas 6x' : 'Mensalidade'}
                 </span>
-                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: highlight ? 'var(--primary)' : '#fff', lineHeight: 1 }}>
-                    <span style={{ fontSize: '1.5rem', verticalAlign: 'top', marginRight: '4px' }}>R$</span>
+                <div className="text-4xl sm:text-5xl font-black text-white my-1 flex items-center justify-center gap-1">
+                    <span className="text-xl sm:text-2xl text-slate-400 font-bold">R$</span>
                     {price}
                 </div>
                 
                 {/* Breakdown Logic */}
-                <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '8px' }}>
+                <div className="flex items-center justify-center gap-2 text-[11px] text-slate-400 mt-2 flex-wrap">
                     <span>Plano: R$ {basePrice.toFixed(2).replace('.', ',')}</span>
                     {fiscalPrice > 0 && (
                         <>
                             <span>+</span>
-                            <span style={{ color: 'var(--primary)' }}>Fiscal: R$ {fiscalPrice.toFixed(2).replace('.', ',')}/mês</span>
+                            <span className="text-cyan-300 font-semibold">Fiscal: R$ {fiscalPrice.toFixed(2).replace('.', ',')}/mês</span>
                         </>
                     )}
                 </div>
             </div>
 
             {cycle === 'semestral' && (
-                <div style={{ fontSize: '0.9rem', color: '#fff' }}>
+                <div className="text-xs sm:text-sm text-slate-300 font-medium bg-white/5 py-1.5 px-3 rounded-lg inline-block">
                    Ou R$ {totalSix} à vista
                 </div>
             )}
         </div>
 
-        <div style={{ height: '1px', background: 'var(--glass-border)', width: '100%', marginBottom: '2rem' }} />
+        <div className="w-full h-px bg-white/10 mb-6" />
 
-        <ul style={{ listStyle: 'none', marginBottom: '2rem', flex: 1 }}>
+        <ul className="space-y-3 mb-8 flex-1">
             {features.map((feat, i) => (
-                <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#ccc', marginBottom: '12px', fontSize: '0.95rem' }}>
-                    <Check size={16} color={highlight ? 'var(--primary)' : 'var(--text-muted)'} />
-                    {feat}
+                <li key={i} className="flex items-center gap-3 text-slate-300 text-xs sm:text-sm">
+                    <Check size={16} className={highlight ? "text-cyan-400 flex-shrink-0" : "text-slate-500 flex-shrink-0"} />
+                    <span>{feat}</span>
                 </li>
             ))}
         </ul>
@@ -356,14 +267,11 @@ const PlanCard = ({ name, cycle, price, basePrice, fiscalPrice, totalSix, featur
             href={`https://app.kryonsystems.com.br/trial?product=${slug}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn btn-primary"
-            style={{ 
-                width: '100%', 
-                justifyContent: 'center', 
-                background: highlight ? 'var(--primary)' : 'transparent',
-                color: highlight ? '#000' : '#fff',
-                border: highlight ? 'none' : '1px solid var(--glass-border)'
-            }}
+            className={`w-full py-3.5 px-6 rounded-xl font-extrabold text-sm sm:text-base text-center transition-all flex items-center justify-center gap-2 no-underline active:scale-[0.98] ${
+                highlight 
+                    ? 'bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 shadow-lg shadow-cyan-500/25' 
+                    : 'bg-white/10 hover:bg-white/15 text-white border border-white/15'
+            }`}
         >
             TESTAR 30 DIAS GRÁTIS
         </a>
