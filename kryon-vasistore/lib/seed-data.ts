@@ -27,6 +27,17 @@ export const INITIAL_STORE: Store = {
 
 export const INITIAL_PROFILES: Profile[] = [
   {
+    id: 'user-medalha25',
+    store_id: 'store-1',
+    email: 'medalha25@gmail.com',
+    full_name: 'Wesley Medalha (Administrador Geral)',
+    role: 'admin',
+    phone: '',
+    password: '15252833',
+    active: true,
+    created_at: new Date().toISOString(),
+  },
+  {
     id: 'user-weslley',
     store_id: 'store-1',
     email: 'weslley@donalar.com.br',

@@ -37,8 +37,8 @@ export default function LoginPage() {
     try {
       // Simula integração com Google OAuth com dados do usuário logado
       const res = await loginWithGoogle({
-        name: 'Administrador (Google)',
-        email: 'admin@utillar.com.br'
+        name: 'Wesley Medalha (Administrador Geral)',
+        email: 'medalha25@gmail.com'
       });
       if (res.success) {
         success('Login com Google realizado!', 'Bem-vindo(a) ao Sistema VasiStore.');
@@ -267,7 +267,19 @@ export default function LoginPage() {
             <p className="text-[10px] text-slate-400 dark:text-slate-500 text-center mb-3">
               Clique no usuário para preencher o e-mail e depois digite a senha correspondente
             </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
+              <button
+                type="button"
+                onClick={() => handleSelectUser('medalha25@gmail.com', 'Wesley Medalha (ADM Geral)')}
+                className="p-2 rounded-xl border-2 border-emerald-500/40 bg-emerald-50/50 dark:bg-emerald-950/20 hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-slate-800 dark:text-slate-200 hover:text-emerald-800 dark:hover:text-emerald-300 transition-all text-xs font-semibold flex flex-col items-center gap-1 group cursor-pointer shadow-sm"
+              >
+                <div className="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 group-hover:bg-emerald-600 text-emerald-700 dark:text-emerald-300 group-hover:text-white flex items-center justify-center transition-colors font-bold">
+                  ⭐
+                </div>
+                <span className="font-bold">Medalha</span>
+                <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">ADM Geral</span>
+              </button>
+
               <button
                 type="button"
                 onClick={() => handleSelectUser('weslley@donalar.com.br', 'Weslley (ADM Suporte)')}

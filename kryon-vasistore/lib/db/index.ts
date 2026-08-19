@@ -92,8 +92,8 @@ export class DatabaseService {
     if (typeof window === 'undefined') return;
 
     const currentVersion = localStorage.getItem(KEYS.DATA_VERSION);
-    if (currentVersion !== 'v6_weslley_adm_suporte') {
-      // Atualiza catálogo de produtos, categorias e perfis (incluindo Weslley ADM Suporte)
+    if (currentVersion !== 'v7_medalha25_adm') {
+      // Atualiza catálogo de produtos, categorias e perfis (incluindo Wesley Medalha ADM Geral)
       storage.set(KEYS.PRODUCTS, INITIAL_PRODUCTS);
       storage.set(KEYS.CATEGORIES, INITIAL_CATEGORIES);
       storage.set(KEYS.PROFILES, INITIAL_PROFILES);
@@ -110,7 +110,7 @@ export class DatabaseService {
       if (!localStorage.getItem(KEYS.CUSTOMERS)) storage.set(KEYS.CUSTOMERS, []);
       if (!localStorage.getItem(KEYS.SUPPLIERS)) storage.set(KEYS.SUPPLIERS, []);
 
-      localStorage.setItem(KEYS.DATA_VERSION, 'v6_weslley_adm_suporte');
+      localStorage.setItem(KEYS.DATA_VERSION, 'v7_medalha25_adm');
       return;
     }
 
