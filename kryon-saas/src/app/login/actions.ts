@@ -35,7 +35,7 @@ async function handlePostLogin(user: User, supabase: SupabaseClient) {
     console.log('DEBUG LOGIN: Starting post-login for:', user.email, 'ID:', user.id)
 
     // 1. Buscar Perfil para obter Contexto de Organização e Loja
-    const { data: profile, error: profileError } = await supabaseAdmin
+    const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('organization_id, shop_id, role, is_super_admin')
       .eq('id', user.id)
@@ -52,12 +52,12 @@ async function handlePostLogin(user: User, supabase: SupabaseClient) {
 
     // 1.5 Super Admin bypass
     if (profile?.is_super_admin) {
-      console.log('DEBUG LOGIN: Super Admin detected. Redirecting to /super-admin')
-      return { success: true, redirect: '/super-admin' }
+      console.log('DEBUG LOGIN: Super Admin detected. Redirecting to /select-system')
+      return { success: true, redirect: '/select-system' }
     }
 
     // 2. Buscar Shop pelo owner_id ou shop_id do profile
-    const { data: shop, error: shopError } = await supabaseAdmin
+    const { data: shop, error: shopError } = await supabase
       .from('shops')
       .select('*')
       .or(`owner_id.eq.${user.id},id.eq.${shopIdFromProfile || '00000000-0000-0000-0000-000000000000'}`)

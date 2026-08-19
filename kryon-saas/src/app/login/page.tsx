@@ -208,14 +208,7 @@ function LoginForm() {
                       )}
                   </button>
 
-                  <div className="pt-4 text-center">
-                      <p className="text-sm text-slate-500">
-                          Novo por aqui?{' '}
-                          <Link href="/register" className="font-bold text-white hover:text-blue-400 transition-colors underline underline-offset-4 decoration-blue-500/30">
-                              Criar conta agora
-                          </Link>
-                      </p>
-                  </div>
+
               </form>
             </div>
           </div>
