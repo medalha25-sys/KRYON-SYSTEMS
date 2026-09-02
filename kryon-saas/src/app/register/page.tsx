@@ -2,14 +2,16 @@ import { signup } from '../login/actions'
 import '../login/login.css'
 import Link from 'next/link'
 
-export default function RegisterPage({
+export default async function RegisterPage({
   searchParams,
 }: {
-  searchParams: { message?: string, shop_id?: string, role?: string, email?: string }
+  searchParams: Promise<{ message?: string, shop_id?: string, role?: string, email?: string }>
 }) {
-  const shopId = searchParams?.shop_id;
-  const role = searchParams?.role;
-  const defaultEmail = searchParams?.email || '';
+  const params = await searchParams;
+  const shopId = params?.shop_id;
+  const role = params?.role;
+  const defaultEmail = params?.email || '';
+  const message = params?.message;
 
   return (
     <div className="loginContainer">
@@ -24,9 +26,9 @@ export default function RegisterPage({
           <p>{shopId ? 'Você foi convidado para colaborar' : 'Kryon Systems'}</p>
         </div>
 
-        {searchParams?.message && (
+        {message && (
           <div className="errorMsg bg-red-50 text-red-500 p-4 rounded-xl border border-red-100 text-sm font-bold mb-6">
-            {searchParams.message}
+            {message}
           </div>
         )}
 

@@ -88,6 +88,13 @@ async function handlePostLogin(user: User, supabase: SupabaseClient) {
       }
       
       console.log('DEBUG LOGIN: New shop created:', newShop.id)
+
+      // Update the profile to link the new shop
+      await supabaseAdmin
+        .from('profiles')
+        .update({ shop_id: newShop.id })
+        .eq('id', user.id)
+
       return { success: true, redirect: user.user_metadata?.product_slug === 'lava-rapido' ? '/products/lava-rapido' : '/products/agenda-facil' }
     }
 
@@ -313,7 +320,7 @@ export async function signup(formData: FormData) {
      if (result?.error) {
         redirect('/register?message=' + encodeURIComponent(result.error))
      }
-     return // handlePostLogin redirects on success
+     redirect('/register/success')
   }
 
   // 2. If NO session, check if we can login immediately (maybe Auto-Confirm is ON but signUp didn't return session)
@@ -328,7 +335,7 @@ export async function signup(formData: FormData) {
       if (result?.error) {
         redirect('/register?message=' + encodeURIComponent(result.error))
       }
-      return
+      redirect('/register/success')
   }
 
   // 3. Fallback: User is truly unverified or Verify Email is ON.

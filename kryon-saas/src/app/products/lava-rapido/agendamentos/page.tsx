@@ -35,12 +35,8 @@ export default function AgendamentosPage() {
   }, [])
 
   const updateStatus = async (id: string, newStatus: string) => {
-    const { error } = await supabase
-      .from('lava_rapido_bookings')
-      .update({ status: newStatus })
-      .eq('id', id)
-
-    if (newStatus === 'completed') {
+    // Quando o dono aprova o agendamento, criamos o veículo e a Ordem de Serviço
+    if (newStatus === 'approved') {
       const { data: bookingData } = await supabase
         .from('lava_rapido_bookings')
         .select('*, service:lava_rapido_services(*)')
@@ -55,22 +51,64 @@ export default function AgendamentosPage() {
             ? service.price_medium 
             : service.price_large
 
-        await supabase.from('financial_transactions').insert([{
-          organization_id: bookingData.tenant_id,
-          description: `Lavagem: ${service.name} - Placa: ${bookingData.vehicle_plate || 'N/A'}`,
-          amount: amount,
-          type: 'income',
-          date: new Date().toISOString().split('T')[0],
-          status: 'paid'
-        }])
+        // 1. Verificar ou Criar Veículo
+        let vehicleId = null
+        const plateToSearch = bookingData.vehicle_plate ? bookingData.vehicle_plate.toUpperCase() : 'SEM-PLACA'
+        
+        const { data: existingVehicle } = await supabase
+          .from('lava_rapido_vehicles')
+          .select('id')
+          .eq('plate', plateToSearch)
+          .eq('tenant_id', bookingData.tenant_id)
+          .maybeSingle()
+        
+        if (existingVehicle) {
+          vehicleId = existingVehicle.id
+        } else {
+          const { data: newVehicle } = await supabase
+            .from('lava_rapido_vehicles')
+            .insert([{
+              tenant_id: bookingData.tenant_id,
+              owner_name: bookingData.customer_name,
+              owner_phone: bookingData.customer_phone,
+              plate: plateToSearch,
+              size: bookingData.vehicle_size
+            }])
+            .select('id')
+            .single()
+            
+          if (newVehicle) vehicleId = newVehicle.id
+        }
+
+        // 2. Criar Ordem de Serviço (OS)
+        if (vehicleId) {
+          await supabase.from('lava_rapido_orders').insert([{
+            tenant_id: bookingData.tenant_id,
+            vehicle_id: vehicleId,
+            service_id: bookingData.service_id,
+            status: 'pending', // 'Em Fila'
+            total_price: amount,
+            final_price: amount,
+            notes: `Gerado via agendamento online para o dia ${bookingData.booking_date} às ${bookingData.start_time}`
+          }])
+        }
       }
     }
+
+    // Atualiza o status do agendamento
+    const { error } = await supabase
+      .from('lava_rapido_bookings')
+      .update({ status: newStatus })
+      .eq('id', id)
 
     if (error) {
       alert('Erro ao atualizar status.')
       console.error(error)
     } else {
       fetchBookings()
+      if (newStatus === 'approved') {
+        alert('Agendamento aprovado e Ordem de Serviço criada com sucesso!')
+      }
     }
   }
 
@@ -84,12 +122,12 @@ export default function AgendamentosPage() {
       </header>
 
       {/* Tabs */}
-      <div className="flex gap-6 border-b border-gray-800">
+      <div className="flex gap-6 border-b border-gray-800 overflow-x-auto whitespace-nowrap">
         <button 
           onClick={() => setFilter('pending')}
           className={`pb-4 px-2 text-sm font-medium transition-all relative ${filter === 'pending' ? 'text-blue-400' : 'text-gray-500 hover:text-gray-300'}`}
         >
-          Pendentes
+          Novos (Pendentes)
           {bookings.filter(b => b.status === 'pending').length > 0 && (
             <span className="ml-2 bg-amber-500/20 text-amber-500 px-2 py-0.5 rounded-full text-[10px]">
               {bookings.filter(b => b.status === 'pending').length}
@@ -98,11 +136,11 @@ export default function AgendamentosPage() {
           {filter === 'pending' && <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-400" />}
         </button>
         <button 
-          onClick={() => setFilter('completed')}
-          className={`pb-4 px-2 text-sm font-medium transition-all relative ${filter === 'completed' ? 'text-blue-400' : 'text-gray-500 hover:text-gray-300'}`}
+          onClick={() => setFilter('approved')}
+          className={`pb-4 px-2 text-sm font-medium transition-all relative ${filter === 'approved' ? 'text-blue-400' : 'text-gray-500 hover:text-gray-300'}`}
         >
-          Concluídos
-          {filter === 'completed' && <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-400" />}
+          Aprovados (OS Criada)
+          {filter === 'approved' && <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-400" />}
         </button>
         <button 
           onClick={() => setFilter('canceled')}
@@ -196,11 +234,12 @@ function BookingCard({ booking, onUpdate }: { booking: any, onUpdate: (id: strin
         {booking.status === 'pending' && (
           <div className="flex gap-2">
             <button 
-              onClick={() => onUpdate(booking.id, 'completed')}
-              className="p-2.5 bg-green-600/10 text-green-500 border border-green-600/20 rounded-xl hover:bg-green-600 hover:text-white transition-all shadow-lg hover:shadow-green-900/20"
-              title="Concluir"
+              onClick={() => onUpdate(booking.id, 'approved')}
+              className="p-2.5 bg-green-600/10 text-green-500 border border-green-600/20 rounded-xl hover:bg-green-600 hover:text-white transition-all shadow-lg hover:shadow-green-900/20 flex items-center gap-2 font-bold px-4"
+              title="Aprovar e Criar OS"
             >
               <CheckCircle2 className="w-5 h-5" />
+              <span className="text-sm">Aprovar</span>
             </button>
             <button 
               onClick={() => onUpdate(booking.id, 'canceled')}

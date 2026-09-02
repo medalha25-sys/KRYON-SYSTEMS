@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Stethoscope, PawPrint, Smartphone, ShoppingBag, Camera, Armchair, ShoppingCart, ArrowRight } from 'lucide-react';
+import { Stethoscope, PawPrint, Smartphone, ShoppingBag, Camera, Armchair, ShoppingCart, Car, ArrowRight } from 'lucide-react';
 
 const Subscribe = () => {
     const systems = [
@@ -13,6 +13,16 @@ const Subscribe = () => {
             color: "#ff7b00", // Bright Orange
             badge: "✨ NOVIDADE",
             link: "https://utillar-gestao.vercel.app/login"
+        },
+        {
+            category: "LAVA RÁPIDO & ESTÉTICA",
+            title: "Brilho Mágico SaaS",
+            slug: "lava-rapido",
+            description: "Agendamento online inteligente sem filas, controle de pátio e box em tempo real, financeiro completo com DRE e cartão fidelidade para seu lava jato.",
+            icon: <Car size={28} />,
+            color: "#2e6aff", // Blue Neon
+            badge: "⚡ AGENDAMENTO ONLINE",
+            link: "https://brilho-magico-saas.vercel.app/cadastro"
         },
         {
             category: "SAÚDE E ATENDIMENTO",

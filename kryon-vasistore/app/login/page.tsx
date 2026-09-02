@@ -1,22 +1,24 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { 
   Store as StoreIcon, Lock, Mail, ArrowRight, ShieldCheck, 
   Sparkles, CheckCircle2, User, KeyRound, HelpCircle, Eye, EyeOff,
-  ShieldAlert
+  ShieldAlert, UserCheck
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
+import { db } from '../../lib/db';
+import { Profile } from '../../lib/db/types';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { Modal } from '../../components/ui/Modal';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, loginWithGoogle, availableUsers } = useAuth();
+  const { login, loginWithGoogle, user: currentUser } = useAuth();
   const { success, error, info } = useToast();
 
   const [email, setEmail] = useState('');
@@ -29,19 +31,36 @@ export default function LoginPage() {
   const [recoveryEmail, setRecoveryEmail] = useState('');
   const [recoverySent, setRecoverySent] = useState(false);
 
+  // Usuários para troca rápida (aparecem apenas se o usuário já tiver logado nesta loja anteriormente)
+  const [savedStoreUsers, setSavedStoreUsers] = useState<Profile[]>([]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const activeStoreId = localStorage.getItem('utillar_active_store_id');
+      const hasLoggedInBefore = localStorage.getItem('utillar_active_user_id');
+      
+      // Só exibe os atalhos de operadores se o cliente já acessou o sistema e possui equipe cadastrada
+      if (hasLoggedInBefore && activeStoreId) {
+        const users = db.getProfiles(activeStoreId);
+        if (users && users.length > 1) {
+          setSavedStoreUsers(users);
+        }
+      }
+    }
+  }, []);
+
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
   const handleGoogleLogin = async () => {
     setIsGoogleLoading(true);
     setLoginError(null);
     try {
-      // Simula integração com Google OAuth com dados do usuário logado
       const res = await loginWithGoogle({
-        name: 'Wesley Medalha (Administrador Geral)',
+        name: 'Wesley Medalha (Super Administrador)',
         email: 'medalha25@gmail.com'
       });
       if (res.success) {
-        success('Login com Google realizado!', 'Bem-vindo(a) ao Sistema VasiStore.');
+        success('Autenticado com o Google!', 'Bem-vindo(a) ao Sistema VasiStore.');
         router.push('/dashboard');
       } else {
         setLoginError(res.message || 'Falha ao autenticar com o Google.');
@@ -168,7 +187,7 @@ export default function LoginPage() {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
               />
             </svg>
-            <span>{isGoogleLoading ? 'Conectando ao Google...' : 'Continuar com o Google'}</span>
+            <span>{isGoogleLoading ? 'Conectando ao Google...' : 'Entrar com a Conta Google'}</span>
           </button>
 
           {/* Divisor */}
@@ -259,133 +278,80 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          {/* Quick Select User Badge */}
-          <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
-            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center mb-1">
-              Selecione o Usuário
-            </p>
-            <p className="text-[10px] text-slate-400 dark:text-slate-500 text-center mb-3">
-              Clique no usuário para preencher o e-mail e depois digite a senha correspondente
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
-              <button
-                type="button"
-                onClick={() => handleSelectUser('medalha25@gmail.com', 'Wesley Medalha (ADM Geral)')}
-                className="p-2 rounded-xl border-2 border-emerald-500/40 bg-emerald-50/50 dark:bg-emerald-950/20 hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-slate-800 dark:text-slate-200 hover:text-emerald-800 dark:hover:text-emerald-300 transition-all text-xs font-semibold flex flex-col items-center gap-1 group cursor-pointer shadow-sm"
-              >
-                <div className="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 group-hover:bg-emerald-600 text-emerald-700 dark:text-emerald-300 group-hover:text-white flex items-center justify-center transition-colors font-bold">
-                  ⭐
-                </div>
-                <span className="font-bold">Medalha</span>
-                <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">ADM Geral</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleSelectUser('weslley@donalar.com.br', 'Weslley (ADM Suporte)')}
-                className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 text-slate-700 dark:text-slate-300 hover:text-indigo-800 dark:hover:text-indigo-300 transition-all text-xs font-semibold flex flex-col items-center gap-1 group cursor-pointer"
-              >
-                <div className="w-7 h-7 rounded-lg bg-indigo-100 dark:bg-indigo-900/60 group-hover:bg-indigo-600 text-indigo-700 dark:text-indigo-300 group-hover:text-white flex items-center justify-center transition-colors font-bold">
-                  🛡️
-                </div>
-                <span className="font-bold">Weslley</span>
-                <span className="text-[10px] text-slate-400 font-normal">ADM Suporte</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleSelectUser('aguilarsuriel6@gmail.com', 'Suriel Aguilar (ADM)')}
-                className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-950/40 text-slate-700 dark:text-slate-300 hover:text-purple-800 dark:hover:text-purple-300 transition-all text-xs font-semibold flex flex-col items-center gap-1 group cursor-pointer"
-              >
-                <div className="w-7 h-7 rounded-lg bg-purple-100 dark:bg-purple-900/60 group-hover:bg-purple-600 text-purple-700 dark:text-purple-300 group-hover:text-white flex items-center justify-center transition-colors font-bold">
-                  👑
-                </div>
-                <span className="font-bold">Suriel</span>
-                <span className="text-[10px] text-slate-400 font-normal">ADM</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleSelectUser('joel@donalar.com.br', 'Joel')}
-                className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-300 hover:text-blue-800 dark:hover:text-blue-300 transition-all text-xs font-semibold flex flex-col items-center gap-1 group cursor-pointer"
-              >
-                <div className="w-7 h-7 rounded-lg bg-blue-100 dark:bg-blue-900/60 group-hover:bg-blue-600 text-blue-700 dark:text-blue-300 group-hover:text-white flex items-center justify-center transition-colors font-bold">
-                  👔
-                </div>
-                <span className="font-bold">Joel</span>
-                <span className="text-[10px] text-slate-400 font-normal">Gerente</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleSelectUser('elizangela@donalar.com.br', 'Elizangela')}
-                className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-slate-700 dark:text-slate-300 hover:text-emerald-800 dark:hover:text-emerald-300 transition-all text-xs font-semibold flex flex-col items-center gap-1 group cursor-pointer"
-              >
-                <div className="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 group-hover:bg-emerald-600 text-emerald-700 dark:text-emerald-300 group-hover:text-white flex items-center justify-center transition-colors font-bold">
-                  💼
-                </div>
-                <span className="font-bold">Elizangela</span>
-                <span className="text-[10px] text-slate-400 font-normal">Vendedora</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleSelectUser('caixa@donalar.com.br', 'Caixa')}
-                className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-amber-500 hover:bg-amber-50 dark:hover:bg-amber-950/40 text-slate-700 dark:text-slate-300 hover:text-amber-800 dark:hover:text-amber-300 transition-all text-xs font-semibold flex flex-col items-center gap-1 group cursor-pointer"
-              >
-                <div className="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-900/60 group-hover:bg-amber-600 text-amber-700 dark:text-amber-300 group-hover:text-white flex items-center justify-center transition-colors font-bold">
-                  🛒
-                </div>
-                <span className="font-bold">Caixa</span>
-                <span className="text-[10px] text-slate-400 font-normal">Op. Caixa</span>
-              </button>
+          {/* Troca Rápida de Operador (Exibido apenas para clientes que já cadastraram equipe na sua loja) */}
+          {savedStoreUsers.length > 1 && (
+            <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
+              <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center mb-1">
+                Troca Rápida de Operador
+              </p>
+              <p className="text-[10px] text-slate-400 dark:text-slate-500 text-center mb-3">
+                Selecione o operador da sua equipe para preencher o acesso
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {savedStoreUsers.map((u) => (
+                  <button
+                    key={u.id}
+                    type="button"
+                    onClick={() => handleSelectUser(u.email, u.full_name)}
+                    className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-slate-700 dark:text-slate-300 hover:text-emerald-800 dark:hover:text-emerald-300 transition-all text-xs font-semibold flex flex-col items-center gap-1 group cursor-pointer"
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 group-hover:bg-emerald-600 text-emerald-700 dark:text-emerald-300 group-hover:text-white flex items-center justify-center transition-colors font-bold text-xs">
+                      {u.role === 'super_admin' ? '⭐' : u.full_name.charAt(0)}
+                    </div>
+                    <span className="font-bold truncate max-w-[80px]">{u.full_name.split(' ')[0]}</span>
+                    <span className="text-[10px] text-slate-400 font-normal capitalize">{u.role}</span>
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* New Store SaaS link */}
-          <div className="mt-6 text-center">
-            <p className="text-xs text-slate-500">
-              Quer usar o sistema em outra loja?{' '}
-              <Link href="/registro" className="font-bold text-emerald-600 hover:text-emerald-700">
-                Criar Nova Loja (SaaS)
+          {/* Link para Criar Conta / Nova Loja */}
+          <div className="mt-6 text-center border-t border-slate-100 dark:border-slate-800 pt-4">
+            <p className="text-xs text-slate-400">
+              Não tem uma conta?{' '}
+              <Link
+                href="/registro"
+                className="font-bold text-emerald-500 hover:text-emerald-400 hover:underline"
+              >
+                Cadastrar Loja Grátis (30 Dias)
               </Link>
             </p>
           </div>
         </div>
       </div>
 
-      {/* Forgot Password Modal */}
+      {/* Modal Esqueci a Senha */}
       <Modal
         isOpen={showForgotModal}
         onClose={() => setShowForgotModal(false)}
         title="Recuperação de Senha"
-        subtitle="Informe seu e-mail cadastrado para redefinir o acesso"
-        maxWidth="md"
+        subtitle="Informe seu e-mail cadastrado para redefinir sua senha"
       >
         {recoverySent ? (
-          <div className="text-center py-6">
-            <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto mb-3" />
-            <h4 className="font-bold text-slate-800 dark:text-slate-100 text-base">E-mail de Recuperação Enviado!</h4>
+          <div className="text-center py-4">
+            <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto mb-2 animate-bounce" />
+            <p className="text-sm font-bold text-slate-900 dark:text-white">E-mail de recuperação enviado!</p>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              Verifique sua caixa de entrada e siga as instruções para redefinir sua senha.
+              Verifique sua caixa de entrada e spam para redefinir seu acesso.
             </p>
           </div>
         ) : (
           <form onSubmit={handleSendRecovery} className="space-y-4">
             <Input
-              label="E-mail Cadastrado"
+              label="Seu E-mail Cadastrado"
               type="email"
               placeholder="seuemail@empresa.com.br"
               value={recoveryEmail}
               onChange={(e) => setRecoveryEmail(e.target.value)}
-              leftIcon={<Mail className="w-4 h-4" />}
+              required
               autoFocus
             />
-            <div className="flex justify-end gap-2 pt-2">
+            <div className="flex justify-end gap-2">
               <Button type="button" variant="outline" size="sm" onClick={() => setShowForgotModal(false)}>
                 Cancelar
               </Button>
-              <Button type="submit" variant="primary" size="sm" rightIcon={<ArrowRight className="w-4 h-4" />}>
+              <Button type="submit" variant="primary" size="sm">
                 Enviar Instruções
               </Button>
             </div>

@@ -67,7 +67,8 @@ const segments = [
         desc: "Agendamento online inteligente, gestão de OS e controle financeiro completo para seu lava jato.",
         icon: <Car size={24} />,
         color: "#2e6aff",
-        directUrl: "https://app.kryonsystems.com.br/products/lava-rapido"
+        directUrl: "https://brilho-magico-saas.vercel.app/cadastro",
+        trialText: "Testar 30 Dias Grátis \u2192"
     },
     {
         title: "Loja de Decoração",

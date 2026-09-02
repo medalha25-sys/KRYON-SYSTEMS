@@ -87,7 +87,7 @@ export async function updateSession(request: NextRequest) {
     url.searchParams.set('next', request.nextUrl.pathname);
     return NextResponse.redirect(url);
   }
-  if (user && !isFlowPage) {
+  if (user && !isFlowPage && !isPublicPath) {
     // 3. Fetch Profile (Fixed: Separate queries to avoid ambiguous relationship joins in production)
     const { data: profile, error: profileError } = await supabase
       .from('profiles')

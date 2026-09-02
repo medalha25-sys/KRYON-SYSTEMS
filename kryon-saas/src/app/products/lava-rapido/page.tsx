@@ -11,8 +11,34 @@ import {
   Plus
 } from 'lucide-react'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { createClient } from '@/utils/supabase/client'
 
 export default function LavaRapidoDashboard() {
+  const [orders, setOrders] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const supabase = createClient()
+
+  useEffect(() => {
+    async function fetchActiveOrders() {
+      const { data, error } = await supabase
+        .from('lava_rapido_orders')
+        .select(`
+          *,
+          vehicle:lava_rapido_vehicles(*),
+          service:lava_rapido_services(*)
+        `)
+        .in('status', ['pending', 'in_progress'])
+        .order('created_at', { ascending: false })
+
+      if (data) {
+        setOrders(data)
+      }
+      setLoading(false)
+    }
+    fetchActiveOrders()
+  }, [])
+
   return (
     <div className="space-y-8">
       <header className="flex justify-between items-end">
@@ -34,27 +60,27 @@ export default function LavaRapidoDashboard() {
         <StatCard 
           icon={<Clock className="w-6 h-6 text-amber-500" />} 
           label="Em Fila" 
-          value="4" 
-          trend="+2 desde as 8h"
+          value={loading ? "..." : orders.filter(o => o.status === 'pending').length.toString()} 
+          trend="Atuais"
         />
         <StatCard 
           icon={<Car className="w-6 h-6 text-blue-500" />} 
           label="Em Lavagem" 
-          value="2" 
-          trend="Capacidade: 75%"
+          value={loading ? "..." : orders.filter(o => o.status === 'in_progress').length.toString()} 
+          trend="Atuais"
         />
         <StatCard 
           icon={<CheckCircle2 className="w-6 h-6 text-green-500" />} 
           label="Finalizados (Hoje)" 
-          value="12" 
-          trend="Meta: 20"
+          value="-" 
+          trend="Em breve"
         />
         <Link href="/products/lava-rapido/financeiro" className="block cursor-pointer">
           <StatCard 
             icon={<TrendingUp className="w-6 h-6 text-indigo-500" />} 
-            label="Faturamento (Mês)" 
-            value="R$ 6.200,00" 
-            trend="+15% vs ontem"
+            label="Faturamento" 
+            value="-" 
+            trend="Em breve"
           />
         </Link>
       </div>
@@ -73,13 +99,36 @@ export default function LavaRapidoDashboard() {
           </div>
           
           <div className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
-            <div className="p-4 text-center py-12 text-gray-500">
-               <div className="bg-gray-800 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Car className="w-8 h-8 text-gray-600" />
-               </div>
-               <p>Nenhuma ordem de serviço ativa no momento.</p>
-               <p className="text-sm">As ordens que você criar aparecerão aqui.</p>
-            </div>
+            {loading ? (
+              <div className="p-4 text-center py-12 text-gray-500">Carregando ordens...</div>
+            ) : orders.length > 0 ? (
+              <div className="divide-y divide-gray-800">
+                {orders.map(order => (
+                  <div key={order.id} className="p-4 flex items-center justify-between hover:bg-gray-800/50 transition">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center text-blue-500">
+                        <Car className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-white">{order.vehicle?.plate || 'Sem Placa'} - {order.vehicle?.owner_name}</p>
+                        <p className="text-xs text-gray-400">{order.service?.name} • R$ {order.total_price}</p>
+                      </div>
+                    </div>
+                    <span className={`text-xs font-bold px-2 py-1 rounded-md ${order.status === 'pending' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' : 'bg-blue-500/10 text-blue-500 border border-blue-500/20'}`}>
+                      {order.status === 'pending' ? 'Na Fila' : 'Lavando'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-4 text-center py-12 text-gray-500">
+                 <div className="bg-gray-800 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Car className="w-8 h-8 text-gray-600" />
+                 </div>
+                 <p>Nenhuma ordem de serviço ativa no momento.</p>
+                 <p className="text-sm">As ordens que você aprovar na Agenda aparecerão aqui.</p>
+              </div>
+            )}
           </div>
         </div>
 
