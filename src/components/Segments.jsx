@@ -7,7 +7,9 @@ const segments = [
         title: "Loja de Utilidades",
         product: "Sistema VasiStore",
         slug: "vasistore",
+        subtitle: "Gestão para Lojas de Utilidades",
         desc: "Gestão completa para lojas de utilidades: controle total de vendas e estoque, frente de caixa PDV e organização para fazer seu negócio crescer.",
+        niches: ["Lojas de Variedades", "Vasilhas & Plásticos", "Utilidades do Lar", "Bazares", "Presentes", "Lojas de 1,99"],
         icon: <ShoppingCart size={24} />,
         color: "#ff7b00",
         badge: "✨ NOVIDADE",
@@ -21,6 +23,7 @@ const segments = [
         slug: "lava-rapido",
         subtitle: "Gestão para Lava-Rápidos",
         desc: "Agendamentos, clientes, serviços, ordens de serviço e controle financeiro para seu lava-rápido.",
+        niches: ["Lava-Rápidos", "Lava-Jatos", "Estética Automotiva", "Detailers", "Polimento & Vitrificação"],
         icon: <Car size={24} />,
         color: "#2e6aff",
         directUrl: "https://brilho-magico-saas.vercel.app/cadastro",
@@ -32,6 +35,7 @@ const segments = [
         slug: "decor-manager",
         subtitle: "Gestão para Lojas de Decoração",
         desc: "Controle de estoque, produtos, vendas, orçamentos e entregas para sua loja de decoração.",
+        niches: ["Lojas de Decoração", "Cortinas & Persianas", "Móveis Planejados", "Tapetes & Quadros", "Artigos para o Lar"],
         icon: <Armchair size={24} />,
         color: "#ff8c00",
         directUrl: "https://app.kryonsystems.com.br/products/decor-manager",
@@ -43,6 +47,7 @@ const segments = [
         slug: "mechanic",
         subtitle: "Gestão completa para Oficinas Mecânicas",
         desc: "Ordens de serviço, peças, clientes, veículos e histórico de manutenção em um só lugar.",
+        niches: ["Oficinas Mecânicas", "Auto Centers", "Centros Automotivos", "Auto Elétricas", "Funilaria & Pintura"],
         icon: <Wrench size={24} />,
         color: "#ff3d00",
         directUrl: "https://app.kryonsystems.com.br/products/mechanic",
@@ -54,6 +59,7 @@ const segments = [
         slug: "legal-desk",
         subtitle: "Gestão para Escritórios de Advocacia",
         desc: "Organize processos, clientes, prazos, audiências e documentos em um só lugar.",
+        niches: ["Escritórios de Advocacia", "Advogados Autônomos", "Consultorias Jurídicas", "Departamentos Legais"],
         icon: <Scale size={24} />,
         color: "#8c52ff",
         directUrl: "https://app.kryonsystems.com.br/products/legal-desk",
@@ -63,7 +69,9 @@ const segments = [
         title: "Saúde e Atendimento",
         product: "Agenda Fácil",
         slug: "agenda-facil",
-        desc: "Sistema de agendamento online simples e eficiente para terapeutas e profissionais da saúde.",
+        subtitle: "Agendamento Inteligente Online",
+        desc: "Sistema de agendamento online simples e eficiente com lembretes automáticos para evitar faltas e organizar horários.",
+        niches: ["Clínicas Médicas", "Dentistas & Odonto", "Psicólogos", "Terapeutas", "Fisioterapeutas", "Nutricionistas", "Fonoaudiólogos", "Estética & Bem-Estar"],
         icon: <Stethoscope size={24} />,
         color: "#00f0ff",
         directUrl: "https://app.kryonsystems.com.br/products/agenda-facil",
@@ -73,7 +81,9 @@ const segments = [
         title: "Pet Shop",
         product: "Sistema Gestão Pet",
         slug: "gestao-pet",
+        subtitle: "Gestão Completa para Pets",
         desc: "Agendamento de serviços, controle de clientes e organização completa dos atendimentos.",
+        niches: ["Pet Shops", "Banho & Tosa", "Clínicas Veterinárias", "Spas Caninos", "Creches & Hotéis Pet"],
         icon: <Dog size={24} />,
         color: "#ff007f",
         directUrl: "https://app.kryonsystems.com.br/products/gestao-pet",
@@ -83,7 +93,9 @@ const segments = [
         title: "Loja de Celulares",
         product: "Tech Assist",
         slug: "tech-assist",
+        subtitle: "Gestão para Assistência Técnica",
         desc: "Controle de estoque, ordens de serviço e gestão completa da assistência técnica.",
+        niches: ["Assistência de Celulares", "Lojas de Acessórios", "Conserto de Informática", "Eletrônicos & Games"],
         icon: <Smartphone size={24} />,
         color: "#7000ff",
         directUrl: "https://app.kryonsystems.com.br/products/tech-assist",
@@ -93,7 +105,9 @@ const segments = [
         title: "Loja de Roupas",
         product: "Fashion Manager",
         slug: "fashion-manager",
-        desc: "Controle de produtos, vendas e organização do negócio.",
+        subtitle: "Gestão de Moda e Vestuário",
+        desc: "Controle de produtos, grade de cores e tamanhos, trocas, vendas e organização do negócio.",
+        niches: ["Lojas de Roupas", "Boutiques", "Lojas de Calçados", "Moda Feminina & Masculina", "Lingerie & Acessórios"],
         icon: <ShoppingBag size={24} />,
         color: "#ffbd2e",
         directUrl: "https://app.kryonsystems.com.br/products/fashion-manager",
@@ -103,7 +117,9 @@ const segments = [
         title: "Fotógrafos",
         product: "Galeria Pro",
         slug: "galeria-pro",
-        desc: "Galeria online segura com marca d'água automática e seleção de fotos sem download.",
+        subtitle: "Galeria Segura para Fotógrafos",
+        desc: "Galeria online segura com marca d'água automática e seleção de fotos sem download indevido.",
+        niches: ["Fotógrafos de Casamentos", "Ensaios & Família", "Eventos & Formaturas", "Festas & Aniversários", "Estúdios Fotográficos"],
         icon: <Camera size={24} />,
         color: "#27c93f",
         directUrl: "https://app.kryonsystems.com.br/products/galeria-pro",
@@ -195,9 +211,29 @@ const Segments = () => {
                                     </div>
                                 </div>
 
-                                <p className="text-slate-400 text-sm sm:text-base leading-relaxed mb-6">
+                                <p className="text-slate-400 text-sm sm:text-base leading-relaxed mb-4">
                                     {item.desc}
                                 </p>
+
+                                {/* Seção "Ideal para" com tags elegantes */}
+                                {item.niches && (
+                                    <div className="mb-6 p-3 rounded-xl bg-white/[0.03] border border-white/5">
+                                        <span className="text-[10px] font-extrabold uppercase tracking-wider block mb-2 flex items-center gap-1.5" style={{ color: item.color }}>
+                                            <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: item.color }} />
+                                            Ideal para:
+                                        </span>
+                                        <div className="flex flex-wrap gap-1.5">
+                                            {item.niches.map((niche, nIdx) => (
+                                                <span 
+                                                    key={nIdx}
+                                                    className="text-[11px] px-2 py-0.5 rounded-md font-medium text-slate-300 bg-white/5 border border-white/5 hover:border-white/10 transition-colors"
+                                                >
+                                                    {niche}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             <a 
