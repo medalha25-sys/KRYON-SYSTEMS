@@ -6,9 +6,9 @@ const Subscribe = () => {
     const systems = [
         {
             category: "LOJA DE UTILIDADES",
-            title: "Sistema VasiStore",
+            title: "Kryon Utilidades",
             slug: "vasistore",
-            description: "Gestão completa para lojas de utilidades: controle total de estoque, vendas rápidas no PDV e relatórios inteligentes para organizar e crescer.",
+            description: "Controle produtos, estoque, vendas, clientes e financeiro em um só lugar.",
             niches: ["Lojas de Variedades", "Vasilhas & Plásticos", "Utilidades do Lar", "Bazares", "Presentes", "Lojas de 1,99"],
             icon: <ShoppingCart size={28} />,
             color: "#ff7b00", // Bright Orange
@@ -16,10 +16,60 @@ const Subscribe = () => {
             link: "https://utillar-gestao.vercel.app/login"
         },
         {
+            category: "AGENDAMENTO ONLINE",
+            title: "Kryon Agenda",
+            slug: "agenda-facil",
+            description: "Organize agendamentos, clientes, serviços, profissionais e horários de forma simples.",
+            niches: ["Clínicas Médicas", "Dentistas & Odonto", "Psicólogos", "Terapeutas", "Fisioterapeutas", "Nutricionistas", "Estética & Bem-Estar"],
+            icon: <Stethoscope size={28} />,
+            color: "#00f0ff", // Cyan
+            link: "https://app.kryonsystems.com.br/products/agenda-facil"
+        },
+        {
+            category: "PET SHOP",
+            title: "Kryon Pet",
+            slug: "gestao-pet",
+            description: "Controle clientes, pets, banho e tosa, serviços, agenda e financeiro em um só lugar.",
+            niches: ["Pet Shops", "Banho & Tosa", "Clínicas Veterinárias", "Spas Caninos", "Creches & Hotéis Pet"],
+            icon: <PawPrint size={28} />,
+            color: "#ff007f", // Pink
+            link: "https://app.kryonsystems.com.br/products/gestao-pet"
+        },
+        {
+            category: "LOJA DE CELULARES",
+            title: "Kryon Celular",
+            slug: "tech-assist",
+            description: "Controle vendas, estoque, aparelhos, acessórios, clientes e serviços técnicos.",
+            niches: ["Assistência de Celulares", "Lojas de Acessórios", "Conserto de Informática", "Eletrônicos & Games"],
+            icon: <Smartphone size={28} />,
+            color: "#7000ff", // Purple
+            link: "https://app.kryonsystems.com.br/products/tech-assist"
+        },
+        {
+            category: "LOJA DE ROUPAS",
+            title: "Kryon Moda",
+            slug: "fashion-manager",
+            description: "Controle produtos, estoque, vendas, clientes e financeiro de forma simples.",
+            niches: ["Lojas de Roupas", "Boutiques", "Lojas de Calçados", "Moda Feminina & Masculina", "Lingerie & Acessórios"],
+            icon: <ShoppingBag size={28} />,
+            color: "#ffbd2e", // Gold/Orange
+            link: "https://app.kryonsystems.com.br/products/fashion-manager"
+        },
+        {
+            category: "FOTÓGRAFOS",
+            title: "Kryon Fotos",
+            slug: "galeria-pro",
+            description: "Crie galerias, entregue fotos aos clientes e organize seleção e compartilhamento em um só lugar.",
+            niches: ["Fotógrafos de Casamentos", "Ensaios & Família", "Eventos & Formaturas", "Festas & Aniversários", "Estúdios Fotográficos"],
+            icon: <Camera size={28} />,
+            color: "#27c93f", // Green
+            link: "https://app.kryonsystems.com.br/products/galeria-pro"
+        },
+        {
             category: "LAVA RÁPIDO",
             title: "Kryon Lava Rápido",
             slug: "lava-rapido",
-            description: "Agendamentos, clientes, serviços, ordens de serviço e controle financeiro para seu lava-rápido.",
+            description: "Controle agendamentos, clientes, serviços, ordens de serviço e financeiro do seu lava-rápido.",
             niches: ["Lava-Rápidos", "Lava-Jatos", "Estética Automotiva", "Detailers", "Polimento & Vitrificação"],
             icon: <Car size={28} />,
             color: "#2e6aff", // Blue Neon
@@ -30,7 +80,7 @@ const Subscribe = () => {
             category: "LOJA DE DECORAÇÃO",
             title: "Kryon Decor",
             slug: "decor-manager",
-            description: "Controle de estoque, produtos, vendas, orçamentos e entregas para sua loja de decoração.",
+            description: "Controle estoque, produtos, vendas, orçamentos personalizados e entregas.",
             niches: ["Lojas de Decoração", "Cortinas & Persianas", "Móveis Planejados", "Tapetes & Quadros", "Artigos para o Lar"],
             icon: <Armchair size={28} />,
             color: "#ff8c00", // Deep Orange
@@ -40,7 +90,7 @@ const Subscribe = () => {
             category: "OFICINA MECÂNICA",
             title: "Kryon Auto",
             slug: "mechanic",
-            description: "Ordens de serviço, peças, clientes, veículos e histórico de manutenção em um só lugar.",
+            description: "Controle ordens de serviço, peças, clientes, veículos e histórico de manutenção.",
             niches: ["Oficinas Mecânicas", "Auto Centers", "Centros Automotivos", "Auto Elétricas", "Funilaria & Pintura"],
             icon: <Wrench size={28} />,
             color: "#ff3d00", // Bright Red-Orange
@@ -55,56 +105,6 @@ const Subscribe = () => {
             icon: <Scale size={28} />,
             color: "#8c52ff", // Purple Neon
             link: "https://app.kryonsystems.com.br/products/legal-desk"
-        },
-        {
-            category: "SAÚDE E ATENDIMENTO",
-            title: "Agenda Fácil",
-            slug: "agenda-facil",
-            description: "Elimine faltas com lembretes automáticos e organize sua agenda de consultas e procedimentos.",
-            niches: ["Clínicas Médicas", "Dentistas & Odonto", "Psicólogos", "Terapeutas", "Fisioterapeutas", "Nutricionistas", "Fonoaudiólogos", "Estética & Bem-Estar"],
-            icon: <Stethoscope size={28} />,
-            color: "#00f0ff", // Cyan
-            link: "https://app.kryonsystems.com.br/products/agenda-facil"
-        },
-        {
-            category: "PET SHOP",
-            title: "Sistema Gestão Pet",
-            slug: "gestao-pet",
-            description: "Gerencie banho, tosa e vendas com facilidade. Tenha o histórico de cada pet e fidelize clientes.",
-            niches: ["Pet Shops", "Banho & Tosa", "Clínicas Veterinárias", "Spas Caninos", "Creches & Hotéis Pet"],
-            icon: <PawPrint size={28} />,
-            color: "#ff007f", // Pink
-            link: "https://app.kryonsystems.com.br/products/gestao-pet"
-        },
-        {
-            category: "LOJA DE CELULARES",
-            title: "Tech Assist",
-            slug: "tech-assist",
-            description: "Organize sua assistência técnica do início ao fim. Controle ordens de serviço, peças e prazos.",
-            niches: ["Assistência de Celulares", "Lojas de Acessórios", "Conserto de Informática", "Eletrônicos & Games"],
-            icon: <Smartphone size={28} />,
-            color: "#9d4edd", // Purple
-            link: "https://app.kryonsystems.com.br/products/tech-assist"
-        },
-        {
-            category: "LOJA DE ROUPAS",
-            title: "Fashion Manager",
-            slug: "fashion-manager",
-            description: "Domine seu estoque de grade e cor. Controle condicional, vendas e crediário de forma simples.",
-            niches: ["Lojas de Roupas", "Boutiques", "Lojas de Calçados", "Moda Feminina & Masculina", "Lingerie & Acessórios"],
-            icon: <ShoppingBag size={28} />,
-            color: "#ffaa00", // Gold/Orange
-            link: "https://app.kryonsystems.com.br/products/fashion-manager"
-        },
-        {
-            category: "FOTÓGRAFOS",
-            title: "Galeria Pro",
-            slug: "galeria-pro",
-            description: "Agilize a aprovação de fotos com clientes. Galeria segura para seleção de imagens com marca d'água.",
-            niches: ["Fotógrafos de Casamentos", "Ensaios & Família", "Eventos & Formaturas", "Festas & Aniversários", "Estúdios Fotográficos"],
-            icon: <Camera size={28} />,
-            color: "#00ff41", // Green
-            link: "https://app.kryonsystems.com.br/products/galeria-pro"
         }
     ];
 
