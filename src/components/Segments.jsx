@@ -74,7 +74,7 @@ const segments = [
         niches: ["Fotógrafos de Casamentos", "Ensaios & Família", "Eventos & Formaturas", "Festas & Aniversários", "Estúdios Fotográficos"],
         icon: <Camera size={24} />,
         color: "#27c93f",
-        directUrl: "https://app.kryonsystems.com.br/products/galeria-pro",
+        directUrl: "https://kryon-fotos.vercel.app",
         trialText: "Começar Teste Grátis →"
     },
     {

@@ -63,7 +63,7 @@ const Subscribe = () => {
             niches: ["Fotógrafos de Casamentos", "Ensaios & Família", "Eventos & Formaturas", "Festas & Aniversários", "Estúdios Fotográficos"],
             icon: <Camera size={28} />,
             color: "#27c93f", // Green
-            link: "https://app.kryonsystems.com.br/products/galeria-pro"
+            link: "https://kryon-fotos.vercel.app"
         },
         {
             category: "LAVA RÁPIDO",
