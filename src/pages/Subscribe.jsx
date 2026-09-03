@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Stethoscope, PawPrint, Smartphone, ShoppingBag, Camera, Armchair, ShoppingCart, Car, ArrowRight } from 'lucide-react';
+import { Stethoscope, PawPrint, Smartphone, ShoppingBag, Camera, Armchair, ShoppingCart, Car, Wrench, Scale, ArrowRight } from 'lucide-react';
 
 const Subscribe = () => {
     const systems = [
@@ -15,14 +15,41 @@ const Subscribe = () => {
             link: "https://utillar-gestao.vercel.app/login"
         },
         {
-            category: "LAVA RÁPIDO & ESTÉTICA",
-            title: "Brilho Mágico SaaS",
+            category: "LAVA RÁPIDO",
+            title: "Kryon Lava Rápido",
             slug: "lava-rapido",
-            description: "Agendamento online inteligente sem filas, controle de pátio e box em tempo real, financeiro completo com DRE e cartão fidelidade para seu lava jato.",
+            description: "Agendamentos, clientes, serviços, ordens de serviço e controle financeiro para seu lava-rápido.",
             icon: <Car size={28} />,
             color: "#2e6aff", // Blue Neon
-            badge: "⚡ AGENDAMENTO ONLINE",
+            badge: "⚡ 30 DIAS GRÁTIS",
             link: "https://brilho-magico-saas.vercel.app/cadastro"
+        },
+        {
+            category: "LOJA DE DECORAÇÃO",
+            title: "Kryon Decor",
+            slug: "decor-manager",
+            description: "Controle de estoque, produtos, vendas, orçamentos e entregas para sua loja de decoração.",
+            icon: <Armchair size={28} />,
+            color: "#ff8c00", // Deep Orange
+            link: "https://app.kryonsystems.com.br/products/decor-manager"
+        },
+        {
+            category: "OFICINA MECÂNICA",
+            title: "Kryon Auto",
+            slug: "mechanic",
+            description: "Ordens de serviço, peças, clientes, veículos e histórico de manutenção em um só lugar.",
+            icon: <Wrench size={28} />,
+            color: "#ff3d00", // Bright Red-Orange
+            link: "https://app.kryonsystems.com.br/products/mechanic"
+        },
+        {
+            category: "ADVOGADOS",
+            title: "Kryon Jurídico",
+            slug: "legal-desk",
+            description: "Organize processos, clientes, prazos, audiências e documentos em um só lugar.",
+            icon: <Scale size={28} />,
+            color: "#8c52ff", // Purple Neon
+            link: "https://app.kryonsystems.com.br/products/legal-desk"
         },
         {
             category: "SAÚDE E ATENDIMENTO",
@@ -68,15 +95,6 @@ const Subscribe = () => {
             icon: <Camera size={28} />,
             color: "#00ff41", // Green
             link: "https://app.kryonsystems.com.br/products/galeria-pro"
-        },
-        {
-            category: "LOJA DE DECORAÇÃO",
-            title: "Decor Manager",
-            slug: "decor-manager",
-            description: "Gestão sob medida para projetos e orçamentos. Controle entregas, encomendas e o financeiro da sua loja de decoração com precisão e elegância.",
-            icon: <Armchair size={28} />,
-            color: "#ff6b00", // Deep Orange
-            link: "https://app.kryonsystems.com.br/products/decor-manager"
         }
     ];
 
@@ -217,7 +235,7 @@ const Subscribe = () => {
                                     if(system.link !== '#') e.currentTarget.style.gap = '6px';
                                 }}
                             >
-                                {system.link === '#' ? 'Em Breve' : 'Testar 30 Dias Grátis'} 
+                                {system.link === '#' ? 'Em Breve' : 'Começar Teste Grátis'} 
                                 {system.link !== '#' && <ArrowRight size={16} />}
                             </a>
 

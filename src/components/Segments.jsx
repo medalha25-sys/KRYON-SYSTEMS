@@ -13,7 +13,51 @@ const segments = [
         badge: "✨ NOVIDADE",
         logo: "/vasistore-logo.png",
         directUrl: "https://utillar-gestao.vercel.app/login",
-        trialText: "Testar 30 Dias Grátis \u2192"
+        trialText: "Começar Teste Grátis →"
+    },
+    {
+        title: "LAVA RÁPIDO",
+        product: "Kryon Lava Rápido",
+        slug: "lava-rapido",
+        subtitle: "Gestão para Lava-Rápidos",
+        desc: "Agendamentos, clientes, serviços, ordens de serviço e controle financeiro para seu lava-rápido.",
+        icon: <Car size={24} />,
+        color: "#2e6aff",
+        directUrl: "https://brilho-magico-saas.vercel.app/cadastro",
+        trialText: "Começar Teste Grátis →"
+    },
+    {
+        title: "LOJA DE DECORAÇÃO",
+        product: "Kryon Decor",
+        slug: "decor-manager",
+        subtitle: "Gestão para Lojas de Decoração",
+        desc: "Controle de estoque, produtos, vendas, orçamentos e entregas para sua loja de decoração.",
+        icon: <Armchair size={24} />,
+        color: "#ff8c00",
+        directUrl: "https://app.kryonsystems.com.br/products/decor-manager",
+        trialText: "Começar Teste Grátis →"
+    },
+    {
+        title: "OFICINA MECÂNICA",
+        product: "Kryon Auto",
+        slug: "mechanic",
+        subtitle: "Gestão completa para Oficinas Mecânicas",
+        desc: "Ordens de serviço, peças, clientes, veículos e histórico de manutenção em um só lugar.",
+        icon: <Wrench size={24} />,
+        color: "#ff3d00",
+        directUrl: "https://app.kryonsystems.com.br/products/mechanic",
+        trialText: "Começar Teste Grátis →"
+    },
+    {
+        title: "ADVOGADOS",
+        product: "Kryon Jurídico",
+        slug: "legal-desk",
+        subtitle: "Gestão para Escritórios de Advocacia",
+        desc: "Organize processos, clientes, prazos, audiências e documentos em um só lugar.",
+        icon: <Scale size={24} />,
+        color: "#8c52ff",
+        directUrl: "https://app.kryonsystems.com.br/products/legal-desk",
+        trialText: "Começar Teste Grátis →"
     },
     {
         title: "Saúde e Atendimento",
@@ -22,7 +66,8 @@ const segments = [
         desc: "Sistema de agendamento online simples e eficiente para terapeutas e profissionais da saúde.",
         icon: <Stethoscope size={24} />,
         color: "#00f0ff",
-        directUrl: "https://app.kryonsystems.com.br/products/agenda-facil"
+        directUrl: "https://app.kryonsystems.com.br/products/agenda-facil",
+        trialText: "Começar Teste Grátis →"
     },
     {
         title: "Pet Shop",
@@ -30,8 +75,9 @@ const segments = [
         slug: "gestao-pet",
         desc: "Agendamento de serviços, controle de clientes e organização completa dos atendimentos.",
         icon: <Dog size={24} />,
-        color: "#ff0070",
-        directUrl: "https://app.kryonsystems.com.br/products/gestao-pet"
+        color: "#ff007f",
+        directUrl: "https://app.kryonsystems.com.br/products/gestao-pet",
+        trialText: "Começar Teste Grátis →"
     },
     {
         title: "Loja de Celulares",
@@ -40,7 +86,8 @@ const segments = [
         desc: "Controle de estoque, ordens de serviço e gestão completa da assistência técnica.",
         icon: <Smartphone size={24} />,
         color: "#7000ff",
-        directUrl: "https://app.kryonsystems.com.br/products/tech-assist"
+        directUrl: "https://app.kryonsystems.com.br/products/tech-assist",
+        trialText: "Começar Teste Grátis →"
     },
     {
         title: "Loja de Roupas",
@@ -49,7 +96,8 @@ const segments = [
         desc: "Controle de produtos, vendas e organização do negócio.",
         icon: <ShoppingBag size={24} />,
         color: "#ffbd2e",
-        directUrl: "https://app.kryonsystems.com.br/products/fashion-manager"
+        directUrl: "https://app.kryonsystems.com.br/products/fashion-manager",
+        trialText: "Começar Teste Grátis →"
     },
     {
         title: "Fotógrafos",
@@ -58,44 +106,8 @@ const segments = [
         desc: "Galeria online segura com marca d'água automática e seleção de fotos sem download.",
         icon: <Camera size={24} />,
         color: "#27c93f",
-        directUrl: "https://app.kryonsystems.com.br/products/galeria-pro"
-    },
-    {
-        title: "Lava Rápido",
-        product: "Agendamento Online",
-        slug: "lava-rapido",
-        desc: "Agendamento online inteligente, gestão de OS e controle financeiro completo para seu lava jato.",
-        icon: <Car size={24} />,
-        color: "#2e6aff",
-        directUrl: "https://brilho-magico-saas.vercel.app/cadastro",
-        trialText: "Testar 30 Dias Grátis \u2192"
-    },
-    {
-        title: "Loja de Decoração",
-        product: "Decor Manager",
-        slug: "decor-manager",
-        desc: "Controle de estoque, orçamentos personalizados e gestão de entregas.",
-        icon: <Armchair size={24} />,
-        color: "#ff8c00",
-        directUrl: "https://app.kryonsystems.com.br/products/decor-manager"
-    },
-    {
-        title: "Oficina Mecânica",
-        product: "Auto Gestor",
-        slug: "mechanic",
-        desc: "Ordens de serviço, controle de peças e histórico de manutenção veicular.",
-        icon: <Wrench size={24} />,
-        color: "#ff3d00",
-        directUrl: "https://app.kryonsystems.com.br/products/mechanic"
-    },
-    {
-        title: "Advogados",
-        product: "Legal Desk",
-        slug: "legal-desk",
-        desc: "Gestão de processos, agenda de audiências e controle de prazos.",
-        icon: <Scale size={24} />,
-        color: "#8c52ff",
-        directUrl: "https://app.kryonsystems.com.br/products/legal-desk"
+        directUrl: "https://app.kryonsystems.com.br/products/galeria-pro",
+        trialText: "Começar Teste Grátis →"
     }
 ];
 
@@ -175,6 +187,11 @@ const Segments = () => {
                                         <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight truncate">
                                             {item.product}
                                         </h3>
+                                        {item.subtitle && (
+                                            <p className="text-xs font-semibold text-slate-300 mt-0.5">
+                                                {item.subtitle}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
 
@@ -196,7 +213,7 @@ const Segments = () => {
                                 onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
                                 onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                             >
-                                {item.trialText || "Testar 30 Dias Grátis \u2192"}
+                                {item.trialText || "Começar Teste Grátis →"}
                             </a>
                         </motion.div>
                     ))}
