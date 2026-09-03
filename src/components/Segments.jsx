@@ -67,7 +67,7 @@ const segments = [
     },
     {
         title: "FOTÓGRAFOS",
-        product: "Kryon Fotos",
+        product: "Kryon Fotos — Studio Pro",
         slug: "galeria-pro",
         subtitle: "Galeria Profissional para Fotógrafos",
         desc: "Crie galerias, entregue fotos aos clientes e organize seleção e compartilhamento em um só lugar.",

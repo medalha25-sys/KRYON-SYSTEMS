@@ -57,7 +57,7 @@ const Subscribe = () => {
         },
         {
             category: "FOTÓGRAFOS",
-            title: "Kryon Fotos",
+            title: "Kryon Fotos — Studio Pro",
             slug: "galeria-pro",
             description: "Crie galerias, entregue fotos aos clientes e organize seleção e compartilhamento em um só lugar.",
             niches: ["Fotógrafos de Casamentos", "Ensaios & Família", "Eventos & Formaturas", "Festas & Aniversários", "Estúdios Fotográficos"],
