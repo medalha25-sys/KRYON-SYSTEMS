@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import { Building2 } from 'lucide-react'
-import { AdminSidebar } from '@/components/admin/AdminSidebar'
-import { MobileBottomNav } from '@/components/admin/MobileBottomNav'
+import { ConcreteSidebar } from './components/ConcreteSidebar'
+import { ConcreteMobileNav } from './components/ConcreteMobileNav'
 import { PWARegister } from './PWARegister'
 
 export default async function ConcreteLayout({
@@ -51,11 +51,11 @@ export default async function ConcreteLayout({
     <div className="flex min-h-screen bg-neutral-950 text-slate-200 font-sans pb-20 md:pb-0">
       {/* Sidebar - Hidden on mobile */}
       <div className="hidden md:block">
-        <AdminSidebar userEmail={user?.email} />
+        <ConcreteSidebar userEmail={user?.email} />
       </div>
       
       {/* Mobile Nav */}
-      <MobileBottomNav />
+      <ConcreteMobileNav />
 
       <main className="flex-1 overflow-auto">
         <header className="bg-neutral-900/50 backdrop-blur-md border-b border-neutral-800/50 p-4 md:p-6 flex justify-between items-center sticky top-0 z-40">

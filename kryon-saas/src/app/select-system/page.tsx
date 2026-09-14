@@ -72,13 +72,7 @@ function SelectSystemContent() {
            return
         }
 
-        // 1.5 Handle Super Admin (Only redirect if they don't have a specific org context they are trying to access)
-        // If they are strictly super admin and just want the dashboard
-        if (profile?.is_super_admin && !profile?.organization_id) {
-             console.log('SELECT SYSTEM: Super Admin bypass to dashboard')
-             router.push('/super-admin')
-             return
-        }
+        // 1.5 Super Admin continues to system selector
 
         // 2. Fetch subscriptions with product details for this organization
         // Resolve PGRST201 by specifying the foreign key (product_id)
@@ -132,10 +126,13 @@ function SelectSystemContent() {
         }
 
         if (productsData.length === 0) {
-            // Case 1: Super Admin with no products can still go to super-admin
+            // Case 1: Super Admin with no specific org products gets all platform products
             if (profile?.is_super_admin) {
-                router.push('/super-admin')
-                return
+                const { data: allProds } = await supabase.from('products').select('*')
+                if (allProds && allProds.length > 0) {
+                  setProducts(allProds as Product[])
+                  return
+                }
             }
             // Case 2: Regular user with no products
             console.warn('SELECT SYSTEM: No active subscriptions found.')

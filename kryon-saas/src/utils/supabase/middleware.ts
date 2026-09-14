@@ -158,7 +158,7 @@ export async function updateSession(request: NextRequest) {
     // 3.2. System/Root Redirection
     if (request.nextUrl.pathname === '/') {
         const url = request.nextUrl.clone();
-        url.pathname = isSuperAdmin ? '/super-admin' : '/select-system';
+        url.pathname = '/select-system';
         return NextResponse.redirect(url);
     }
 
@@ -172,30 +172,6 @@ export async function updateSession(request: NextRequest) {
         const url = request.nextUrl.clone();
         url.pathname = '/assinar';
         return NextResponse.redirect(url);
-      }
-    }
-
-    // 3.4. Admin & Super Admin Route Protection
-    if (request.nextUrl.pathname.startsWith('/admin') || request.nextUrl.pathname.startsWith('/super-admin')) {
-      if (request.nextUrl.pathname === '/admin' && isSuperAdmin) {
-          const url = request.nextUrl.clone();
-          url.pathname = '/super-admin';
-          return NextResponse.redirect(url);
-      }
-
-      if (request.nextUrl.pathname.startsWith('/super-admin') && !isSuperAdmin) {
-           const url = request.nextUrl.clone();
-           url.pathname = '/select-system';
-           return NextResponse.redirect(url);
-      }
-      
-      if (request.nextUrl.pathname.startsWith('/admin') && !request.nextUrl.pathname.startsWith('/super-admin')) {
-          if (profile?.role !== 'admin' && !isSuperAdmin) {
-              const url = request.nextUrl.clone();
-              url.pathname = '/select-system';
-              url.searchParams.set('message', 'Acesso negado: Apenas administradores podem acessar esta área.');
-              return NextResponse.redirect(url);
-          }
       }
     }
 

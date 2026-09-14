@@ -110,9 +110,8 @@ export default function SelectOrganizationPage() {
           }
 
           if (profile?.is_super_admin) {
-              // Set cookie for super admin too if needed, though they might not need it for isolation
               document.cookie = `org_id=${orgId}; path=/; max-age=31536000; SameSite=Lax`;
-              router.push('/super-admin')
+              router.push('/select-system')
               return
           }
 
