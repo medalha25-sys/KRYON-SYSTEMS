@@ -197,10 +197,17 @@ export function CommissionHistorySection({
                           <p className="font-bold text-white group-hover:text-blue-300 transition-colors">
                             {order.shopSlug}
                           </p>
-                          <span className="inline-flex items-center gap-1 text-[10px] text-amber-400/90 font-medium">
-                            <AlertCircle size={10} />
-                            Vínculo pendente
-                          </span>
+                          {order.vinculoStatus === 'pendente' ? (
+                            <span className="inline-flex items-center gap-1 text-[10px] text-amber-400/90 font-medium">
+                              <AlertCircle size={10} />
+                              Vínculo pendente
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 text-[10px] text-emerald-400/90 font-medium">
+                              <CheckCircle2 size={10} />
+                              {order.empresa}
+                            </span>
+                          )}
                         </div>
                       </div>
                     </td>

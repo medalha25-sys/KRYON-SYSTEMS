@@ -93,7 +93,7 @@ export async function getKryonAdminOverview(
 
       supabase
         .from('shops')
-        .select('id, slug, store_type, plan, trial_ate, created_at')
+        .select('id, slug, store_type, plan, trial_ate, created_at, organization_id')
         .order('created_at', { ascending: false }),
 
       supabase
@@ -448,14 +448,26 @@ export async function getKryonAdminOverview(
   }
 
   // Insight 2: Estrutura de Empresas e Vínculos
-  if (shopsCount > 0) {
+  const pendingLinkShops = shops.filter(s => !(s as any).organization_id)
+  const linkedShops = shops.filter(s => !!(s as any).organization_id)
+
+  if (pendingLinkShops.length > 0) {
     intelligenceInsights.push({
       id: 'real-2',
       type: 'recommendation',
       tag: 'Estrutura Multi-Tenant',
-      title: `${shopsCount} estabelecimento(s) do Lava Rápido com vínculo pendente.`,
-      description: `A base operacional possui ${shopsCount} shop(s) sem chave estrangeira associando-os diretamente a uma Organização Kryon da base central.`,
+      title: `${pendingLinkShops.length} estabelecimento(s) com vínculo pendente.`,
+      description: `Existem ${pendingLinkShops.length} shop(s) operacionais aguardando associação formal a uma Organização Kryon na base central.`,
       actionText: 'Auditar Vínculos'
+    })
+  } else if (shopsCount > 0 && linkedShops.length === shopsCount) {
+    intelligenceInsights.push({
+      id: 'real-2',
+      type: 'positive',
+      tag: 'Estrutura Multi-Tenant',
+      title: `Todos os ${shopsCount} estabelecimentos estão vinculados.`,
+      description: `Vínculo formal 100% íntegro entre Organizações Centrais e Estabelecimentos Operacionais do Lava Rápido.`,
+      actionText: 'Ver Relacionamentos'
     })
   } else if (organizationsCount > 0) {
     intelligenceInsights.push({
@@ -551,15 +563,33 @@ export async function getKryonAdminOverview(
         ? 'Restrito'
         : (shop.plan === 'trial' ? 'Período de teste' : 'Ativo')
 
+      // Verificar vínculo formal com a organização central (shops.organization_id -> organizations.id)
+      const shopOrgId = (shop as any).organization_id
+      const linkedOrg = shopOrgId
+        ? organizations.find(o => o.id === shopOrgId)
+        : null
+      const isVinculado = !!linkedOrg
+      const vinculoNome = linkedOrg
+        ? (linkedOrg.name || linkedOrg.legal_name || 'Organização Kryon')
+        : 'Vínculo pendente'
+
+      const productName = shop.store_type === 'agenda_facil_ai'
+        ? 'Kryon Agenda'
+        : (shop.store_type === 'lava_rapido' || !shop.store_type ? 'Kryon Lava Rápido' : `Kryon ${shop.store_type}`)
+
+      const commercialModel = shop.store_type === 'agenda_facil_ai'
+        ? 'Assinatura Mensal'
+        : 'Comissão (R$ 2,00/lavagem)'
+
       companies.push({
         id: shop.id || `shop-${idx}`,
         name: shop.slug ? shop.slug.replace(/-/g, ' ').toUpperCase() : `Lava Rápido #${idx + 1}`,
         entityType: 'shop_operacional',
         entityTypeLabel: 'Estabelecimento Operacional',
-        vinculoStatus: 'pendente',
-        vinculoNome: 'Vínculo pendente',
-        product: 'Kryon Lava Rápido',
-        model: 'Comissão (R$ 2,00/lavagem)',
+        vinculoStatus: isVinculado ? 'vinculado' : 'pendente',
+        vinculoNome,
+        product: productName,
+        model: commercialModel,
         status: shopStatus,
         daysOverdue: 0,
         access: shop.plan === 'bloqueado' ? 'Bloqueado' : 'Completo',
@@ -590,13 +620,23 @@ export async function getKryonAdminOverview(
     const shop = shops.find(s => s.id === order.tenant_id)
     const shopSlug = shop?.slug ? shop.slug.replace(/-/g, ' ').toUpperCase() : `Estabelecimento #${order.tenant_id ? order.tenant_id.slice(0, 8) : idx + 1}`
 
+    // Identificar organização proprietária através do shop vinculado
+    const shopOrgId = shop ? (shop as any).organization_id : null
+    const linkedOrg = shopOrgId
+      ? organizations.find(o => o.id === shopOrgId)
+      : null
+    const isVinculado = !!linkedOrg
+    const empresaNome = linkedOrg
+      ? (linkedOrg.name || linkedOrg.legal_name || 'Organização Kryon')
+      : 'Vínculo pendente'
+
     return {
       id: order.id || `order-${idx}`,
       orderNumber: order.id ? `OS-${order.id.slice(0, 8).toUpperCase()}` : `OS-#${idx + 1}`,
       date: isNaN(orderDate.getTime()) ? 'Data não informada' : orderDate.toLocaleDateString('pt-BR'),
       time: isNaN(orderDate.getTime()) ? '--:--' : orderDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-      empresa: 'Vínculo pendente',
-      vinculoStatus: 'pendente',
+      empresa: empresaNome,
+      vinculoStatus: isVinculado ? 'vinculado' : 'pendente',
       shopSlug,
       produto: 'Kryon Lava Rápido',
       statusLavagem: order.status || 'pending',
