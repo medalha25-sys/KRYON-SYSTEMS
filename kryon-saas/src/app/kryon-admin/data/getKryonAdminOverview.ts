@@ -19,6 +19,7 @@ import {
 function getPeriodDateRange(period: PeriodFilter): { startDate: Date; endDate: Date; label: string } {
   const now = new Date()
   const endDate = new Date(now)
+  endDate.setHours(23, 59, 59, 999)
   let startDate = new Date(now)
   let label = 'Este mês'
 
