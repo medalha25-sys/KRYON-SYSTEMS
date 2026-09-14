@@ -55,7 +55,8 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname.startsWith('/products/agenda-facil/landing') ||
     request.nextUrl.pathname.startsWith('/agenda-facil') ||
     request.nextUrl.pathname.startsWith('/agendar-lavagem') ||
-    request.nextUrl.pathname.startsWith('/agendar');
+    request.nextUrl.pathname.startsWith('/agendar') ||
+    request.nextUrl.pathname.startsWith('/kryon-admin');
 
   const isFlowPage = 
     request.nextUrl.pathname === '/select-organization' ||
@@ -158,8 +159,18 @@ export async function updateSession(request: NextRequest) {
     // 3.2. System/Root Redirection
     if (request.nextUrl.pathname === '/') {
         const url = request.nextUrl.clone();
-        url.pathname = '/select-system';
+        url.pathname = isSuperAdmin ? '/kryon-admin' : '/select-system';
         return NextResponse.redirect(url);
+    }
+
+    // 3.3. Kryon Admin Protection (Exclusive for Platform Super Admin)
+    if (request.nextUrl.pathname.startsWith('/kryon-admin')) {
+        if (!isSuperAdmin) {
+            const url = request.nextUrl.clone();
+            url.pathname = '/select-system';
+            url.searchParams.set('message', 'Acesso restrito: Apenas a administração central da Kryon Systems tem acesso.');
+            return NextResponse.redirect(url);
+        }
     }
 
     // 3.3. Subscription & Trial Checks
