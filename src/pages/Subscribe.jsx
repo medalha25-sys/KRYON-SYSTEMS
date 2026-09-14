@@ -266,6 +266,8 @@ const Subscribe = () => {
                             {/* Link/Action */}
                             <a 
                                 href={system.link} 
+                                target={system.link !== '#' ? "_blank" : undefined}
+                                rel={system.link !== '#' ? "noopener noreferrer" : undefined}
                                 style={{ 
                                     display: 'flex', 
                                     alignItems: 'center', 

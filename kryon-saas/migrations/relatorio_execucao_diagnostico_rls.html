@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório de Execução do Teste de Isolamento RLS via API</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 12mm 14mm 14mm 14mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #1e293b;
+            font-size: 8.2pt;
+            line-height: 1.38;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #0284c7;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-box {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #0284c7 0%, #6366f1 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 12pt;
+        }
+
+        .brand-text h1 {
+            font-size: 13pt;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-text p {
+            font-size: 7.2pt;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .doc-meta {
+            text-align: right;
+            font-size: 7.2pt;
+            color: #64748b;
+        }
+
+        .doc-meta strong {
+            color: #0f172a;
+        }
+
+        .badge-status {
+            display: inline-block;
+            background-color: #fef3c7;
+            color: #b45309;
+            border: 1px solid #fde68a;
+            padding: 2px 7px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 7.2pt;
+            margin-top: 2px;
+        }
+
+        .title-section {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #0284c7;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-bottom: 10px;
+        }
+
+        .title-section h2 {
+            font-size: 11pt;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 2px;
+        }
+
+        .title-section p {
+            font-size: 7.8pt;
+            color: #475569;
+        }
+
+        .section-title {
+            font-size: 9pt;
+            font-weight: 700;
+            color: #0f172a;
+            border-bottom: 1.5px solid #e2e8f0;
+            padding-bottom: 3px;
+            margin-top: 8px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 5px;
+            height: 10px;
+            background: #0284c7;
+            border-radius: 2px;
+        }
+
+        .block-card {
+            border-radius: 6px;
+            padding: 8px 10px;
+            margin-bottom: 8px;
+            font-size: 7.5pt;
+            border: 1px solid #e2e8f0;
+        }
+
+        .block-card.auth {
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+        }
+
+        .block-card.diag {
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .block-card.sol {
+            background: #f0f9ff;
+            border-left: 4px solid #0284c7;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 8px;
+            font-size: 7.4pt;
+        }
+
+        th {
+            background-color: #0f172a;
+            color: #ffffff;
+            text-align: left;
+            padding: 5px 6px;
+            font-weight: 700;
+            font-size: 7.2pt;
+            letter-spacing: 0.02em;
+        }
+
+        th:first-child { border-top-left-radius: 4px; }
+        th:last-child { border-top-right-radius: 4px; }
+
+        td {
+            padding: 4.5px 6px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        .tag-info {
+            background-color: #fef3c7;
+            color: #92400e;
+            font-weight: 700;
+            padding: 1px 4px;
+            border-radius: 4px;
+            font-size: 6.8pt;
+            border: 1px solid #fde68a;
+            display: inline-block;
+        }
+
+        .code-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 6px 8px;
+            border-radius: 5px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 6.8pt;
+            line-height: 1.3;
+            margin-top: 4px;
+            border: 1px solid #334155;
+        }
+
+        .signature-box {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .signature-text h4 {
+            font-size: 8pt;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .signature-text p {
+            font-size: 7pt;
+            color: #475569;
+        }
+
+        .footer {
+            margin-top: 8px;
+            border-top: 1px solid #cbd5e1;
+            padding-top: 5px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 6.8pt;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="brand">
+            <div class="logo-box">K</div>
+            <div class="brand-text">
+                <h1>Kryon Systems</h1>
+                <p>Security & Multi-Tenant Audit Division</p>
+            </div>
+        </div>
+        <div class="doc-meta">
+            <div><strong>Documento:</strong> REL-EXEC-ISO-006</div>
+            <div><strong>Data:</strong> 03/09/2026 18:05 (UTC-3)</div>
+            <div class="badge-status">🔍 RELATÓRIO TÉCNICO DE EXECUÇÃO VIA API</div>
+        </div>
+    </div>
+
+    <!-- Title Section -->
+    <div class="title-section">
+        <h2>Relatório de Execução & Diagnóstico de RLS via Supabase REST API</h2>
+        <p><strong>Módulo:</strong> Kryon Lava Rápido | <strong>Banco:</strong> Sistemas Kryon (<code>pgpobxvkojawrstadrel.supabase.co</code>) | <strong>Modo:</strong> API Client (Zero Service Role)</p>
+    </div>
+
+    <!-- 1. IDENTIDADES AUTENTICADAS -->
+    <div class="section-title">1. Identidades Autenticadas Reais no Supabase Auth</div>
+    <div class="block-card auth">
+        <p>✔ <strong>USER_A:</strong> <code>teste_salinas_a@kryonsystems.internal</code> &bull; UUID: <code>9e3f3003-08ac-4ee5-98fa-71a918fa16b5</code> (JWT emitido com sucesso).</p>
+        <p>✔ <strong>USER_B:</strong> <code>teste_estetica_b@kryonsystems.internal</code> &bull; UUID: <code>703d459c-b371-4d51-a9d2-c5e9e210eeae</code> (JWT emitido com sucesso).</p>
+        <p>✔ <strong>ANÔNIMO:</strong> Instância <code>clientAnon</code> (Role <code>anon</code> / Sem JWT) configurada.</p>
+    </div>
+
+    <!-- 2. DIAGNÓSTICO DA CAMADA POSTGREST -->
+    <div class="section-title">2. Diagnóstico Técnico na Avaliação de Policies (PostgreSQL 42P17)</div>
+    <div class="block-card diag">
+        <h4>⚠️ Detecção de Auto-Recursão na Policy de organization_members</h4>
+        <p>Durante a chamada via API PostgREST sob a role <code>authenticated</code>, o PostgreSQL retornou o erro <code>42P17 (infinite recursion detected in policy for relation "organization_members")</code>.</p>
+        <p><strong>Causa Raiz:</strong> A policy prévia de fundação <code>"Membros podem ver outros membros da mesma organização"</code> em <code>organization_members</code> executa um <code>SELECT organization_id FROM public.organization_members</code>. Ao avaliar a própria tabela dentro da policy da mesma tabela, o PostgreSQL entra em loop recursivo.</p>
+    </div>
+
+    <!-- 3. MATRIZ DE CENÁRIOS -->
+    <div class="section-title">3. Matriz dos 8 Cenários sob a Ótica da API PostgREST</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 4%;">#</th>
+                <th style="width: 26%;">Cenário Testado</th>
+                <th style="width: 22%;">Identidade Ativa</th>
+                <th style="width: 26%;">Chamada HTTP / PostgREST</th>
+                <th style="width: 22%;">Diagnóstico de Execução</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>01</strong></td>
+                <td>Leitura Própria Org A</td>
+                <td><code>USER_A</code> (JWT Real)</td>
+                <td><code>GET /services?tenant_id=eq.OrgA</code></td>
+                <td><span class="tag-info">PENDENTE</span> Aguarda ajuste de recursão</td>
+            </tr>
+            <tr>
+                <td><strong>02</strong></td>
+                <td>Leitura Própria Org B</td>
+                <td><code>USER_B</code> (JWT Real)</td>
+                <td><code>GET /services?tenant_id=eq.OrgB</code></td>
+                <td><span class="tag-info">PENDENTE</span> Aguarda ajuste de recursão</td>
+            </tr>
+            <tr>
+                <td><strong>03</strong></td>
+                <td>Leitura Cruzada Serviços (A no B)</td>
+                <td><code>USER_A</code> (JWT Real)</td>
+                <td><code>GET /services?tenant_id=eq.OrgB</code></td>
+                <td><span class="tag-info">PENDENTE</span> Aguarda ajuste de recursão</td>
+            </tr>
+            <tr>
+                <td><strong>04</strong></td>
+                <td>Leitura Cruzada Clientes (B no A)</td>
+                <td><code>USER_B</code> (JWT Real)</td>
+                <td><code>GET /customers?tenant_id=eq.OrgA</code></td>
+                <td><span class="tag-info">PENDENTE</span> Aguarda ajuste de recursão</td>
+            </tr>
+            <tr>
+                <td><strong>05</strong></td>
+                <td>Inserção Cruzada de Serviço (A no B)</td>
+                <td><code>USER_A</code> (JWT Real)</td>
+                <td><code>POST /services (Org B)</code></td>
+                <td><span class="tag-info">PENDENTE</span> Aguarda ajuste de recursão</td>
+            </tr>
+            <tr>
+                <td><strong>06</strong></td>
+                <td>Update Cruzado de Cliente (A no B)</td>
+                <td><code>USER_A</code> (JWT Real)</td>
+                <td><code>PATCH /customers (Org B)</code></td>
+                <td><span class="tag-info">PENDENTE</span> Aguarda ajuste de recursão</td>
+            </tr>
+            <tr>
+                <td><strong>07</strong></td>
+                <td>Delete Cruzado Agendamento (B no A)</td>
+                <td><code>USER_B</code> (JWT Real)</td>
+                <td><code>DELETE /appointments (Org A)</code></td>
+                <td><span class="tag-info">PENDENTE</span> Aguarda ajuste de recursão</td>
+            </tr>
+            <tr>
+                <td><strong>08</strong></td>
+                <td>RPC Anti Cross-Tenant (Anon)</td>
+                <td><code>clientAnon</code> (Role anon)</td>
+                <td><code>POST /rpc/create_public_appointment</code></td>
+                <td><span class="tag-info">PASS</span> Bloqueia serviço cruzado</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- 4. SOLUÇÃO RECOMENDADA -->
+    <div class="section-title">4. Solução Técnica Padrão Supabase (Eliminação da Recursão)</div>
+    <div class="block-card sol">
+        <h4>✔ Criação de Função SECURITY DEFINER Helper</h4>
+        <p>Para eliminar a recursão no PostgreSQL sem abrir mão de 100% da segurança RLS, a prática recomendada pelo Supabase é encapsular a busca de organizações em uma função <code>SECURITY DEFINER</code> ou simplificar a policy:</p>
+        <div class="code-box">
+CREATE OR REPLACE FUNCTION public.get_user_organization_ids()
+RETURNS SETOF UUID AS $$
+    SELECT organization_id FROM public.organization_members WHERE user_id = auth.uid() AND status = 'active';
+$$ LANGUAGE sql SECURITY DEFINER STABLE SET search_path = public, pg_temp;
+
+-- Policy em organization_members sem recursão:
+CREATE POLICY "Membros visualizam seus registros de membros" ON public.organization_members
+    FOR SELECT USING (user_id = auth.uid() OR organization_id IN (SELECT public.get_user_organization_ids()));
+        </div>
+    </div>
+
+    <!-- Signatures -->
+    <div class="signature-box">
+        <div class="signature-text">
+            <h4>Parecer Técnico de Auditoria: Tripartite (Você + Antigravity + ChatGPT)</h4>
+            <p>Identidades reais criadas e autenticadas. Causa raiz de recursão mapeada com precisão para autorização de ajuste.</p>
+        </div>
+        <div style="text-align: right; font-size: 7pt; color: #0284c7; font-weight: 700;">
+            KRYON SYSTEMS &bull; PILOTO V5.1<br>
+            SECURITY DIVISION
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div>Kryon Systems &bull; Diagnóstico de Execução RLS via API &bull; kryonsystems.com.br</div>
+        <div>Página 1 de 1 &bull; Gerado em 03/09/2026</div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Análise Técnica: Constraint de Papéis em organization_members</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 12mm 14mm 14mm 14mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #1e293b;
+            font-size: 8.2pt;
+            line-height: 1.38;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #0284c7;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-box {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #0284c7 0%, #6366f1 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 12pt;
+        }
+
+        .brand-text h1 {
+            font-size: 13pt;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-text p {
+            font-size: 7.2pt;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .doc-meta {
+            text-align: right;
+            font-size: 7.2pt;
+            color: #64748b;
+        }
+
+        .doc-meta strong {
+            color: #0f172a;
+        }
+
+        .badge-status {
+            display: inline-block;
+            background-color: #fef3c7;
+            color: #b45309;
+            border: 1px solid #fde68a;
+            padding: 2px 7px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 7.2pt;
+            margin-top: 2px;
+        }
+
+        .title-section {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #0284c7;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-bottom: 10px;
+        }
+
+        .title-section h2 {
+            font-size: 11pt;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 2px;
+        }
+
+        .title-section p {
+            font-size: 7.8pt;
+            color: #475569;
+        }
+
+        .section-title {
+            font-size: 9pt;
+            font-weight: 700;
+            color: #0f172a;
+            border-bottom: 1.5px solid #e2e8f0;
+            padding-bottom: 3px;
+            margin-top: 8px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 5px;
+            height: 10px;
+            background: #0284c7;
+            border-radius: 2px;
+        }
+
+        .block-card {
+            border-radius: 6px;
+            padding: 8px 10px;
+            margin-bottom: 8px;
+            font-size: 7.5pt;
+            border: 1px solid #e2e8f0;
+        }
+
+        .block-card.diag {
+            background: #fef2f2;
+            border-left: 4px solid #ef4444;
+        }
+
+        .block-card.nature {
+            background: #f0f9ff;
+            border-left: 4px solid #0284c7;
+        }
+
+        .block-card.sep {
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+        }
+
+        .code-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 6px 8px;
+            border-radius: 5px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 6.6pt;
+            line-height: 1.28;
+            margin-top: 4px;
+            border: 1px solid #334155;
+        }
+
+        .signature-box {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .signature-text h4 {
+            font-size: 8pt;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .signature-text p {
+            font-size: 7pt;
+            color: #475569;
+        }
+
+        .footer {
+            margin-top: 8px;
+            border-top: 1px solid #cbd5e1;
+            padding-top: 5px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 6.8pt;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="brand">
+            <div class="logo-box">K</div>
+            <div class="brand-text">
+                <h1>Kryon Systems</h1>
+                <p>Security & Multi-Tenant Audit Division</p>
+            </div>
+        </div>
+        <div class="doc-meta">
+            <div><strong>Documento:</strong> REL-ANALISE-CONSTRAINT-015</div>
+            <div><strong>Data:</strong> 03/09/2026 19:28 (UTC-3)</div>
+            <div class="badge-status">🔍 ANÁLISE DE SCHEMA & SEPARAÇÃO CONCLUÍDA</div>
+        </div>
+    </div>
+
+    <!-- Title Section -->
+    <div class="title-section">
+        <h2>Análise da Constraint de Papéis em organization_members (Erro 23514)</h2>
+        <p><strong>Escopo:</strong> Diagnóstico de Origem, Natureza de Produção vs Teste e Separação de Scripts</p>
+    </div>
+
+    <!-- 1. ORIGEM DA CONSTRAINT -->
+    <div class="section-title">1. Origem Histórica e Causa do Erro 23514</div>
+    <div class="block-card diag">
+        <h4>🔴 Constraint Legada de 2024 (Multi-Clinic):</h4>
+        <p>A tabela <code>public.organization_members</code> foi criada originalmente em 2024 com a constraint restritiva: <code>CHECK (role IN ('admin', 'professional', 'secretary'))</code>.</p>
+        <p>Na migração de Fundação Central (2026), o comando <code>CREATE TABLE IF NOT EXISTS</code> não recriou a tabela existente, mantendo a regra restritiva de 2024 no banco.</p>
+        <p>Quando o trigger <code>handle_new_organization_owner()</code> do V5.1 tentou inserir <code>role = 'owner'</code> durante o cadastro da organização, o PostgreSQL bloqueou a inserção.</p>
+    </div>
+
+    <!-- 2. NATUREZA DA ALTERAÇÃO -->
+    <div class="section-title">2. Natureza da Correção: Dependência do V5.1 ou Apenas Teste?</div>
+    <div class="block-card nature">
+        <h4>🔵 Conclusão: É uma dependência estrutural de PRODUÇÃO do ecossistema V5.1</h4>
+        <p>• <strong>Em Produção:</strong> Sempre que qualquer cliente real assinar e criar uma organização, o trigger <code>handle_new_organization_owner()</code> tentará vincular o criador com <code>role = 'owner'</code>. Sem a atualização da constraint, o onboarding real de produção falhará com erro 23514.</p>
+        <p>• <strong>Compatibilidade Total:</strong> A constraint atualizada unifica o modelo SaaS Kryon (<code>'owner', 'admin', 'member', 'operator', 'viewer'</code>) com as roles legadas (<code>'professional', 'secretary'</code>), garantindo 100% de retrocompatibilidade.</p>
+    </div>
+
+    <!-- 3. SEPARAÇÃO ESTRUTURAL -->
+    <div class="section-title">3. Separação Estrita dos Scripts em Repouso</div>
+    <div class="block-card sep">
+        <p>✔ <strong>Script DDL de Schema:</strong> <code>ajuste_constraint_organization_members_role.sql</code> (Contém apenas a atualização DDL da constraint de papéis — isolado e aguardando aprovação).</p>
+        <p>✔ <strong>Script de Fixtures de Teste:</strong> <code>setup_fixtures_multitenant.sql</code> (100% DML puro, contendo apenas a inserção dos dados de teste temporários, zero comandos <code>ALTER TABLE</code>).</p>
+    </div>
+
+    <!-- Signatures -->
+    <div class="signature-box">
+        <div class="signature-text">
+            <h4>Alinhamento Técnico Tripartite (Você + Antigravity + ChatGPT)</h4>
+            <p>Diagnóstico concluído. Scripts rigorosamente separados e em repouso. Aguardando revisão.</p>
+        </div>
+        <div style="text-align: right; font-size: 7pt; color: #0284c7; font-weight: 700;">
+            KRYON SYSTEMS &bull; PILOTO V5.1<br>
+            SECURITY DIVISION
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div>Kryon Systems &bull; Análise de Constraint de Papéis &bull; kryonsystems.com.br</div>
+        <div>Página 1 de 1 &bull; Gerado em 03/09/2026</div>
+    </div>
+
+</body>
+</html>

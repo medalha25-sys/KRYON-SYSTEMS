@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Auditoria Read-Only de Políticas RLS - Kryon Systems</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 10mm 12mm 12mm 12mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #1e293b;
+            font-size: 7.5pt;
+            line-height: 1.35;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #0284c7;
+            padding-bottom: 5px;
+            margin-bottom: 8px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-box {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #0284c7 0%, #6366f1 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 10pt;
+        }
+
+        .brand-text h1 {
+            font-size: 11pt;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-text p {
+            font-size: 6.5pt;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .doc-meta {
+            text-align: right;
+            font-size: 6.5pt;
+            color: #64748b;
+        }
+
+        .doc-meta strong {
+            color: #0f172a;
+        }
+
+        .badge-read-only {
+            display: inline-block;
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 6.5pt;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .section {
+            margin-bottom: 8px;
+        }
+
+        .section-title {
+            font-size: 8.5pt;
+            font-weight: 700;
+            color: #0f172a;
+            border-left: 3px solid #0284c7;
+            padding-left: 5px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            margin-bottom: 6px;
+        }
+
+        .card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 5px 6px;
+            text-align: center;
+        }
+
+        .card-label {
+            font-size: 6pt;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 1px;
+        }
+
+        .card-value {
+            font-size: 7.5pt;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .card-value.highlight { color: #0284c7; }
+        .card-value.danger { color: #dc2626; }
+        .card-value.success { color: #059669; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 6.5pt;
+            margin-top: 2px;
+            margin-bottom: 5px;
+        }
+
+        th {
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            text-align: left;
+            padding: 3.5px 5px;
+            border-bottom: 1px solid #cbd5e1;
+            font-size: 6pt;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 3px 5px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #334155;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) td {
+            background: #f8fafc;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-size: 5.5pt;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-remove { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .status-keep { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+
+        .code-box {
+            background: #0f172a;
+            color: #f8fafc;
+            padding: 5px 7px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 6pt;
+            line-height: 1.3;
+            overflow-x: auto;
+            margin: 3px 0 5px 0;
+            border: 1px solid #334155;
+        }
+
+        .callout-box {
+            background: #eff6ff;
+            border-left: 3px solid #3b82f6;
+            padding: 5px 7px;
+            border-radius: 0 4px 4px 0;
+            font-size: 6.8pt;
+            margin: 4px 0;
+            color: #1e3a8a;
+        }
+
+        .callout-box strong {
+            color: #1d4ed8;
+        }
+
+        .footer {
+            margin-top: 6px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 3px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 6pt;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="brand">
+            <div class="logo-box">K</div>
+            <div class="brand-text">
+                <h1>KRYON SYSTEMS SAAS &mdash; AUDITORIA READ-ONLY DE POLICIES</h1>
+                <p>Mapeamento de Políticas RLS do Catálogo PostgreSQL &bull; Diagnóstico Tripartite</p>
+            </div>
+        </div>
+        <div class="doc-meta">
+            <div>Data: <strong>05/09/2026</strong></div>
+            <div>Ambiente: <strong>pgpobxvkojawrstadrel.supabase.co</strong></div>
+            <div class="badge-read-only">100% SELECT (Zero Mutações)</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="info-grid">
+            <div class="card">
+                <div class="card-label">Tabelas Inspecionadas</div>
+                <div class="card-value highlight">7 Tabelas Centrais</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Políticas Identificadas</div>
+                <div class="card-value highlight">Mapeamento Exaustivo</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Brechas Identificadas</div>
+                <div class="card-value danger">Policies Permissivas V2</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Status da Análise</div>
+                <div class="card-value success">Pronto para Revisão</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">1. Consulta SQL para Inspeção Direta no Catálogo (pg_policies)</div>
+        <div class="code-box">SELECT schemaname, tablename, policyname, permissive, roles, cmd, qual, with_check 
+FROM pg_policies 
+WHERE schemaname = 'public' 
+  AND tablename IN ('services', 'customers', 'appointments', 'feedbacks', 'organizations', 'organization_members', 'subscriptions')
+ORDER BY tablename, policyname;</div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">2. Tabela Comparativa: Policies Atuais vs Ação Recomendada</div>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 15%;">Tabela</th>
+                    <th style="width: 25%;">Policy Atual / Legada</th>
+                    <th style="width: 12%;">Deve ser Removida?</th>
+                    <th style="width: 25%;">Motivo Técnico / Causa de Falha</th>
+                    <th style="width: 23%;">Policy Substituta Proposta</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>services</code></td>
+                    <td>Serviços visíveis publicamente apenas de organizações ativas</td>
+                    <td><span class="status-badge status-remove">SIM (DROP)</span></td>
+                    <td><strong>Causa do FAIL Cenário 03</strong>: Permite SELECT irrestrito de qualquer tenant ativo.</td>
+                    <td>Membros consultam serviços da sua organização (via <code>is_user_member_of_org</code>)</td>
+                </tr>
+                <tr>
+                    <td><code>services</code></td>
+                    <td>Membros gerenciam serviços da sua organização (sem WITH CHECK)</td>
+                    <td><span class="status-badge status-remove">SIM (DROP)</span></td>
+                    <td><strong>Causa do FAIL Cenário 05</strong>: Não bloqueia INSERT com tenant_id de terceiros.</td>
+                    <td>Membros gerenciam serviços... (FOR ALL + <code>WITH CHECK</code> estrito)</td>
+                </tr>
+                <tr>
+                    <td><code>customers</code></td>
+                    <td>Gerenciamento de clientes pelo tenant / Membros gerenciam...</td>
+                    <td><span class="status-badge status-remove">SIM (DROP)</span></td>
+                    <td><strong>Causa dos FAILs Cenários 04 e 06</strong>: Falta de filtro estrito no SELECT e UPDATE.</td>
+                    <td>Membros gerenciam clientes... (FOR ALL + <code>USING / WITH CHECK</code>)</td>
+                </tr>
+                <tr>
+                    <td><code>appointments</code></td>
+                    <td>Agendamento público com validação estrita de integridade</td>
+                    <td><span class="status-badge status-remove">SIM (DROP)</span></td>
+                    <td><strong>Causa do FAIL Cenário 07</strong>: Como era FOR ALL aberta, permitiu DELETE cruzado.</td>
+                    <td>Membros gerenciam agendamentos... (FOR ALL estrito; anônimo usa RPC)</td>
+                </tr>
+                <tr>
+                    <td><code>feedbacks</code></td>
+                    <td>Membros visualizam feedbacks...</td>
+                    <td><span class="status-badge status-remove">SIM (DROP)</span></td>
+                    <td>Otimização de performance e segurança via função booleana central.</td>
+                    <td>Membros visualizam feedbacks... (via <code>is_user_member_of_org</code>)</td>
+                </tr>
+                <tr>
+                    <td><code>organization_members</code></td>
+                    <td>Membros podem ver outros membros...</td>
+                    <td><span class="status-badge status-remove">SIM (DROP)</span></td>
+                    <td><strong>Causa da auto-recursão RLS (42P17)</strong> ao consultar a própria tabela.</td>
+                    <td>Membros visualizam membros... (user_id = auth.uid() OR <code>is_user_member_of_org</code>)</td>
+                </tr>
+                <tr>
+                    <td><code>organizations</code></td>
+                    <td>Membros podem ver suas organizações / Owners atualizam</td>
+                    <td><span class="status-badge status-remove">SIM (DROP)</span></td>
+                    <td>Otimização para usar a função booleana sem dependência circular.</td>
+                    <td>Membros podem ver / Owners e admins podem atualizar...</td>
+                </tr>
+                <tr>
+                    <td><code>subscriptions</code></td>
+                    <td>Membros podem ver assinaturas da sua organização</td>
+                    <td><span class="status-badge status-remove">SIM (DROP)</span></td>
+                    <td>Otimização para usar a função booleana central.</td>
+                    <td>Membros podem ver assinaturas... (via <code>is_user_member_of_org</code>)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="callout-box">
+        <strong>Diagnóstico Técnico:</strong><br>
+        O script de hardening RLS precisa conter cláusulas explícitas de <code>DROP POLICY IF EXISTS</code> cobrindo <strong>todos os nomes legados identificados</strong> (incluindo <em>'Gerenciamento de clientes pelo tenant'</em>, <em>'Serviços visíveis publicamente apenas de organizações ativas'</em> e <em>'Agendamento público com validação estrita de integridade'</em>). Isso garantirá a remoção completa de quaisquer brechas residuais antes da criação das novas políticas restritivas.
+    </div>
+
+    <div class="footer">
+        <div>Kryon Systems &bull; Diagnóstico de Catálogo RLS</div>
+        <div>Página 1 de 1 &bull; 100% Read-Only Verification</div>
+    </div>
+
+</body>
+</html>

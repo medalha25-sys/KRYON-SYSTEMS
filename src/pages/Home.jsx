@@ -15,7 +15,7 @@ import PainPoints from '../components/PainPoints';
 import CreativeCalendar from '../components/CreativeCalendar';
 
 const Section = ({ children, id, className = "" }) => (
-  <section id={id} className={`py-24 ${className}`}>
+  <section id={id} className={`py-12 sm:py-16 md:py-20 lg:py-24 ${className}`}>
     <div className="container-custom">
       {children}
     </div>
@@ -44,15 +44,17 @@ const Home = () => {
             {/* 2. QUEM SOMOS */}
             <Section id="quem-somos" className="bg-[#08080a]">
                 <motion.div {...fadeIn} className="max-w-4xl mx-auto text-center">
-                    <h2 className="text-sm font-bold tracking-[0.2em] text-blue-500 mb-6 uppercase">Sobre a Kryon</h2>
-                    <h3 className="text-4xl md:text-5xl font-extrabold mb-10 tracking-tight">Tecnologia criada a partir de problemas reais</h3>
-                    <p className="text-gray-400 text-xl leading-relaxed mb-12">
+                    <h2 className="text-xs sm:text-sm font-bold tracking-[0.2em] text-blue-500 mb-4 sm:mb-6 uppercase">Sobre a Kryon</h2>
+                    <h3 className="text-2xl sm:text-3xl md:text-5xl font-extrabold mb-6 md:mb-10 tracking-tight leading-tight">
+                        Tecnologia criada a partir de problemas reais
+                    </h3>
+                    <p className="text-gray-400 text-sm sm:text-base md:text-xl leading-relaxed mb-8 md:mb-12">
                         A Kryon Systems nasce da necessidade de negócios que sofrem com sistemas lentos e complexos. 
                         Nossa missão é simplificar a gestão através de plataformas SaaS de alta performance, 
                         focadas no que realmente importa: o crescimento do seu negócio.
                     </p>
-                    <div className="p-8 bg-blue-500/5 border border-blue-500/20 rounded-3xl inline-block text-left backdrop-blur-sm">
-                        <p className="text-2xl text-blue-100 font-medium italic leading-snug">
+                    <div className="p-5 sm:p-8 bg-blue-500/5 border border-blue-500/20 rounded-2xl sm:rounded-3xl inline-block text-left backdrop-blur-sm">
+                        <p className="text-base sm:text-xl md:text-2xl text-blue-100 font-medium italic leading-snug">
                             “Não criamos apenas software. Entregamos a liberdade <br className="hidden md:block" /> para você focar no que é essencial.”
                         </p>
                     </div>
@@ -61,9 +63,13 @@ const Home = () => {
 
             {/* 3. NOSSOS SISTEMAS */}
             <Section id="sistemas">
-                <div className="text-center mb-20">
-                    <h2 className="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight">Soluções <span className="text-gradient">Integradas</span></h2>
-                    <p className="text-gray-400 text-lg max-w-2xl mx-auto">Ecossistema completo de ferramentas desenhadas para escalar sua operação.</p>
+                <div className="text-center mb-10 md:mb-20">
+                    <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold mb-3 sm:mb-6 tracking-tight leading-tight">
+                        Soluções <span className="text-gradient">Integradas</span>
+                    </h2>
+                    <p className="text-gray-400 text-sm sm:text-base md:text-lg max-w-2xl mx-auto">
+                        Ecossistema completo de ferramentas desenhadas para escalar sua operação.
+                    </p>
                 </div>
                 
                 <SystemShowcase />
@@ -88,8 +94,10 @@ const Home = () => {
             <Section className="bg-[#08080a] relative overflow-hidden">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
                 <div className="max-w-5xl mx-auto">
-                    <motion.h2 {...fadeIn} className="text-4xl font-extrabold text-center mb-16 tracking-tight">Universo de possibilidades</motion.h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+                    <motion.h2 {...fadeIn} className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center mb-8 sm:mb-16 tracking-tight">
+                        Universo de possibilidades
+                    </motion.h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6 mb-10 sm:mb-16">
                         {[
                             'Lojas Físicas e Digitais', 
                             'Clínicas e Consultórios', 
@@ -103,14 +111,14 @@ const Home = () => {
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 whileInView={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: i * 0.05 }}
-                                className="glass-card p-8 text-center text-lg font-semibold hover:border-blue-500/40"
+                                className="glass-card p-4 sm:p-7 text-center font-semibold hover:border-blue-500/40"
                             >
-                                <span className="text-gradient uppercase tracking-widest text-sm">{item}</span>
+                                <span className="text-gradient uppercase tracking-widest text-xs sm:text-sm">{item}</span>
                             </motion.div>
                         ))}
                     </div>
-                    <div className="text-center">
-                         <p className="text-2xl text-gray-300 font-medium max-w-2xl mx-auto">
+                    <div className="text-center px-4">
+                         <p className="text-base sm:text-xl md:text-2xl text-gray-300 font-medium max-w-2xl mx-auto leading-relaxed">
                             “Se o seu sistema atual consome seu tempo em vez de poupá-lo, você precisa da Kryon.”
                         </p>
                     </div>

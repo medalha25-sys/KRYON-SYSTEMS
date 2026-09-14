@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório de Validação Pós-Migração V5.1 - Kryon Lava Rápido</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 15mm 15mm 18mm 15mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #1e293b;
+            font-size: 10pt;
+            line-height: 1.45;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #0284c7;
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-box {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #0284c7 0%, #6366f1 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 14pt;
+        }
+
+        .brand-text h1 {
+            font-size: 15pt;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-text p {
+            font-size: 8pt;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .doc-meta {
+            text-align: right;
+            font-size: 8pt;
+            color: #64748b;
+        }
+
+        .doc-meta strong {
+            color: #0f172a;
+        }
+
+        .badge-status {
+            display: inline-block;
+            background-color: #dcfce7;
+            color: #15803d;
+            border: 1px solid #86efac;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 8pt;
+            margin-top: 4px;
+        }
+
+        .title-section {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #0284c7;
+            border-radius: 6px;
+            padding: 10px 14px;
+            margin-bottom: 16px;
+        }
+
+        .title-section h2 {
+            font-size: 12.5pt;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 3px;
+        }
+
+        .title-section p {
+            font-size: 8.5pt;
+            color: #475569;
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .kpi-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 8px 10px;
+            text-align: center;
+        }
+
+        .kpi-num {
+            font-size: 14pt;
+            font-weight: 800;
+            color: #0284c7;
+        }
+
+        .kpi-label {
+            font-size: 7.5pt;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+            font-size: 8.2pt;
+        }
+
+        th {
+            background-color: #0f172a;
+            color: #ffffff;
+            text-align: left;
+            padding: 7px 8px;
+            font-weight: 700;
+            font-size: 8pt;
+            letter-spacing: 0.02em;
+        }
+
+        th:first-child { border-top-left-radius: 4px; }
+        th:last-child { border-top-right-radius: 4px; }
+
+        td {
+            padding: 6.5px 8px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        .tag-conforme {
+            background-color: #dcfce7;
+            color: #166534;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 7.5pt;
+            border: 1px solid #bbf7d0;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: 10pt;
+            font-weight: 700;
+            color: #0f172a;
+            border-bottom: 1.5px solid #e2e8f0;
+            padding-bottom: 4px;
+            margin-top: 14px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 12px;
+            background: #0284c7;
+            border-radius: 2px;
+        }
+
+        .details-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 10px 12px;
+            margin-bottom: 12px;
+            font-size: 8pt;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .details-item h4 {
+            font-size: 8.5pt;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .details-item ul {
+            list-style: none;
+            padding-left: 0;
+            color: #334155;
+            line-height: 1.4;
+        }
+
+        .details-item ul li {
+            margin-bottom: 3px;
+            display: flex;
+            align-items: flex-start;
+            gap: 4px;
+        }
+
+        .details-item ul li::before {
+            content: '✔';
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+        .signature-box {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 6px;
+            padding: 10px 12px;
+            margin-top: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .signature-text h4 {
+            font-size: 9pt;
+            color: #166534;
+            font-weight: 700;
+        }
+
+        .signature-text p {
+            font-size: 7.5pt;
+            color: #15803d;
+        }
+
+        .footer {
+            margin-top: 14px;
+            border-top: 1px solid #cbd5e1;
+            padding-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 7.5pt;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="brand">
+            <div class="logo-box">K</div>
+            <div class="brand-text">
+                <h1>Kryon Systems</h1>
+                <p>Enterprise SaaS & Cloud Infrastructure</p>
+            </div>
+        </div>
+        <div class="doc-meta">
+            <div><strong>Relatório Técnico Oficial:</strong> REL-V51-VAL-001</div>
+            <div><strong>Data de Emissão:</strong> 03/09/2026 12:25 (UTC-3)</div>
+            <div class="badge-status">✔ MIGRAÇÃO 100% HOMOLOGADA</div>
+        </div>
+    </div>
+
+    <!-- Title Section -->
+    <div class="title-section">
+        <h2>Relatório Diagnóstico de Validação Pós-Migração (SQL V5.1 Final)</h2>
+        <p><strong>Módulo Piloto:</strong> Kryon Lava Rápido (<code>slug: kryon-lava-rapido</code>) | <strong>Banco Central:</strong> Sistemas Kryon (<code>pgpobxvkojawrstadrel.supabase.co</code>)</p>
+    </div>
+
+    <!-- KPI Summary Cards -->
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="kpi-num">4 / 4</div>
+            <div class="kpi-label">Tabelas Criadas</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-num">100%</div>
+            <div class="kpi-label">RLS Ativo (5 Policies)</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-num">3</div>
+            <div class="kpi-label">Funções RPC (30d Trial)</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-num">7 + 1</div>
+            <div class="kpi-label">Índices & Constraint Única</div>
+        </div>
+    </div>
+
+    <!-- Table of 10 Checks -->
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 4%;">#</th>
+                <th style="width: 32%;">Item / Check Verificado</th>
+                <th style="width: 28%;">Resultado Obtido</th>
+                <th style="width: 12%;">Status</th>
+                <th style="width: 24%;">Observação Técnica</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>1</strong></td>
+                <td><strong>Existência das 4 tabelas do módulo piloto</strong> (<code>services</code>, <code>customers</code>, <code>appointments</code>, <code>feedbacks</code>)</td>
+                <td>4 tabelas criadas no schema <code>public</code></td>
+                <td><span class="tag-conforme">CONFORME</span></td>
+                <td>Modelagem normalizada com UUID v4.</td>
+            </tr>
+            <tr>
+                <td><strong>2</strong></td>
+                <td><strong>Existência da coluna <code>tenant_id</code> nas 4 tabelas</strong></td>
+                <td>4 colunas <code>tenant_id</code> (tipo <code>UUID</code>) presentes</td>
+                <td><span class="tag-conforme">CONFORME</span></td>
+                <td>FK -> <code>organizations(id)</code> com <code>ON DELETE CASCADE</code>.</td>
+            </tr>
+            <tr>
+                <td><strong>3</strong></td>
+                <td><strong>RLS (Row Level Security) habilitado nas 4 tabelas</strong></td>
+                <td><code>rowsecurity = true</code> em 100% das tabelas</td>
+                <td><span class="tag-conforme">CONFORME</span></td>
+                <td>Proteção ativa contra vazamento cross-tenant.</td>
+            </tr>
+            <tr>
+                <td><strong>4</strong></td>
+                <td><strong>Policies de isolamento criadas pelo V5.1</strong></td>
+                <td>5 policies ativas no catálogo PostgreSQL</td>
+                <td><span class="tag-conforme">CONFORME</span></td>
+                <td>Filtro estrito via <code>organization_members</code>.</td>
+            </tr>
+            <tr>
+                <td><strong>5</strong></td>
+                <td><strong>Funções centrais com hardening</strong> (<code>activate_product_subscription</code>, <code>get_public_organization_services</code>, <code>create_public_appointment</code>)</td>
+                <td>3 funções ativas (<code>SECURITY DEFINER</code>)</td>
+                <td><span class="tag-conforme">CONFORME</span></td>
+                <td>Padrão oficial de <strong>30 dias de trial</strong> e anti-scraping.</td>
+            </tr>
+            <tr>
+                <td><strong>6</strong></td>
+                <td><strong>Trigger <code>on_organization_owner_created</code></strong></td>
+                <td>Trigger ativo em <code>public.organizations</code></td>
+                <td><span class="tag-conforme">CONFORME</span></td>
+                <td>Auto-onboarding do criador como <code>owner</code>.</td>
+            </tr>
+            <tr>
+                <td><strong>7</strong></td>
+                <td><strong>Produto no Catálogo Central (<code>public.products</code>)</strong></td>
+                <td><code>Kryon Lava Rápido</code> (<code>status: active</code>)</td>
+                <td><span class="tag-conforme">CONFORME</span></td>
+                <td>Slug oficial: <code>kryon-lava-rapido</code>.</td>
+            </tr>
+            <tr>
+                <td><strong>8</strong></td>
+                <td><strong>Constraint de Unicidade <code>uq_subscriptions_org_product</code></strong></td>
+                <td>Constraint ativa em <code>public.subscriptions</code></td>
+                <td><span class="tag-conforme">CONFORME</span></td>
+                <td>Impede duplicidade de assinatura por produto.</td>
+            </tr>
+            <tr>
+                <td><strong>9</strong></td>
+                <td><strong>Índices de alta performance criados pelo V5.1</strong></td>
+                <td>7 índices ativos criados com sucesso</td>
+                <td><span class="tag-conforme">CONFORME</span></td>
+                <td>Otimização de consultas por tenant, data e slug.</td>
+            </tr>
+            <tr>
+                <td><strong>10</strong></td>
+                <td><strong>Integridade de registros nas tabelas do piloto</strong></td>
+                <td>Tabelas limpas (0 registros residuais)</td>
+                <td><span class="tag-conforme">CONFORME</span></td>
+                <td>Pronto para o teste Empresa A vs Empresa B.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Detalhamento de Arquitetura -->
+    <div class="section-title">Detalhamento de Segurança e Arquitetura Implementada</div>
+
+    <div class="details-box">
+        <div class="details-grid">
+            <div class="details-item">
+                <h4>Políticas RLS & RPCs Blindadas</h4>
+                <ul>
+                    <li><strong>services:</strong> Membros consultam e gerenciam serviços da sua org.</li>
+                    <li><strong>customers:</strong> Gestão exclusiva de clientes por tenant.</li>
+                    <li><strong>appointments:</strong> Agendamentos protegidos por organização.</li>
+                    <li><strong>feedbacks:</strong> Visualização isolada para membros ativos.</li>
+                    <li><strong>RPC create_public_appointment:</strong> Agendamento público blindado contra manipulação de preço e tenant cruzado.</li>
+                </ul>
+            </div>
+            <div class="details-item">
+                <h4>Regras Comerciais & Hardening de Funções</h4>
+                <ul>
+                    <li><strong>Trial Grátis Oficial:</strong> 30 dias (bloqueio/conversão no 31º dia).</li>
+                    <li><strong>Função de Ativação:</strong> <code>p_plan_name DEFAULT 'Plano Trial (30 Dias)'</code> e <code>p_trial_days DEFAULT 30</code>.</li>
+                    <li><strong>Controle de Privilégios:</strong> Execução revogada de <code>anon/public</code> para a função de ativação de planos.</li>
+                    <li><strong>Performance:</strong> Índices em <code>tenant_id</code>, <code>service_id</code>, <code>scheduled_at</code> e <code>slug</code>.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Certification / Signature -->
+    <div class="signature-box">
+        <div class="signature-text">
+            <h4>Parecer Técnico Conclusivo: APROVADO</h4>
+            <p>O banco de dados central "Sistemas Kryon" atende a 100% dos requisitos do SQL V5.1 Final. Ambiente certificado e seguro para a execução dos testes de isolamento multitenant.</p>
+        </div>
+        <div style="text-align: right; font-size: 7.5pt; color: #15803d; font-weight: 700;">
+            KRYON SYSTEMS INC.<br>
+            SECURITY & CLOUD DIVISION
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div>Kryon Systems &bull; Plataforma de Gestão Multi-Tenant &bull; kryonsystems.com.br</div>
+        <div>Página 1 de 1 &bull; Documento Gerado em 03/09/2026</div>
+    </div>
+
+</body>
+</html>

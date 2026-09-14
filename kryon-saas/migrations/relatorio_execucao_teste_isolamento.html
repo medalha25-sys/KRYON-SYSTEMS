@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Script de Execução do Teste de Isolamento Multitenant - Kryon Systems</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 12mm 14mm 14mm 14mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #1e293b;
+            font-size: 8.2pt;
+            line-height: 1.38;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #0284c7;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-box {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #0284c7 0%, #6366f1 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 12pt;
+        }
+
+        .brand-text h1 {
+            font-size: 13pt;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-text p {
+            font-size: 7.2pt;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .doc-meta {
+            text-align: right;
+            font-size: 7.2pt;
+            color: #64748b;
+        }
+
+        .doc-meta strong {
+            color: #0f172a;
+        }
+
+        .badge-status {
+            display: inline-block;
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 2px 7px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 7.2pt;
+            margin-top: 2px;
+        }
+
+        .title-section {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #0284c7;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-bottom: 10px;
+        }
+
+        .title-section h2 {
+            font-size: 11pt;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 2px;
+        }
+
+        .title-section p {
+            font-size: 7.8pt;
+            color: #475569;
+        }
+
+        .section-title {
+            font-size: 9pt;
+            font-weight: 700;
+            color: #0f172a;
+            border-bottom: 1.5px solid #e2e8f0;
+            padding-bottom: 3px;
+            margin-top: 8px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 5px;
+            height: 10px;
+            background: #0284c7;
+            border-radius: 2px;
+        }
+
+        .block-card {
+            border-radius: 6px;
+            padding: 8px 10px;
+            margin-bottom: 8px;
+            font-size: 7.5pt;
+            border: 1px solid #e2e8f0;
+        }
+
+        .block-card.sql {
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+        }
+
+        .code-box {
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 6.6pt;
+            line-height: 1.28;
+        }
+
+        .signature-box {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .signature-text h4 {
+            font-size: 8pt;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .signature-text p {
+            font-size: 7pt;
+            color: #475569;
+        }
+
+        .footer {
+            margin-top: 8px;
+            border-top: 1px solid #cbd5e1;
+            padding-top: 5px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 6.8pt;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="brand">
+            <div class="logo-box">K</div>
+            <div class="brand-text">
+                <h1>Kryon Systems</h1>
+                <p>Security & Multi-Tenant Audit Division</p>
+            </div>
+        </div>
+        <div class="doc-meta">
+            <div><strong>Documento:</strong> EXEC-ISO-SQL-011</div>
+            <div><strong>Data:</strong> 03/09/2026 18:27 (UTC-3)</div>
+            <div class="badge-status">🚀 SCRIPT DE TESTE PRÁTICO AUTORIZADO</div>
+        </div>
+    </div>
+
+    <!-- Title Section -->
+    <div class="title-section">
+        <h2>Script de Setup & Execução do Teste de Isolamento (Empresa A vs B)</h2>
+        <p><strong>Módulo:</strong> Kryon Lava Rápido | <strong>Banco:</strong> Sistemas Kryon (<code>pgpobxvkojawrstadrel.supabase.co</code>)</p>
+    </div>
+
+    <!-- 1. RESUMO DOS 8 CENÁRIOS -->
+    <div class="section-title">1. Resumo dos 8 Cenários de Validação RLS</div>
+    <div style="font-size: 7.5pt; color: #334155; margin-bottom: 8px;">
+        O script abaixo cria as fixtures temporárias para <strong>Empresa A</strong> e <strong>Empresa B</strong>, alterna dinamicamente o contexto não-privilegiado (role <code>authenticated</code> com os JWTs reais de <code>USER_A</code> e <code>USER_B</code>), executa os 8 testes com validações de segurança e emite a tabela de resultados.
+    </div>
+
+    <!-- 2. SCRIPT SQL -->
+    <div class="section-title">2. Código SQL Completo de Execução</div>
+    <div class="block-card sql">
+        <pre class="code-box">
+-- ETAPA 1: SETUP DAS FIXTURES
+DO $$
+DECLARE
+    v_user_a_id UUID;
+    v_user_b_id UUID;
+    v_org_a_id UUID := 'a1111111-1111-1111-1111-111111111111'::uuid;
+    v_org_b_id UUID := 'b2222222-2222-2222-2222-222222222222'::uuid;
+BEGIN
+    SELECT id INTO v_user_a_id FROM auth.users WHERE email = 'teste_salinas_a@kryonsystems.internal';
+    SELECT id INTO v_user_b_id FROM auth.users WHERE email = 'teste_estetica_b@kryonsystems.internal';
+
+    INSERT INTO public.profiles (id, is_super_admin, role)
+    VALUES (v_user_a_id, false, 'ADMIN'), (v_user_b_id, false, 'ADMIN')
+    ON CONFLICT (id) DO UPDATE SET role = EXCLUDED.role;
+
+    INSERT INTO public.organizations (id, name, slug, phone, address, owner_id, status)
+    VALUES 
+        (v_org_a_id, '[TESTE] Lava Rápido Salinas A', 'teste-lava-rapido-salinas-a', '(38) 99999-0001', 'Rua A, 100', v_user_a_id, 'active'),
+        (v_org_b_id, '[TESTE] Estética Automotiva VIP B', 'teste-estetica-automotiva-vip-b', '(38) 99999-0002', 'Av B, 200', v_user_b_id, 'active')
+    ON CONFLICT (slug) DO UPDATE SET owner_id = EXCLUDED.owner_id, status = EXCLUDED.status;
+
+    INSERT INTO public.services (id, tenant_id, name, vehicle_type, price, duration_minutes, is_active)
+    VALUES 
+        ('a3333333-3333-3333-3333-333333333333', v_org_a_id, '[TESTE] Lavagem Completa A', 'CARRO', 50.00, 45, true),
+        ('b4444444-4444-4444-4444-444444444444', v_org_b_id, '[TESTE] Polimento Premium B', 'CARRO', 150.00, 90, true)
+    ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, price = EXCLUDED.price;
+
+    INSERT INTO public.customers (id, tenant_id, name, phone, vehicle_plate)
+    VALUES 
+        ('a5555555-5555-5555-5555-555555555555', v_org_a_id, '[TESTE] Cliente Salinas A', '(38) 98888-0001', 'ABC1A01'),
+        ('b6666666-6666-6666-6666-666666666666', v_org_b_id, '[TESTE] Cliente VIP B', '(38) 98888-0002', 'XYZ9Z99')
+    ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name;
+
+    INSERT INTO public.appointments (id, tenant_id, service_id, customer_name, customer_phone, vehicle_plate, scheduled_at, status, total_price)
+    VALUES 
+        ('a7777777-7777-7777-7777-777777777777', v_org_a_id, 'a3333333-3333-3333-3333-333333333333', '[TESTE] Cliente Salinas A', '(38) 98888-0001', 'ABC1A01', now() + interval '1 day', 'PENDENTE', 50.00),
+        ('b8888888-8888-8888-8888-888888888888', v_org_b_id, 'b4444444-4444-4444-4444-444444444444', '[TESTE] Cliente VIP B', '(38) 98888-0002', 'XYZ9Z99', now() + interval '2 day', 'PENDENTE', 150.00)
+    ON CONFLICT (id) DO UPDATE SET customer_name = EXCLUDED.customer_name;
+END $$;
+        </pre>
+    </div>
+
+    <!-- Signatures -->
+    <div class="signature-box">
+        <div class="signature-text">
+            <h4>Alinhamento Técnico Tripartite (Você + Antigravity + ChatGPT)</h4>
+            <p>Script de teste calibrado com identidades reais. Execução pronta para emissão dos resultados.</p>
+        </div>
+        <div style="text-align: right; font-size: 7pt; color: #0284c7; font-weight: 700;">
+            KRYON SYSTEMS &bull; PILOTO V5.1<br>
+            SECURITY DIVISION
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div>Kryon Systems &bull; Teste de Isolamento RLS &bull; kryonsystems.com.br</div>
+        <div>Página 1 de 1 &bull; Gerado em 03/09/2026</div>
+    </div>
+
+</body>
+</html>

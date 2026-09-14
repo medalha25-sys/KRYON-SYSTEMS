@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Execução Autorizada: correcao_recursao_rls_v5_1.sql - Kryon Systems</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 10mm 12mm 12mm 12mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #1e293b;
+            font-size: 8pt;
+            line-height: 1.35;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #059669;
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-box {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #059669 0%, #0284c7 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 11pt;
+        }
+
+        .brand-text h1 {
+            font-size: 12pt;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-text p {
+            font-size: 7pt;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .doc-meta {
+            text-align: right;
+            font-size: 7pt;
+            color: #64748b;
+        }
+
+        .doc-meta strong {
+            color: #0f172a;
+        }
+
+        .badge-authorized {
+            display: inline-block;
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 7pt;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .section {
+            margin-bottom: 8px;
+        }
+
+        .section-title {
+            font-size: 9pt;
+            font-weight: 700;
+            color: #0f172a;
+            border-left: 3px solid #059669;
+            padding-left: 6px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 5px 7px;
+            text-align: center;
+        }
+
+        .card-label {
+            font-size: 6.5pt;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .card-value {
+            font-size: 8pt;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .card-value.highlight { color: #0284c7; }
+        .card-value.success { color: #059669; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 7pt;
+            margin-top: 3px;
+            margin-bottom: 6px;
+        }
+
+        th {
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            text-align: left;
+            padding: 4px 6px;
+            border-bottom: 1px solid #cbd5e1;
+            font-size: 6.5pt;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 3.5px 6px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #334155;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) td {
+            background: #f8fafc;
+        }
+
+        .code-box {
+            background: #0f172a;
+            color: #f8fafc;
+            padding: 6px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 6.5pt;
+            line-height: 1.35;
+            overflow-x: auto;
+            margin: 4px 0 6px 0;
+            border: 1px solid #334155;
+        }
+
+        .callout-box {
+            background: #f0fdf4;
+            border-left: 3px solid #10b981;
+            padding: 5px 8px;
+            border-radius: 0 4px 4px 0;
+            font-size: 7pt;
+            margin: 5px 0;
+            color: #065f46;
+        }
+
+        .callout-box strong {
+            color: #047857;
+        }
+
+        .footer {
+            margin-top: 8px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 4px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 6.5pt;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="brand">
+            <div class="logo-box">K</div>
+            <div class="brand-text">
+                <h1>KRYON SYSTEMS SAAS &mdash; APLICAÇÃO DE HARDENING RLS</h1>
+                <p>Execução Autorizada: correcao_recursao_rls_v5_1.sql</p>
+            </div>
+        </div>
+        <div class="doc-meta">
+            <div>Data: <strong>05/09/2026</strong></div>
+            <div>Ambiente: <strong>pgpobxvkojawrstadrel.supabase.co</strong></div>
+            <div class="badge-authorized">AUTORIZADO &bull; APROVADO</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="info-grid">
+            <div class="card">
+                <div class="card-label">Projeto Alvo</div>
+                <div class="card-value highlight">Sistemas Kryon</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Tabelas Protegidas</div>
+                <div class="card-value success">7 Tabelas Centrais</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Mutações de Dados</div>
+                <div class="card-value success">0 (Zero Escrita)</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Status da Aplicação</div>
+                <div class="card-value success">Pronto para SQL Editor</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">1. Resumo das Políticas Aplicadas por Tabela</div>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 25%;">Tabela</th>
+                    <th style="width: 35%;">Política RLS Aplicada</th>
+                    <th style="width: 40%;">Mecanismo de Segurança</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>organization_members</strong></td>
+                    <td>Membros visualizam membros da sua organização</td>
+                    <td><code>user_id = auth.uid() OR is_user_member_of_organization(org_id)</code></td>
+                </tr>
+                <tr>
+                    <td><strong>organizations</strong></td>
+                    <td>Membros podem ver / atualizar suas organizações</td>
+                    <td><code>owner_id = auth.uid() OR is_user_member_of_organization(id)</code></td>
+                </tr>
+                <tr>
+                    <td><strong>subscriptions</strong></td>
+                    <td>Membros podem ver assinaturas da sua organização</td>
+                    <td><code>is_user_member_of_organization(organization_id)</code></td>
+                </tr>
+                <tr>
+                    <td><strong>services</strong></td>
+                    <td>Membros consultam / gerenciam serviços da sua organização</td>
+                    <td><code>is_user_member_of_organization(tenant_id)</code> + <code>WITH CHECK</code></td>
+                </tr>
+                <tr>
+                    <td><strong>customers</strong></td>
+                    <td>Membros gerenciam clientes da sua organização</td>
+                    <td><code>is_user_member_of_organization(tenant_id)</code> + <code>WITH CHECK</code></td>
+                </tr>
+                <tr>
+                    <td><strong>appointments</strong></td>
+                    <td>Membros gerenciam agendamentos da sua organização</td>
+                    <td><code>is_user_member_of_organization(tenant_id)</code> + <code>WITH CHECK</code></td>
+                </tr>
+                <tr>
+                    <td><strong>feedbacks</strong></td>
+                    <td>Membros visualizam feedbacks da sua organização</td>
+                    <td><code>is_user_member_of_organization(tenant_id)</code></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="callout-box">
+        <strong>Confirmação de Conformidade:</strong><br>
+        O script SQL exato e integral de <code>correcao_recursao_rls_v5_1.sql</code> está disponível para execução direta no Supabase SQL Editor. Nenhuma outra modificação de schema ou manipulação de dados foi executada.
+    </div>
+
+    <div class="footer">
+        <div>Kryon Systems &bull; Aplicação de Hardening RLS</div>
+        <div>Página 1 de 1 &bull; Execução Segura Autorizada</div>
+    </div>
+
+</body>
+</html>

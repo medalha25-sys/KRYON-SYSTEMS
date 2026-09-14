@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Validação Pós-Desacoplamento: public.customers - Kryon Systems</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 10mm 12mm 12mm 12mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #1e293b;
+            font-size: 8pt;
+            line-height: 1.35;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #059669;
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-box {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #059669 0%, #0284c7 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 11pt;
+        }
+
+        .brand-text h1 {
+            font-size: 12pt;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-text p {
+            font-size: 7pt;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .doc-meta {
+            text-align: right;
+            font-size: 7pt;
+            color: #64748b;
+        }
+
+        .doc-meta strong {
+            color: #0f172a;
+        }
+
+        .badge-success {
+            display: inline-block;
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 7pt;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .section {
+            margin-bottom: 8px;
+        }
+
+        .section-title {
+            font-size: 9pt;
+            font-weight: 700;
+            color: #0f172a;
+            border-left: 3px solid #059669;
+            padding-left: 6px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 5px 7px;
+        }
+
+        .card-label {
+            font-size: 6.5pt;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .card-value {
+            font-size: 8pt;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .card-value.highlight { color: #0284c7; }
+        .card-value.success { color: #059669; }
+        .card-value.danger { color: #dc2626; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 7pt;
+            margin-top: 3px;
+            margin-bottom: 6px;
+        }
+
+        th {
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            text-align: left;
+            padding: 4px 6px;
+            border-bottom: 1px solid #cbd5e1;
+            font-size: 6.5pt;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 3.5px 6px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #334155;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) td {
+            background: #f8fafc;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-size: 6pt;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-pass { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+        .status-removed { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+
+        .callout-box {
+            background: #f0fdf4;
+            border-left: 3px solid #10b981;
+            padding: 5px 8px;
+            border-radius: 0 4px 4px 0;
+            font-size: 7pt;
+            margin: 5px 0;
+            color: #065f46;
+        }
+
+        .callout-box strong {
+            color: #047857;
+        }
+
+        .footer {
+            margin-top: 8px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 4px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 6.5pt;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="brand">
+            <div class="logo-box">K</div>
+            <div class="brand-text">
+                <h1>KRYON SYSTEMS SAAS &mdash; VALIDAÇÃO PÓS-DESACOPLAMENTO</h1>
+                <p>Auditoria 100% Read-Only: Estrutura da Tabela public.customers</p>
+            </div>
+        </div>
+        <div class="doc-meta">
+            <div>Data: <strong>05/09/2026</strong></div>
+            <div>Ambiente: <strong>Produção Supabase</strong></div>
+            <div class="badge-success">100% VALIDADO &bull; APROVADO</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="info-grid">
+            <div class="card">
+                <div class="card-label">Coluna shop_id</div>
+                <div class="card-value success">REMOVIDA (Inexistente)</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Coluna tenant_id</div>
+                <div class="card-value success">PRESENTE (Ativa)</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Checklist de Validação</div>
+                <div class="card-value highlight">6 de 6 PASS</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Pronto para Fixtures A/B</div>
+                <div class="card-value success">100% PRONTO</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">1. Checklist Estrito de Validação das Colunas Solicitadas</div>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 25%;">Item Solicitado</th>
+                    <th style="width: 20%;">Critério Exigido</th>
+                    <th style="width: 35%;">Resultado no Banco (PostgreSQL API)</th>
+                    <th style="width: 20%;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>shop_id</code></td>
+                    <td><strong>NÃO deve aparecer</strong></td>
+                    <td>Inexistente (Confirmado erro 42703: column does not exist)</td>
+                    <td><span class="status-badge status-pass">PASS (REMOVIDA)</span></td>
+                </tr>
+                <tr>
+                    <td><code>tenant_id</code></td>
+                    <td><strong>DEVE aparecer</strong></td>
+                    <td>Presente (UUID, vinculada a organizations)</td>
+                    <td><span class="status-badge status-pass">PASS (PRESENTE)</span></td>
+                </tr>
+                <tr>
+                    <td><code>id</code></td>
+                    <td><strong>DEVE aparecer</strong></td>
+                    <td>Presente (UUID Primary Key)</td>
+                    <td><span class="status-badge status-pass">PASS (PRESENTE)</span></td>
+                </tr>
+                <tr>
+                    <td><code>name</code></td>
+                    <td><strong>DEVE aparecer</strong></td>
+                    <td>Presente (TEXT)</td>
+                    <td><span class="status-badge status-pass">PASS (PRESENTE)</span></td>
+                </tr>
+                <tr>
+                    <td><code>phone</code></td>
+                    <td><strong>DEVE aparecer</strong></td>
+                    <td>Presente (TEXT)</td>
+                    <td><span class="status-badge status-pass">PASS (PRESENTE)</span></td>
+                </tr>
+                <tr>
+                    <td><code>vehicle_plate</code></td>
+                    <td><strong>DEVE aparecer</strong></td>
+                    <td>Presente (TEXT)</td>
+                    <td><span class="status-badge status-pass">PASS (PRESENTE)</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">2. Estrutura Completa Atual de public.customers</div>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 10%;">Ordem</th>
+                    <th style="width: 30%;">Nome da Coluna</th>
+                    <th style="width: 30%;">Finalidade Multi-Tenant / Módulo</th>
+                    <th style="width: 30%;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td><code>id</code></td><td>Identificador único do cliente</td><td><span class="status-badge status-pass">OK</span></td></tr>
+                <tr><td>2</td><td><code>tenant_id</code></td><td>FK de isolamento (public.organizations.id)</td><td><span class="status-badge status-pass">OK (Ativa)</span></td></tr>
+                <tr><td>3</td><td><code>name</code></td><td>Nome do cliente</td><td><span class="status-badge status-pass">OK</span></td></tr>
+                <tr><td>4</td><td><code>phone</code></td><td>Telefone / WhatsApp</td><td><span class="status-badge status-pass">OK</span></td></tr>
+                <tr><td>5</td><td><code>cpf</code></td><td>Documento / CPF</td><td><span class="status-badge status-pass">OK</span></td></tr>
+                <tr><td>6</td><td><code>vehicle_plate</code></td><td>Placa do veículo (Lava Rápido)</td><td><span class="status-badge status-pass">OK</span></td></tr>
+                <tr><td>7</td><td><code>vehicle_model</code></td><td>Modelo do veículo (Lava Rápido)</td><td><span class="status-badge status-pass">OK</span></td></tr>
+                <tr><td>8</td><td><code>notes</code></td><td>Observações do atendimento</td><td><span class="status-badge status-pass">OK</span></td></tr>
+                <tr><td>9</td><td><code>points</code></td><td>Pontos fidelidade</td><td><span class="status-badge status-pass">OK</span></td></tr>
+                <tr><td>10</td><td><code>email</code></td><td>E-mail de contato</td><td><span class="status-badge status-pass">OK</span></td></tr>
+                <tr><td>11</td><td><code>city</code></td><td>Cidade</td><td><span class="status-badge status-pass">OK</span></td></tr>
+                <tr><td>12</td><td><code>total_orders</code></td><td>Histórico de pedidos</td><td><span class="status-badge status-pass">OK</span></td></tr>
+                <tr><td>13</td><td><code>created_at</code></td><td>Data de cadastro</td><td><span class="status-badge status-pass">OK</span></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="callout-box">
+        <strong>Conclusão Técnica:</strong><br>
+        A tabela <code>public.customers</code> foi desacoplada com 100% de sucesso da tabela <code>shops</code>. A coluna <code>shop_id</code> foi completamente removida do catálogo do banco, e todas as colunas essenciais para o <strong>Kryon Lava Rápido V5.1</strong> e o isolamento multi-tenant por <code>tenant_id</code> estão perfeitamente preservadas. O ambiente está 100% seguro para a execução do script das <strong>Fixtures A/B</strong>.
+    </div>
+
+    <div class="footer">
+        <div>Kryon Systems &bull; Validação de Desacoplamento</div>
+        <div>Página 1 de 1 &bull; 100% Read-Only Verification</div>
+    </div>
+
+</body>
+</html>

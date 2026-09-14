@@ -129,22 +129,22 @@ const segments = [
 
 const Segments = () => {
     return (
-        <section id="segmentos" className="section py-16 md:py-24">
+        <section id="segmentos" className="section py-12 sm:py-16 md:py-24">
             <div className="container-custom">
-                <div className="text-center mb-12 md:mb-16">
-                    <h2 className="title text-3xl sm:text-4xl md:text-5xl">
+                <div className="text-center mb-8 sm:mb-16">
+                    <h2 className="title text-2xl sm:text-3xl md:text-5xl">
                         Soluções por <span className="gradient-text">Segmento</span>
                     </h2>
-                    <p className="subtitle mx-auto text-base sm:text-lg mt-3 text-slate-400 max-w-2xl">
+                    <p className="subtitle mx-auto text-sm sm:text-base md:text-lg mt-2 sm:mt-3 text-slate-400 max-w-2xl">
                         Ferramentas especializadas e pensadas sob medida para impulsionar o seu nicho.
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
                     {segments.map((item, index) => (
                         <motion.div
                             key={index}
-                            className="card relative flex flex-col justify-between overflow-hidden p-6 sm:p-8"
+                            className="card relative flex flex-col justify-between overflow-hidden p-5 sm:p-7"
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
@@ -162,14 +162,14 @@ const Segments = () => {
                             />
 
                             <div>
-                                <div className="flex items-center gap-3.5 mb-5">
+                                <div className="flex items-center gap-3 sm:gap-3.5 mb-4 sm:mb-5">
                                     <div 
-                                        className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                                        className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0"
                                         style={{
                                             background: 'rgba(255,255,255,0.06)',
                                             color: item.color,
                                             border: `1px solid ${item.color}40`,
-                                            padding: item.logo ? '6px' : '10px'
+                                            padding: item.logo ? '6px' : '8px'
                                         }}
                                     >
                                         {item.logo ? (
@@ -183,13 +183,13 @@ const Segments = () => {
                                         )}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <div className="flex items-center justify-between gap-2 flex-wrap mb-1">
-                                            <span className="text-[11px] uppercase tracking-wider text-slate-400 font-semibold truncate">
+                                        <div className="flex items-center justify-between gap-1.5 flex-wrap mb-0.5">
+                                            <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-slate-400 font-semibold truncate">
                                                 {item.title}
                                             </span>
                                             {item.badge && (
                                                 <span 
-                                                    className="text-[10px] px-2.5 py-0.5 rounded-full font-extrabold uppercase tracking-wider whitespace-nowrap shadow-sm shadow-orange-500/20"
+                                                    className="text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full font-extrabold uppercase tracking-wider whitespace-nowrap shadow-sm shadow-orange-500/20"
                                                     style={{
                                                         background: 'linear-gradient(135deg, rgba(255, 123, 0, 0.25), rgba(255, 60, 0, 0.2))',
                                                         color: '#ffaa44',
@@ -200,33 +200,33 @@ const Segments = () => {
                                                 </span>
                                             )}
                                         </div>
-                                        <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight truncate">
+                                        <h3 className="text-base sm:text-xl font-bold text-white tracking-tight truncate">
                                             {item.product}
                                         </h3>
                                         {item.subtitle && (
-                                            <p className="text-xs font-semibold text-slate-300 mt-0.5">
+                                            <p className="text-[11px] sm:text-xs font-semibold text-slate-300 mt-0.5 line-clamp-1">
                                                 {item.subtitle}
                                             </p>
                                         )}
                                     </div>
                                 </div>
 
-                                <p className="text-slate-400 text-sm sm:text-base leading-relaxed mb-4">
+                                <p className="text-slate-400 text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4">
                                     {item.desc}
                                 </p>
 
                                 {/* Seção "Ideal para" com tags elegantes */}
                                 {item.niches && (
-                                    <div className="mb-6 p-3 rounded-xl bg-white/[0.03] border border-white/5">
-                                        <span className="text-[10px] font-extrabold uppercase tracking-wider block mb-2 flex items-center gap-1.5" style={{ color: item.color }}>
+                                    <div className="mb-5 sm:mb-6 p-2.5 sm:p-3 rounded-xl bg-white/[0.03] border border-white/5">
+                                        <span className="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider block mb-1.5 flex items-center gap-1.5" style={{ color: item.color }}>
                                             <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: item.color }} />
                                             Ideal para:
                                         </span>
-                                        <div className="flex flex-wrap gap-1.5">
+                                        <div className="flex flex-wrap gap-1">
                                             {item.niches.map((niche, nIdx) => (
                                                 <span 
                                                     key={nIdx}
-                                                    className="text-[11px] px-2 py-0.5 rounded-md font-medium text-slate-300 bg-white/5 border border-white/5 hover:border-white/10 transition-colors"
+                                                    className="text-[10px] sm:text-[11px] px-2 py-0.5 rounded-md font-medium text-slate-300 bg-white/5 border border-white/5 hover:border-white/10 transition-colors"
                                                 >
                                                     {niche}
                                                 </span>
@@ -240,7 +240,7 @@ const Segments = () => {
                                 href={item.directUrl || `https://app.kryonsystems.com.br/products/${item.slug}`} 
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="w-full py-3 sm:py-3.5 px-5 rounded-xl font-bold text-sm sm:text-base text-center transition-all flex items-center justify-center gap-2 no-underline active:scale-[0.98]"
+                                className="w-full py-3 sm:py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm text-center transition-all flex items-center justify-center gap-2 no-underline active:scale-[0.98]"
                                 style={{
                                     backgroundColor: item.color,
                                     color: '#050507',

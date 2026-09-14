@@ -33,38 +33,38 @@ const FAQ = () => {
     };
 
     return (
-        <section className="section" style={{ background: 'var(--bg-secondary)', position: 'relative' }}>
-            <div className="container">
-                <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-                    <h2 className="title">Perguntas <span className="gradient-text">Frequentes</span></h2>
-                    <p className="subtitle" style={{ margin: '0 auto' }}>
+        <section className="section py-12 sm:py-16 md:py-24 bg-[#08080c] relative">
+            <div className="container-custom">
+                <div className="text-center mb-8 sm:mb-16">
+                    <h2 className="title text-2xl sm:text-3xl md:text-5xl">
+                        Perguntas <span className="gradient-text">Frequentes</span>
+                    </h2>
+                    <p className="subtitle mx-auto text-sm sm:text-base md:text-lg mt-2 sm:mt-3 text-slate-400">
                         Tire suas dúvidas sobre a Kryon Systems.
                     </p>
                 </div>
 
-                <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+                <div className="max-w-3xl mx-auto space-y-3 sm:space-y-4">
                     {faqs.map((item, index) => (
-                        <div key={index} style={{ marginBottom: '1rem' }}>
+                        <div key={index} className="overflow-hidden">
                             <motion.div
                                 onClick={() => toggleAccordion(index)}
-                                style={{
-                                    background: activeIndex === index ? 'rgba(255,255,255,0.08)' : 'var(--glass)',
-                                    border: '1px solid var(--glass-border)',
-                                    borderRadius: '12px',
-                                    padding: '1.2rem 1.5rem',
-                                    cursor: 'pointer',
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                    transition: 'all 0.3s'
-                                }}
-                                whileHover={{ scale: 1.01 }}
+                                className={`p-4 sm:p-5 rounded-2xl cursor-pointer flex justify-between items-center transition-all border ${
+                                    activeIndex === index 
+                                        ? 'bg-white/10 border-cyan-500/30' 
+                                        : 'card hover:border-white/20'
+                                }`}
+                                whileHover={{ scale: 1.005 }}
                             >
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontWeight: '600', fontSize: '1.05rem' }}>
-                                    <HelpCircle size={20} color={activeIndex === index ? 'var(--primary)' : 'var(--text-muted)'} />
+                                <div className="flex items-center gap-3 font-semibold text-xs sm:text-base text-white pr-2">
+                                    <HelpCircle size={18} className={`flex-shrink-0 ${activeIndex === index ? 'text-cyan-400' : 'text-slate-400'}`} />
                                     {item.question}
                                 </div>
-                                {activeIndex === index ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                                {activeIndex === index ? (
+                                    <ChevronUp size={18} className="text-cyan-400 flex-shrink-0" />
+                                ) : (
+                                    <ChevronDown size={18} className="text-slate-400 flex-shrink-0" />
+                                )}
                             </motion.div>
 
                             <AnimatePresence>
@@ -73,16 +73,9 @@ const FAQ = () => {
                                         initial={{ height: 0, opacity: 0 }}
                                         animate={{ height: 'auto', opacity: 1 }}
                                         exit={{ height: 0, opacity: 0 }}
-                                        style={{ overflow: 'hidden' }}
+                                        className="overflow-hidden"
                                     >
-                                        <div style={{
-                                            padding: '1.5rem',
-                                            color: '#ccc',
-                                            lineHeight: '1.6',
-                                            borderLeft: '2px solid var(--primary)',
-                                            marginLeft: '1rem',
-                                            marginTop: '0.5rem'
-                                        }}>
+                                        <div className="p-4 sm:p-5 text-slate-300 text-xs sm:text-sm leading-relaxed border-l-2 border-cyan-400 ml-4 sm:ml-5 mt-2 bg-white/[0.02] rounded-r-xl">
                                             {item.answer}
                                         </div>
                                     </motion.div>

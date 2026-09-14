@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmação Estrutural: Dependência Legada customers.shop_id - Kryon Systems</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 10mm 12mm 12mm 12mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #1e293b;
+            font-size: 8pt;
+            line-height: 1.35;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #0284c7;
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-box {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #0284c7 0%, #6366f1 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 11pt;
+        }
+
+        .brand-text h1 {
+            font-size: 12pt;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-text p {
+            font-size: 7pt;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .doc-meta {
+            text-align: right;
+            font-size: 7pt;
+            color: #64748b;
+        }
+
+        .doc-meta strong {
+            color: #0f172a;
+        }
+
+        .badge-status {
+            display: inline-block;
+            background-color: #fef3c7;
+            color: #b45309;
+            border: 1px solid #fde68a;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 7pt;
+            margin-top: 2px;
+        }
+
+        .title-section {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #0284c7;
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin-bottom: 8px;
+        }
+
+        .title-section h2 {
+            font-size: 10.5pt;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 2px;
+        }
+
+        .title-section p {
+            font-size: 7.5pt;
+            color: #475569;
+        }
+
+        .section-title {
+            font-size: 8.5pt;
+            font-weight: 700;
+            color: #0f172a;
+            border-bottom: 1.5px solid #e2e8f0;
+            padding-bottom: 2px;
+            margin-top: 6px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 9px;
+            background: #0284c7;
+            border-radius: 2px;
+        }
+
+        .block-card {
+            border-radius: 6px;
+            padding: 6px 8px;
+            margin-bottom: 6px;
+            font-size: 7.3pt;
+            border: 1px solid #e2e8f0;
+        }
+
+        .block-card.warning {
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .block-card.guarantee {
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+        }
+
+        .block-card.code {
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+        }
+
+        .code-box {
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 6.4pt;
+            line-height: 1.25;
+            white-space: pre-wrap;
+        }
+
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 7pt;
+            margin-bottom: 6px;
+        }
+
+        table.data-table th {
+            background-color: #f1f5f9;
+            color: #334155;
+            text-align: left;
+            padding: 4px 6px;
+            font-weight: 700;
+            border: 1px solid #cbd5e1;
+        }
+
+        table.data-table td {
+            padding: 3px 6px;
+            border: 1px solid #e2e8f0;
+            color: #334155;
+        }
+
+        table.data-table tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        .footer {
+            margin-top: 8px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 4px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 6.5pt;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="brand">
+            <div class="logo-box">K</div>
+            <div class="brand-text">
+                <h1>KRYON SYSTEMS</h1>
+                <p>Governança de Banco de Dados &bull; Engenharia de Software</p>
+            </div>
+        </div>
+        <div class="doc-meta">
+            <p><strong>DOCUMENTO:</strong> REL-CONF-CUSTOMERS-SHOP-002</p>
+            <p><strong>DATA:</strong> 03/09/2026 &bull; <strong>SISTEMA:</strong> Piloto Kryon Lava Rápido V5.1</p>
+            <div class="badge-status">AUDITORIA 100% READ-ONLY (SELECT APENAS)</div>
+        </div>
+    </div>
+
+    <div class="title-section">
+        <h2>Confirmação Estrutural da Dependência Legada customers.shop_id</h2>
+        <p>Levantamento de esquema, mapeamento de todas as Foreign Keys que referenciam public.shops e validação de contagens em repouso sem qualquer alteração no banco.</p>
+    </div>
+
+    <div class="section-title">1. Resumo da Investigação de Origem e Dependências</div>
+    <div class="block-card warning">
+        <p>• <strong>Origem Comprovada no Código DDL:</strong> A tabela <code>public.customers</code> foi criada no módulo inicial (Fashion / Antigo ERP) com a definição estrita: <code>shop_id UUID REFERENCES public.shops(id) ON DELETE CASCADE NOT NULL</code>.</p>
+        <p>• <strong>Causa Raiz da Falha no Setup:</strong> Quando o setup de fixtures executou <code>INSERT INTO public.customers (id, tenant_id, name, phone, vehicle_plate)</code>, a coluna legada <code>shop_id</code> permaneceu sem valor (NULL), violando a constraint <code>NOT NULL</code> e a FK <code>customers_shop_id_fkey</code> apontando para a tabela <code>public.shops</code> (que está vazia com 0 registros).</p>
+        <p>• <strong>Natureza da Dependência:</strong> <strong>100% LEGADO OBSOLETO</strong>. O módulo Kryon Lava Rápido V5.1 Final não utiliza <code>shops</code> nem <code>customers.shop_id</code>; seu isolamento multi-tenant é exclusivamente garantido por <code>customers.tenant_id REFERENCES public.organizations(id) ON DELETE CASCADE</code>.</p>
+    </div>
+
+    <div class="section-title">2. As 6 Consultas SELECT Prontas para Execução no Supabase SQL Editor</div>
+    <div class="block-card code">
+        <div class="code-box">-- 1. Estrutura completa de public.customers
+SELECT column_name, data_type, is_nullable, column_default 
+FROM information_schema.columns 
+WHERE table_schema = 'public' AND table_name = 'customers' 
+ORDER BY ordinal_position;
+
+-- 2. Foreign Keys de public.customers
+SELECT tc.constraint_name, kcu.column_name, ccu.table_schema AS foreign_table_schema, 
+       ccu.table_name AS foreign_table_name, ccu.column_name AS foreign_column_name, 
+       rc.delete_rule, rc.update_rule 
+FROM information_schema.table_constraints tc 
+JOIN information_schema.key_column_usage kcu ON tc.constraint_name = kcu.constraint_name AND tc.table_schema = kcu.table_schema 
+JOIN information_schema.constraint_column_usage ccu ON ccu.constraint_name = tc.constraint_name AND ccu.table_schema = tc.table_schema 
+JOIN information_schema.referential_constraints rc ON rc.constraint_name = tc.constraint_name AND rc.constraint_schema = tc.table_schema 
+WHERE tc.table_schema = 'public' AND tc.table_name = 'customers' AND tc.constraint_type = 'FOREIGN KEY' 
+ORDER BY tc.constraint_name;
+
+-- 3. Todas as Foreign Keys no banco que apontam para public.shops(id)
+SELECT tc.table_schema, tc.table_name, kcu.column_name, tc.constraint_name, 
+       ccu.table_schema AS foreign_table_schema, ccu.table_name AS foreign_table_name, 
+       ccu.column_name AS foreign_column_name, rc.delete_rule, rc.update_rule 
+FROM information_schema.table_constraints tc 
+JOIN information_schema.key_column_usage kcu ON tc.constraint_name = kcu.constraint_name AND tc.table_schema = kcu.table_schema 
+JOIN information_schema.constraint_column_usage ccu ON ccu.constraint_name = tc.constraint_name AND ccu.table_schema = tc.table_schema 
+JOIN information_schema.referential_constraints rc ON rc.constraint_name = tc.constraint_name AND rc.constraint_schema = tc.table_schema 
+WHERE tc.constraint_type = 'FOREIGN KEY' AND ccu.table_schema = 'public' AND ccu.table_name = 'shops' 
+ORDER BY tc.table_schema, tc.table_name, tc.constraint_name;
+
+-- 4. Estrutura completa de public.shops
+SELECT column_name, data_type, is_nullable, column_default 
+FROM information_schema.columns 
+WHERE table_schema = 'public' AND table_name = 'shops' 
+ORDER BY ordinal_position;
+
+-- 5. Contagem de linhas em public.shops
+SELECT COUNT(*) AS total FROM public.shops;
+
+-- 6. Contagem de linhas em public.customers
+SELECT COUNT(*) AS total FROM public.customers;</div>
+    </div>
+
+    <div class="section-title">3. Estado das Contagens em Tempo Real</div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Tabela</th>
+                <th>Total Atual</th>
+                <th>Papel Arquitetural no Kryon Lava Rápido V5.1</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>public.shops</code></td>
+                <td><strong>0 linhas</strong></td>
+                <td>Tabela legada descartável (Substituída por <code>organizations</code>)</td>
+            </tr>
+            <tr>
+                <td><code>public.customers</code></td>
+                <td><strong>0 linhas</strong></td>
+                <td>Tabela ativa de clientes do Lava Rápido (Isolada por <code>tenant_id</code>)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <span>Kryon Systems &bull; Governança de Banco de Dados</span>
+        <span>Auditoria 100% Read-Only &bull; Aguardando análise do ChatGPT</span>
+    </div>
+
+</body>
+</html>

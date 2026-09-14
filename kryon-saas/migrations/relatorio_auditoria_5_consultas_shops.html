@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Auditoria das 5 Consultas de Shops e Objetos Dependentes - Kryon Systems</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 10mm 12mm 12mm 12mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #1e293b;
+            font-size: 8pt;
+            line-height: 1.35;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #0284c7;
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-box {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #0284c7 0%, #6366f1 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 11pt;
+        }
+
+        .brand-text h1 {
+            font-size: 12pt;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-text p {
+            font-size: 7pt;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .doc-meta {
+            text-align: right;
+            font-size: 7pt;
+            color: #64748b;
+        }
+
+        .doc-meta strong {
+            color: #0f172a;
+        }
+
+        .badge-status {
+            display: inline-block;
+            background-color: #fef3c7;
+            color: #b45309;
+            border: 1px solid #fde68a;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 7pt;
+            margin-top: 2px;
+        }
+
+        .title-section {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #0284c7;
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin-bottom: 8px;
+        }
+
+        .title-section h2 {
+            font-size: 10.5pt;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 2px;
+        }
+
+        .title-section p {
+            font-size: 7.5pt;
+            color: #475569;
+        }
+
+        .section-title {
+            font-size: 8.5pt;
+            font-weight: 700;
+            color: #0f172a;
+            border-bottom: 1.5px solid #e2e8f0;
+            padding-bottom: 2px;
+            margin-top: 6px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 9px;
+            background: #0284c7;
+            border-radius: 2px;
+        }
+
+        .block-card {
+            border-radius: 6px;
+            padding: 6px 8px;
+            margin-bottom: 6px;
+            font-size: 7.3pt;
+            border: 1px solid #e2e8f0;
+        }
+
+        .block-card.warning {
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .block-card.guarantee {
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+        }
+
+        .block-card.code {
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            margin-bottom: 6px;
+        }
+
+        .code-box {
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 6.4pt;
+            line-height: 1.25;
+            white-space: pre-wrap;
+        }
+
+        .footer {
+            margin-top: 8px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 4px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 6.5pt;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="brand">
+            <div class="logo-box">K</div>
+            <div class="brand-text">
+                <h1>KRYON SYSTEMS</h1>
+                <p>Governança de Banco de Dados &bull; Engenharia de Software</p>
+            </div>
+        </div>
+        <div class="doc-meta">
+            <p><strong>DOCUMENTO:</strong> REL-AUD-5-QUERIES-SHOPS-005</p>
+            <p><strong>DATA:</strong> 03/09/2026 &bull; <strong>SISTEMA:</strong> Piloto Kryon Lava Rápido V5.1</p>
+            <div class="badge-status">AUDITORIA 100% READ-ONLY (SELECT APENAS)</div>
+        </div>
+    </div>
+
+    <div class="title-section">
+        <h2>Auditoria Estrutural Individualizada: Funções, Triggers, Views, Policies e Colunas de Shops</h2>
+        <p>Mapeamento das dependências no catálogo do PostgreSQL para identificação prévia de qualquer acoplamento antes de decisões estruturais, em estrito modo somente leitura.</p>
+    </div>
+
+    <div class="section-title">1. Contexto das 14 FKs Mapeadas</div>
+    <div class="block-card warning">
+        <p>• <strong>Evidência Confirmada:</strong> A consulta anterior identificou 14 Foreign Keys apontando para <code>public.shops(id)</code>, incluindo 4 tabelas legadas prefixadas com <code>lava_rapido_*</code> (ex: <code>lava_rapido_bookings</code>, <code>lava_rapido_orders</code>, <code>lava_rapido_services</code>, <code>lava_rapido_vehicles</code>) originárias da modelagem inicial de 2024.</p>
+        <p>• <strong>Diretriz de Segurança:</strong> Nenhuma Foreign Key, coluna ou tabela será alterada nesta etapa. O objetivo é única e exclusivamente mapear todas as amarras no PostgreSQL.</p>
+    </div>
+
+    <div class="section-title">2. As 5 Consultas Individuais Prontas para o Supabase SQL Editor</div>
+
+    <p style="font-weight: 700; margin-top: 4px; margin-bottom: 2px;">Consulta 1: Funções regulares no schema public com 'shop'</p>
+    <div class="block-card code">
+        <div class="code-box">SELECT n.nspname AS schema_name, p.proname AS function_name, p.oid::regprocedure AS signature 
+FROM pg_proc p 
+JOIN pg_namespace n ON n.oid = p.pronamespace 
+WHERE n.nspname = 'public' 
+  AND p.prokind = 'f' 
+  AND pg_get_functiondef(p.oid) ILIKE '%shop%' 
+ORDER BY p.proname;</div>
+    </div>
+
+    <p style="font-weight: 700; margin-top: 4px; margin-bottom: 2px;">Consulta 2: Triggers com referência a 'shop'</p>
+    <div class="block-card code">
+        <div class="code-box">SELECT event_object_schema, event_object_table, trigger_name, action_statement 
+FROM information_schema.triggers 
+WHERE action_statement ILIKE '%shop%' OR trigger_name ILIKE '%shop%' 
+ORDER BY event_object_table, trigger_name;</div>
+    </div>
+
+    <p style="font-weight: 700; margin-top: 4px; margin-bottom: 2px;">Consulta 3: Views com referência a 'shop'</p>
+    <div class="block-card code">
+        <div class="code-box">SELECT schemaname, viewname 
+FROM pg_views 
+WHERE schemaname = 'public' 
+  AND definition ILIKE '%shop%' 
+ORDER BY viewname;</div>
+    </div>
+
+    <p style="font-weight: 700; margin-top: 4px; margin-bottom: 2px;">Consulta 4: Policies RLS com referência a 'shop'</p>
+    <div class="block-card code">
+        <div class="code-box">SELECT schemaname, tablename, policyname 
+FROM pg_policies 
+WHERE schemaname = 'public' 
+  AND (qual ILIKE '%shop%' OR with_check ILIKE '%shop%' OR policyname ILIKE '%shop%') 
+ORDER BY tablename, policyname;</div>
+    </div>
+
+    <p style="font-weight: 700; margin-top: 4px; margin-bottom: 2px;">Consulta 5: Todas as colunas chamadas 'shop_id' no schema public</p>
+    <div class="block-card code">
+        <div class="code-box">SELECT table_schema, table_name, column_name, data_type, is_nullable 
+FROM information_schema.columns 
+WHERE table_schema = 'public' 
+  AND column_name = 'shop_id' 
+ORDER BY table_name;</div>
+    </div>
+
+    <div class="footer">
+        <span>Kryon Systems &bull; Governança de Banco de Dados</span>
+        <span>Auditoria 100% Read-Only &bull; Aguardando retorno das 5 consultas</span>
+    </div>
+
+</body>
+</html>

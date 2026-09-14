@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Preparação de Fixtures A/B: Kryon Lava Rápido - Kryon Systems</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 10mm 12mm 12mm 12mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #1e293b;
+            font-size: 7.5pt;
+            line-height: 1.35;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #0284c7;
+            padding-bottom: 5px;
+            margin-bottom: 8px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-box {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #0284c7 0%, #6366f1 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 10pt;
+        }
+
+        .brand-text h1 {
+            font-size: 11pt;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-text p {
+            font-size: 6.5pt;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .doc-meta {
+            text-align: right;
+            font-size: 6.5pt;
+            color: #64748b;
+        }
+
+        .doc-meta strong {
+            color: #0f172a;
+        }
+
+        .badge-ready {
+            display: inline-block;
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 6.5pt;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .section {
+            margin-bottom: 8px;
+        }
+
+        .section-title {
+            font-size: 8.5pt;
+            font-weight: 700;
+            color: #0f172a;
+            border-left: 3px solid #0284c7;
+            padding-left: 5px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            margin-bottom: 6px;
+        }
+
+        .card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 5px 6px;
+        }
+
+        .card-label {
+            font-size: 6pt;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 1px;
+        }
+
+        .card-value {
+            font-size: 7.5pt;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .card-value.highlight { color: #0284c7; }
+        .card-value.success { color: #059669; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 6.5pt;
+            margin-top: 2px;
+            margin-bottom: 5px;
+        }
+
+        th {
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            text-align: left;
+            padding: 3.5px 5px;
+            border-bottom: 1px solid #cbd5e1;
+            font-size: 6pt;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 3px 5px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #334155;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) td {
+            background: #f8fafc;
+        }
+
+        .code-box {
+            background: #0f172a;
+            color: #f8fafc;
+            padding: 5px 7px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 6pt;
+            line-height: 1.3;
+            overflow-x: auto;
+            margin: 3px 0 5px 0;
+            border: 1px solid #334155;
+        }
+
+        .callout-box {
+            background: #eff6ff;
+            border-left: 3px solid #3b82f6;
+            padding: 5px 7px;
+            border-radius: 0 4px 4px 0;
+            font-size: 6.8pt;
+            margin: 4px 0;
+            color: #1e3a8a;
+        }
+
+        .callout-box strong {
+            color: #1d4ed8;
+        }
+
+        .footer {
+            margin-top: 6px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 3px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 6pt;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="brand">
+            <div class="logo-box">K</div>
+            <div class="brand-text">
+                <h1>KRYON SYSTEMS SAAS &mdash; PREPARAÇÃO DE FIXTURES A/B</h1>
+                <p>Módulo Kryon Lava Rápido V5.1 Final Pós-Desacoplamento de customers</p>
+            </div>
+        </div>
+        <div class="doc-meta">
+            <div>Data: <strong>05/09/2026</strong></div>
+            <div>Status: <strong>PROPOSTA DE DADOS PRONTA</strong></div>
+            <div class="badge-ready">AGUARDANDO AUTORIZAÇÃO</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="info-grid">
+            <div class="card">
+                <div class="card-label">Organização A</div>
+                <div class="card-value highlight">Lava Rápido Salinas</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Organização B</div>
+                <div class="card-value highlight">Estética VIP</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Schema de Customers</div>
+                <div class="card-value success">100% Compatível</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Schema de Appointments</div>
+                <div class="card-value success">100% Compatível</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">1. Estrutura e Mapeamento dos INSERTs por Tabela</div>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 18%;">Tabela</th>
+                    <th style="width: 32%;">Colunas Alvo no INSERT</th>
+                    <th style="width: 35%;">Entidades Inseridas (Org A / Org B)</th>
+                    <th style="width: 15%;">Conformidade</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>organizations</strong></td>
+                    <td><code>id, name, slug, phone, address, owner_id, status</code></td>
+                    <td><code>a1111111-...</code> (Salinas A) &bull; <code>b2222222-...</code> (VIP B)</td>
+                    <td><strong style="color: #059669;">100% OK</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>services</strong></td>
+                    <td><code>id, tenant_id, name, vehicle_type, price, duration_minutes, is_active</code></td>
+                    <td><code>a3333333-...</code> (Lavagem Completa A) &bull; <code>b4444444-...</code> (Polimento VIP B)</td>
+                    <td><strong style="color: #059669;">100% OK</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>customers</strong></td>
+                    <td><code>id, tenant_id, name, phone, cpf, vehicle_plate, vehicle_model, notes, points</code></td>
+                    <td><code>a5555555-...</code> (Cliente Salinas A) &bull; <code>b6666666-...</code> (Cliente VIP B)</td>
+                    <td><strong style="color: #059669;">100% OK (Sem shop_id)</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>appointments</strong></td>
+                    <td><code>id, tenant_id, service_id, customer_name, customer_phone, vehicle_plate, scheduled_at, status, total_price</code></td>
+                    <td><code>a7777777-...</code> (Agendamento A) &bull; <code>b8888888-...</code> (Agendamento B)</td>
+                    <td><strong style="color: #059669;">100% OK</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">2. Resumo das Fases de Segurança Embutidas no Script</div>
+        <p style="margin-bottom: 4px;">• <strong>Fase 1 (Validação Prévia de Identidades)</strong>: Valida existência determinística de <code>teste_salinas_a</code> (UUID <code>9e3f3003-08ac-4ee5-98fa-71a918fa16b5</code>), <code>teste_estetica_b</code> (UUID <code>703d459c-b371-4d51-a9d2-c5e9e210eeae</code>) e integridade do Super Admin <code>medalha25@gmail.com</code>.<br>
+        • <strong>Fase 2 (Anti-Colisão)</strong>: Aborta com <code>RAISE EXCEPTION</code> se qualquer uma das entidades de teste já existir.<br>
+        • <strong>Fase 3 (Inserções Determinísticas)</strong>: Inserções puras sem <code>ON CONFLICT DO UPDATE</code> e sem mutações nos profiles.<br>
+        • <strong>Fase 4 (Auditoria Pós-Setup)</strong>: Valida contagens exatas (2 orgs, 2 members, 2 services, 2 customers, 2 appointments) e vínculo de <code>profiles.organization_id</code> gerado pelo trigger.</p>
+    </div>
+
+    <div class="callout-box">
+        <strong>Critério de Parada:</strong><br>
+        O script SQL completo está pronto e salvo. <strong>Nenhum comando de modificação foi executado</strong>. Estamos aguardando a autorização expressa do usuário antes de realizar o INSERT das fixtures.
+    </div>
+
+    <div class="footer">
+        <div>Kryon Systems &bull; Setup de Fixtures A/B</div>
+        <div>Página 1 de 1 &bull; Aguardando Autorização Expressa</div>
+    </div>
+
+</body>
+</html>

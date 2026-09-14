@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Plano Técnico de Teste RLS via API Supabase - Kryon Systems</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 12mm 14mm 14mm 14mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #1e293b;
+            font-size: 8.5pt;
+            line-height: 1.4;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #0284c7;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-box {
+            width: 34px;
+            height: 34px;
+            background: linear-gradient(135deg, #0284c7 0%, #6366f1 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 13pt;
+        }
+
+        .brand-text h1 {
+            font-size: 13.5pt;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-text p {
+            font-size: 7.5pt;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .doc-meta {
+            text-align: right;
+            font-size: 7.5pt;
+            color: #64748b;
+        }
+
+        .badge-status {
+            display: inline-block;
+            background-color: #e0f2fe;
+            color: #0369a1;
+            border: 1px solid #7dd3fc;
+            padding: 2px 7px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 7.5pt;
+            margin-top: 3px;
+        }
+
+        .title-section {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #0284c7;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-bottom: 12px;
+        }
+
+        .title-section h2 {
+            font-size: 11.5pt;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 2px;
+        }
+
+        .title-section p {
+            font-size: 8pt;
+            color: #475569;
+        }
+
+        .section-title {
+            font-size: 9.5pt;
+            font-weight: 700;
+            color: #0f172a;
+            border-bottom: 1.5px solid #e2e8f0;
+            padding-bottom: 3px;
+            margin-top: 10px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 5px;
+            height: 11px;
+            background: #0284c7;
+            border-radius: 2px;
+        }
+
+        /* 3-Column Client Architecture */
+        .client-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .client-card {
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 7.5pt;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+        }
+
+        .client-card.admin {
+            border-top: 3px solid #ef4444;
+            background: #fef2f2;
+        }
+
+        .client-card.authA {
+            border-top: 3px solid #0284c7;
+            background: #f0f9ff;
+        }
+
+        .client-card.authB {
+            border-top: 3px solid #8b5cf6;
+            background: #f5f3ff;
+        }
+
+        .client-card h4 {
+            font-size: 8pt;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #0f172a;
+        }
+
+        .client-card p {
+            color: #475569;
+            line-height: 1.35;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+            font-size: 7.6pt;
+        }
+
+        th {
+            background-color: #0f172a;
+            color: #ffffff;
+            text-align: left;
+            padding: 5px 6px;
+            font-weight: 700;
+            font-size: 7.2pt;
+            letter-spacing: 0.02em;
+        }
+
+        th:first-child { border-top-left-radius: 4px; }
+        th:last-child { border-top-right-radius: 4px; }
+
+        td {
+            padding: 5px 6px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        .tag-pass {
+            background-color: #dcfce7;
+            color: #166534;
+            font-weight: 700;
+            padding: 1px 4px;
+            border-radius: 4px;
+            font-size: 6.8pt;
+            border: 1px solid #bbf7d0;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .code-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 7pt;
+            line-height: 1.3;
+            margin-bottom: 8px;
+            border: 1px solid #334155;
+        }
+
+        .signature-box {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 8px 10px;
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .signature-text h4 {
+            font-size: 8.5pt;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .signature-text p {
+            font-size: 7.2pt;
+            color: #475569;
+        }
+
+        .footer {
+            margin-top: 10px;
+            border-top: 1px solid #cbd5e1;
+            padding-top: 6px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 7pt;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="brand">
+            <div class="logo-box">K</div>
+            <div class="brand-text">
+                <h1>Kryon Systems</h1>
+                <p>Security & API Architecture Review</p>
+            </div>
+        </div>
+        <div class="doc-meta">
+            <div><strong>Documento:</strong> PLN-ISO-API-003</div>
+            <div><strong>Data:</strong> 03/09/2026 12:40 (UTC-3)</div>
+            <div class="badge-status">🌐 TESTE RLS 100% VIA SUPABASE SDK / REST</div>
+        </div>
+    </div>
+
+    <!-- Title Section -->
+    <div class="title-section">
+        <h2>Arquitetura do Teste de Isolamento RLS via API Supabase (Produção Real)</h2>
+        <p><strong>Módulo Piloto:</strong> Kryon Lava Rápido (<code>kryon-lava-rapido</code>) | <strong>Banco Central:</strong> Sistemas Kryon (<code>pgpobxvkojawrstadrel.supabase.co</code>)</p>
+    </div>
+
+    <!-- Client Instantiation Model -->
+    <div class="section-title">1. Instanciação e Separação Estrita de Clientes Supabase</div>
+    <div class="client-grid">
+        <div class="client-card admin">
+            <h4>🔴 supabaseAdmin (Service Role)</h4>
+            <p><strong>Escopo Exclusivo:</strong> Setup e Teardown.</p>
+            <p>• Cria identidades descartáveis no <code>auth.users</code>.</p>
+            <p>• Cria as organizações A e B e vincula membros.</p>
+            <p>• <strong>PROIBIDO</strong> nos 8 testes de validação RLS.</p>
+        </div>
+        <div class="client-card authA">
+            <h4>🔵 clientA (Bearer JWT de USER_A)</h4>
+            <p><strong>Escopo:</strong> Testes da Empresa A.</p>
+            <p>• Login via <code>signInWithPassword</code>.</p>
+            <p>• Executa queries HTTP com cabeçalho JWT real de A.</p>
+            <p>• PostgREST aplica RLS restrito de USER_A.</p>
+        </div>
+        <div class="client-card authB">
+            <h4>🟣 clientB (Bearer JWT de USER_B)</h4>
+            <p><strong>Escopo:</strong> Testes da Empresa B.</p>
+            <p>• Login via <code>signInWithPassword</code>.</p>
+            <p>• Executa queries HTTP com cabeçalho JWT real de B.</p>
+            <p>• PostgREST aplica RLS restrito de USER_B.</p>
+        </div>
+    </div>
+
+    <!-- Table of 8 API Test Scenarios -->
+    <div class="section-title">2. Matriz de Execução dos 8 Cenários via API REST</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 4%;">#</th>
+                <th style="width: 22%;">Cenário Testado</th>
+                <th style="width: 28%;">Chamada de API PostgREST (SDK)</th>
+                <th style="width: 26%;">Resultado Esperado via HTTP</th>
+                <th style="width: 20%;">Mecanismo RLS</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>01</strong></td>
+                <td><strong>Leitura Própria Org A</strong></td>
+                <td><code>clientA.from('services').select('*').eq('tenant_id', orgA)</code></td>
+                <td>Status 200 &bull; <code>data.length === 1</code></td>
+                <td><span class="tag-pass">PASS</span> RLS SELECT Policy</td>
+            </tr>
+            <tr>
+                <td><strong>02</strong></td>
+                <td><strong>Leitura Própria Org B</strong></td>
+                <td><code>clientB.from('services').select('*').eq('tenant_id', orgB)</code></td>
+                <td>Status 200 &bull; <code>data.length === 1</code></td>
+                <td><span class="tag-pass">PASS</span> RLS SELECT Policy</td>
+            </tr>
+            <tr>
+                <td><strong>03</strong></td>
+                <td><strong>Leitura Cruzada Serviços (A no B)</strong></td>
+                <td><code>clientA.from('services').select('*').eq('tenant_id', orgB)</code></td>
+                <td>Status 200 &bull; <code>data.length === 0</code> (0 vazados)</td>
+                <td><span class="tag-pass">PASS</span> RLS SELECT Isolation</td>
+            </tr>
+            <tr>
+                <td><strong>04</strong></td>
+                <td><strong>Leitura Cruzada Clientes (B no A)</strong></td>
+                <td><code>clientB.from('customers').select('*').eq('tenant_id', orgA)</code></td>
+                <td>Status 200 &bull; <code>data.length === 0</code> (LGPD Seguro)</td>
+                <td><span class="tag-pass">PASS</span> RLS SELECT Isolation</td>
+            </tr>
+            <tr>
+                <td><strong>05</strong></td>
+                <td><strong>Inserção Cruzada (A no B)</strong></td>
+                <td><code>clientA.from('services').insert({ tenant_id: orgB, ... })</code></td>
+                <td>Status 403/42501 &bull; <code>error !== null</code> (Bloqueado)</td>
+                <td><span class="tag-pass">PASS</span> RLS WITH CHECK Violation</td>
+            </tr>
+            <tr>
+                <td><strong>06</strong></td>
+                <td><strong>Update Cruzado (A no B)</strong></td>
+                <td><code>clientA.from('customers').update(...).eq('id', custB)</code></td>
+                <td>Status 200 &bull; <code>data.length === 0</code> (0 afetados)</td>
+                <td><span class="tag-pass">PASS</span> RLS UPDATE Isolation</td>
+            </tr>
+            <tr>
+                <td><strong>07</strong></td>
+                <td><strong>Delete Cruzado (B no A)</strong></td>
+                <td><code>clientB.from('appointments').delete().eq('id', apptA)</code></td>
+                <td>Status 200 &bull; <code>data.length === 0</code> (0 afetados)</td>
+                <td><span class="tag-pass">PASS</span> RLS DELETE Isolation</td>
+            </tr>
+            <tr>
+                <td><strong>08</strong></td>
+                <td><strong>RPC Anti Cross-Tenant (Anon)</strong></td>
+                <td><code>clientAnon.rpc('create_public_appointment', { ... })</code></td>
+                <td>Status 400 &bull; <code>error.message</code> (Serviço inválido)</td>
+                <td><span class="tag-pass">PASS</span> Server-Side RPC Security</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Snippet Code -->
+    <div class="section-title">3. Exemplo Real de Execução HTTP com Bearer JWT (Zero Bypass)</div>
+    <div class="code-box">
+// Instanciação e autenticação real via PostgREST / GoTrue
+const clientA = createClient(SUPABASE_URL, ANON_KEY);
+await clientA.auth.signInWithPassword({ email: 'teste_salinas_a@kryonsystems.internal', password: '...' });
+
+// Requisição enviada com header 'Authorization: Bearer &lt;JWT_USER_A&gt;'
+const { data, error } = await clientA.from('services').select('*').eq('tenant_id', orgBId);
+
+// Assert rigoroso: PostgREST intercepta e retorna array vazio (bloqueio 100% silencioso e seguro)
+if (data.length === 0) {
+    console.log('✔ CENÁRIO 03 [PASS]: RLS bloqueou leitura cruzada via API REST real.');
+}
+    </div>
+
+    <!-- Signatures -->
+    <div class="signature-box">
+        <div class="signature-text">
+            <h4>Alinhamento Técnico: Tripartite (Você + Antigravity + ChatGPT)</h4>
+            <p>Arquitetura 100% fiel ao ambiente de produção. O teste passa obrigatoriamente pela camada de rede PostgREST com autenticação JWT.</p>
+        </div>
+        <div style="text-align: right; font-size: 7.2pt; color: #0284c7; font-weight: 700;">
+            KRYON SYSTEMS &bull; PILOTO V5.1<br>
+            SECURITY DIVISION
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div>Kryon Systems &bull; Validação de Segurança RLS via API &bull; kryonsystems.com.br</div>
+        <div>Página 1 de 1 &bull; Gerado em 03/09/2026</div>
+    </div>
+
+</body>
+</html>

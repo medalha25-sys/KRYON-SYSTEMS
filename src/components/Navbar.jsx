@@ -24,23 +24,23 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 w-full z-[1000] transition-all duration-500 py-4 ${
+      className={`fixed top-0 left-0 w-full z-[1000] transition-all duration-500 ${
         isScrolled 
-          ? 'bg-background/80 backdrop-blur-xl border-b border-white/10 py-3 shadow-2xl' 
-          : 'bg-transparent py-6'
+          ? 'bg-background/85 backdrop-blur-xl border-b border-white/10 py-2.5 sm:py-3 shadow-2xl' 
+          : 'bg-transparent py-4 sm:py-6'
       }`}
     >
       <div className="container-custom flex justify-between items-center text-white">
         {/* Logo */}
         <Link 
           to="/" 
-          className="flex items-center gap-3 no-underline group"
+          className="flex items-center gap-2.5 sm:gap-3 no-underline group"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
-          <div className="relative w-10 h-10 flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl overflow-hidden shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform">
+          <div className="relative w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl sm:rounded-2xl overflow-hidden shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform flex-shrink-0">
             <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
           </div>
-          <span className="text-xl md:text-2xl font-extrabold tracking-tight">
+          <span className="text-lg sm:text-xl md:text-2xl font-extrabold tracking-tight">
             Kryon <span className="text-gradient">Systems</span>
           </span>
         </Link>
@@ -79,42 +79,43 @@ const Navbar = () => {
         {/* Mobile Menu Toggle */}
         <button
           onClick={() => setIsOpen(!isOpen)}
+          aria-label="Menu"
           className="lg:hidden p-2 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-colors"
         >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
+          {isOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
 
       {/* Mobile Menu */}
       <div 
-        className={`fixed inset-0 top-[70px] bg-background/95 backdrop-blur-2xl lg:hidden transition-all duration-500 ${
+        className={`fixed inset-0 top-[58px] sm:top-[68px] bg-background/95 backdrop-blur-2xl lg:hidden transition-all duration-300 overflow-y-auto ${
           isOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
         }`}
       >
-        <div className="flex flex-col gap-6 p-8 h-full border-t border-white/10">
+        <div className="flex flex-col gap-4 p-6 border-t border-white/10 min-h-[calc(100vh-68px)]">
           {menuItems.map((item) => (
             <a
               key={item.name}
               href={item.link}
               onClick={() => setIsOpen(false)}
-              className="text-2xl font-bold text-white no-underline border-b border-white/5 pb-4"
+              className="text-lg sm:text-xl font-bold text-white no-underline border-b border-white/5 pb-3"
             >
               {item.name}
             </a>
           ))}
           
-          <div className="flex flex-col gap-4 mt-auto">
+          <div className="flex flex-col gap-3 mt-auto pt-6">
              <a 
                 href="https://app.kryonsystems.com.br/login" 
-                className="w-full py-4 text-center font-bold text-gray-400 border border-white/10 rounded-2xl no-underline"
+                className="w-full py-3.5 text-center font-bold text-gray-300 border border-white/10 rounded-xl no-underline text-sm"
               >
                 Já sou cliente
               </a>
               <a 
                 href="https://app.kryonsystems.com.br/trial" 
-                className="w-full py-5 text-center font-extrabold bg-blue-600 rounded-2xl text-white shadow-xl shadow-blue-900/40 no-underline"
+                className="w-full py-4 text-center font-extrabold bg-blue-600 rounded-xl text-white shadow-xl shadow-blue-900/40 no-underline text-sm sm:text-base"
               >
-                Começar agora
+                Começar agora (30 Dias Grátis)
               </a>
           </div>
         </div>

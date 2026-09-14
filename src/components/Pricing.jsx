@@ -46,24 +46,24 @@ const Pricing = () => {
     };
 
     return (
-        <section className="section py-16 md:py-24 bg-[#08080c] relative overflow-hidden" id="precos">
+        <section className="section py-12 sm:py-16 md:py-24 bg-[#08080c] relative overflow-hidden" id="precos">
             {/* Background Glow */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle,rgba(112,0,255,0.06)_0%,rgba(0,0,0,0)_70%)] pointer-events-none" />
 
             <div className="container-custom relative z-10">
-                <div className="text-center mb-12 md:mb-16">
-                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-bold uppercase tracking-wider mb-4">
-                        <Sparkles size={14} /> Planos Sem Pegadinhas
+                <div className="text-center mb-8 sm:mb-16">
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-3 sm:mb-4">
+                        <Sparkles size={13} /> Planos Sem Pegadinhas
                     </div>
-                    <h2 className="title text-3xl sm:text-4xl md:text-5xl">Planos e Preços</h2>
-                    <p className="subtitle mx-auto text-base sm:text-lg mt-3 text-slate-400 max-w-2xl">
+                    <h2 className="title text-2xl sm:text-3xl md:text-5xl">Planos e Preços</h2>
+                    <p className="subtitle mx-auto text-sm sm:text-base md:text-lg mt-2 sm:mt-3 text-slate-400 max-w-2xl">
                         Escolha o plano ideal para a sua empresa. Sem taxas escondidas e com 30 dias grátis para testar.
                     </p>
 
                     {/* Controls Container */}
-                    <div className="card max-w-3xl mx-auto mt-8 mb-12 p-6 sm:p-8 flex flex-col items-center gap-6">
+                    <div className="card max-w-3xl mx-auto mt-6 sm:mt-8 mb-8 sm:mb-12 p-4 sm:p-8 flex flex-col items-center gap-4 sm:gap-6">
                         {/* 1. Cycle Toggle */}
-                        <div className="flex items-center gap-3 sm:gap-4 flex-wrap justify-center text-sm sm:text-base">
+                        <div className="flex items-center gap-2.5 sm:gap-4 flex-wrap justify-center text-xs sm:text-base">
                             <span 
                                 className={`cursor-pointer transition-colors ${billingCycle === 'monthly' ? 'text-white font-bold' : 'text-slate-400'}`} 
                                 onClick={() => setBillingCycle('monthly')}
@@ -72,25 +72,25 @@ const Pricing = () => {
                             </span>
                             <div 
                                 onClick={() => setBillingCycle(billingCycle === 'semestral' ? 'monthly' : 'semestral')}
-                                className="w-14 h-7 bg-white/10 rounded-full relative cursor-pointer transition-all"
+                                className="w-12 h-6 sm:w-14 sm:h-7 bg-white/10 rounded-full relative cursor-pointer transition-all flex-shrink-0"
                                 style={{
                                     backgroundColor: billingCycle === 'semestral' ? '#00f0ff' : 'rgba(255,255,255,0.1)'
                                 }}
                             >
                                 <div 
-                                    className="w-5 h-5 bg-white rounded-full absolute top-1 transition-all shadow-md"
+                                    className="w-4 h-4 sm:w-5 sm:h-5 bg-white rounded-full absolute top-1 transition-all shadow-md"
                                     style={{
-                                        left: billingCycle === 'semestral' ? '30px' : '4px',
+                                        left: billingCycle === 'semestral' ? 'calc(100% - 20px)' : '4px',
                                         backgroundColor: billingCycle === 'semestral' ? '#050507' : '#ffffff'
                                     }}
                                 />
                             </div>
                             <span 
-                                className={`cursor-pointer transition-colors flex items-center gap-1.5 ${billingCycle === 'semestral' ? 'text-white font-bold' : 'text-slate-400'}`} 
+                                className={`cursor-pointer transition-colors flex items-center gap-1 sm:gap-1.5 ${billingCycle === 'semestral' ? 'text-white font-bold' : 'text-slate-400'}`} 
                                 onClick={() => setBillingCycle('semestral')}
                             >
                                 Semestral 
-                                <span className="text-[11px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-full font-bold">
+                                <span className="text-[10px] sm:text-[11px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-1.5 py-0.5 rounded-full font-bold">
                                     -20% OFF
                                 </span>
                             </span>
@@ -100,24 +100,24 @@ const Pricing = () => {
                         <div className="w-full h-px bg-white/10" />
 
                         {/* 2. Fiscal Controls */}
-                        <div className="flex flex-col items-center gap-4 w-full">
+                        <div className="flex flex-col items-center gap-3 sm:gap-4 w-full">
                             {/* Toggle Fiscal */}
-                            <div className="flex items-center gap-3 text-left cursor-pointer" onClick={() => setWantsFiscal(!wantsFiscal)}>
+                            <div className="flex items-center gap-2.5 sm:gap-3 text-left cursor-pointer" onClick={() => setWantsFiscal(!wantsFiscal)}>
                                 <div 
-                                    className="w-11 h-6 rounded-full relative transition-all flex-shrink-0"
+                                    className="w-10 h-5 sm:w-11 sm:h-6 rounded-full relative transition-all flex-shrink-0"
                                     style={{
                                         backgroundColor: wantsFiscal ? '#00f0ff' : 'rgba(255,255,255,0.1)'
                                     }}
                                 >
                                     <div 
-                                        className="w-4 h-4 rounded-full absolute top-1 transition-all"
+                                        className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full absolute top-[3px] sm:top-1 transition-all"
                                         style={{
-                                            left: wantsFiscal ? '24px' : '4px',
+                                            left: wantsFiscal ? 'calc(100% - 17px)' : '3px',
                                             backgroundColor: wantsFiscal ? '#050507' : '#ffffff'
                                         }}
                                     />
                                 </div>
-                                <span className="text-white text-sm sm:text-base font-medium">Desejo emitir notas fiscais (NF-e / NFC-e)</span>
+                                <span className="text-white text-xs sm:text-base font-medium">Desejo emitir notas fiscais (NF-e / NFC-e)</span>
                             </div>
 
                             {/* Note Packs */}
@@ -127,20 +127,20 @@ const Pricing = () => {
                                         initial={{ opacity: 0, y: -10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: -10 }}
-                                        className="flex gap-2.5 sm:gap-3 flex-wrap justify-center w-full mt-2"
+                                        className="flex gap-2 sm:gap-3 flex-wrap justify-center w-full mt-1 sm:mt-2"
                                     >
                                         {fiscalOptions.map((opt, idx) => (
                                             <div 
                                                 key={idx}
                                                 onClick={() => setFiscalTier(idx)}
-                                                className={`p-3 rounded-xl cursor-pointer text-center transition-all flex-1 min-w-[90px] border ${
+                                                className={`p-2 sm:p-3 rounded-xl cursor-pointer text-center transition-all flex-1 min-w-[80px] sm:min-w-[90px] border ${
                                                     fiscalTier === idx 
                                                         ? 'bg-cyan-500/10 border-cyan-400 text-cyan-300 shadow-lg shadow-cyan-500/10' 
                                                         : 'bg-white/[0.03] border-white/10 text-slate-400 hover:border-white/20'
                                                 }`}
                                             >
-                                                <div className="font-bold text-xs sm:text-sm">{opt.count} Notas</div>
-                                                <div className="text-[11px] text-slate-400 mt-0.5">R$ {opt.price}/mês</div>
+                                                <div className="font-bold text-[11px] sm:text-sm">{opt.count} Notas</div>
+                                                <div className="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">R$ {opt.price}/mês</div>
                                             </div>
                                         ))}
                                     </motion.div>
@@ -151,7 +151,7 @@ const Pricing = () => {
                 </div>
 
                 {/* Cards Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto items-stretch">
                     {/* PLAN: BASIC */}
                     <PlanCard 
                         name="Básico"
@@ -224,34 +224,34 @@ const Pricing = () => {
                 </div>
 
                 {/* 3 Selos de Confiança (Risco Zero) */}
-                <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-                    <div className="flex items-center gap-4 p-5 rounded-2xl bg-white/[0.02] border border-white/5">
-                        <div className="p-3 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex-shrink-0">
-                            <ShieldCheck size={24} />
+                <div className="mt-10 sm:mt-16 grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-6 max-w-5xl mx-auto">
+                    <div className="flex items-center gap-3 sm:gap-4 p-4 sm:p-5 rounded-2xl bg-white/[0.02] border border-white/5">
+                        <div className="p-2.5 sm:p-3 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex-shrink-0">
+                            <ShieldCheck size={20} className="sm:w-6 sm:h-6" />
                         </div>
                         <div>
-                            <h4 className="text-white font-bold text-sm">Teste 30 Dias Grátis</h4>
-                            <p className="text-slate-400 text-xs mt-0.5">Sem precisar cadastrar cartão de crédito.</p>
+                            <h4 className="text-white font-bold text-xs sm:text-sm">Teste 30 Dias Grátis</h4>
+                            <p className="text-slate-400 text-[11px] sm:text-xs mt-0.5">Sem precisar cadastrar cartão de crédito.</p>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-4 p-5 rounded-2xl bg-white/[0.02] border border-white/5">
-                        <div className="p-3 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 flex-shrink-0">
-                            <Unlock size={24} />
+                    <div className="flex items-center gap-3 sm:gap-4 p-4 sm:p-5 rounded-2xl bg-white/[0.02] border border-white/5">
+                        <div className="p-2.5 sm:p-3 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 flex-shrink-0">
+                            <Unlock size={20} className="sm:w-6 sm:h-6" />
                         </div>
                         <div>
-                            <h4 className="text-white font-bold text-sm">Sem Contrato de Fidelidade</h4>
-                            <p className="text-slate-400 text-xs mt-0.5">Cancele quando quiser com apenas 1 clique.</p>
+                            <h4 className="text-white font-bold text-xs sm:text-sm">Sem Contrato de Fidelidade</h4>
+                            <p className="text-slate-400 text-[11px] sm:text-xs mt-0.5">Cancele quando quiser com apenas 1 clique.</p>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-4 p-5 rounded-2xl bg-white/[0.02] border border-white/5">
-                        <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex-shrink-0">
-                            <MessageSquare size={24} />
+                    <div className="flex items-center gap-3 sm:gap-4 p-4 sm:p-5 rounded-2xl bg-white/[0.02] border border-white/5">
+                        <div className="p-2.5 sm:p-3 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex-shrink-0">
+                            <MessageSquare size={20} className="sm:w-6 sm:h-6" />
                         </div>
                         <div>
-                            <h4 className="text-white font-bold text-sm">Suporte no WhatsApp</h4>
-                            <p className="text-slate-400 text-xs mt-0.5">Atendimento humanizado direto no Brasil.</p>
+                            <h4 className="text-white font-bold text-xs sm:text-sm">Suporte no WhatsApp</h4>
+                            <p className="text-slate-400 text-[11px] sm:text-xs mt-0.5">Atendimento humanizado direto no Brasil.</p>
                         </div>
                     </div>
                 </div>

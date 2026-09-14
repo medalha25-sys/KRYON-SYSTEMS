@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Revisão Final Hardening RLS V5.1 - Kryon Systems</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 10mm 12mm 12mm 12mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #1e293b;
+            font-size: 7.5pt;
+            line-height: 1.35;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #0284c7;
+            padding-bottom: 5px;
+            margin-bottom: 8px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-box {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #0284c7 0%, #6366f1 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 10pt;
+        }
+
+        .brand-text h1 {
+            font-size: 11pt;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-text p {
+            font-size: 6.5pt;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .doc-meta {
+            text-align: right;
+            font-size: 6.5pt;
+            color: #64748b;
+        }
+
+        .doc-meta strong {
+            color: #0f172a;
+        }
+
+        .badge-ready {
+            display: inline-block;
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 6.5pt;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .section {
+            margin-bottom: 8px;
+        }
+
+        .section-title {
+            font-size: 8.5pt;
+            font-weight: 700;
+            color: #0f172a;
+            border-left: 3px solid #0284c7;
+            padding-left: 5px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            margin-bottom: 6px;
+        }
+
+        .card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 5px 6px;
+            text-align: center;
+        }
+
+        .card-label {
+            font-size: 6pt;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 1px;
+        }
+
+        .card-value {
+            font-size: 7.5pt;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .card-value.highlight { color: #0284c7; }
+        .card-value.success { color: #059669; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 6.5pt;
+            margin-top: 2px;
+            margin-bottom: 5px;
+        }
+
+        th {
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            text-align: left;
+            padding: 3.5px 5px;
+            border-bottom: 1px solid #cbd5e1;
+            font-size: 6pt;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 3px 5px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #334155;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) td {
+            background: #f8fafc;
+        }
+
+        .callout-box {
+            background: #eff6ff;
+            border-left: 3px solid #3b82f6;
+            padding: 5px 7px;
+            border-radius: 0 4px 4px 0;
+            font-size: 6.8pt;
+            margin: 4px 0;
+            color: #1e3a8a;
+        }
+
+        .callout-box strong {
+            color: #1d4ed8;
+        }
+
+        .footer {
+            margin-top: 6px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 3px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 6pt;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="brand">
+            <div class="logo-box">K</div>
+            <div class="brand-text">
+                <h1>KRYON SYSTEMS SAAS &mdash; REVISÃO FINAL HARDENING RLS</h1>
+                <p>Script Consolidado V5.1 &bull; Inclusão de Todos os DROP POLICY IF EXISTS</p>
+            </div>
+        </div>
+        <div class="doc-meta">
+            <div>Data: <strong>05/09/2026</strong></div>
+            <div>Status: <strong>PROPOSTA FINAL PRONTA</strong></div>
+            <div class="badge-ready">AGUARDANDO APROVAÇÃO</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="info-grid">
+            <div class="card">
+                <div class="card-label">Tabelas Protegidas</div>
+                <div class="card-value highlight">7 Tabelas Centrais</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Policies Legadas Removidas</div>
+                <div class="card-value success">15 Cláusulas DROP</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Controle de Escrita</div>
+                <div class="card-value success">WITH CHECK Ativo</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Mutações de Dados</div>
+                <div class="card-value success">ZERO (0 Mutações)</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">1. Tabela Comparativa de Policies: Removidas vs Criadas</div>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 20%;">Tabela</th>
+                    <th style="width: 38%;">Policies Removidas Explicitas (DROP IF EXISTS)</th>
+                    <th style="width: 42%;">Novas Policies de Hardening Criadas (CREATE)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>public.services</code></td>
+                    <td>• Serviços visíveis publicamente apenas de organizações ativas<br>• Membros gerenciam serviços da sua organização<br>• Membros consultam serviços da sua organização<br>• Users manage own services</td>
+                    <td>1. <strong>Membros consultam serviços...</strong> (FOR SELECT USING is_user_member_of_org)<br>2. <strong>Membros gerenciam serviços...</strong> (FOR ALL USING + WITH CHECK is_user_member_of_org)</td>
+                </tr>
+                <tr>
+                    <td><code>public.customers</code></td>
+                    <td>• Gerenciamento de clientes pelo tenant<br>• Membros gerenciam clientes da sua organização<br>• Owners can manage their customers</td>
+                    <td>1. <strong>Membros gerenciam clientes...</strong> (FOR ALL USING + WITH CHECK is_user_member_of_org)</td>
+                </tr>
+                <tr>
+                    <td><code>public.appointments</code></td>
+                    <td>• Agendamento público com validação estrita de integridade<br>• Membros gerenciam agendamentos da sua organização<br>• Users manage own appointments</td>
+                    <td>1. <strong>Membros gerenciam agendamentos...</strong> (FOR ALL USING + WITH CHECK is_user_member_of_org)</td>
+                </tr>
+                <tr>
+                    <td><code>public.organization_members</code></td>
+                    <td>• Membros podem ver outros membros...<br>• Membros visualizam membros...<br>• Users can view own membership</td>
+                    <td>1. <strong>Membros visualizam membros...</strong> (FOR SELECT USING user_id = auth.uid() OR is_user_member_of_org)</td>
+                </tr>
+                <tr>
+                    <td><code>public.organizations</code></td>
+                    <td>• Membros podem ver suas organizações<br>• Owners e admins podem atualizar sua organização<br>• Users can view own organizations</td>
+                    <td>1. <strong>Membros podem ver suas organizações</strong> (FOR SELECT)<br>2. <strong>Owners e admins podem atualizar sua organização</strong> (FOR UPDATE)</td>
+                </tr>
+                <tr>
+                    <td><code>public.subscriptions</code></td>
+                    <td>• Membros podem ver assinaturas da sua organização<br>• Org members view subscriptions</td>
+                    <td>1. <strong>Membros podem ver assinaturas da sua organização</strong> (FOR SELECT)</td>
+                </tr>
+                <tr>
+                    <td><code>public.feedbacks</code></td>
+                    <td>• Membros visualizam feedbacks da sua organização</td>
+                    <td>1. <strong>Membros visualizam feedbacks da sua organização</strong> (FOR SELECT)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="callout-box">
+        <strong>Conclusão Técnica:</strong><br>
+        O script <code>correcao_recursao_rls_v5_1.sql</code> foi totalmente atualizado para garantir a remoção determinística de todas as políticas legadas (incluindo <em>'Gerenciamento de clientes pelo tenant'</em> e as regras de leitura pública aberta em <code>services</code>). O script está 100% pronto e aguarda autorização expressa para execução.
+    </div>
+
+    <div class="footer">
+        <div>Kryon Systems &bull; Hardening RLS V5.1 Final</div>
+        <div>Página 1 de 1 &bull; Proposta Consolidada e Segura</div>
+    </div>
+
+</body>
+</html>

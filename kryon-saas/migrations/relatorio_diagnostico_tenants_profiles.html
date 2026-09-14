@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Diagnóstico Técnico: Relação entre Tenants, Organizations e Profiles</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 12mm 14mm 14mm 14mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #1e293b;
+            font-size: 8.2pt;
+            line-height: 1.38;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #0284c7;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-box {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #0284c7 0%, #6366f1 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 12pt;
+        }
+
+        .brand-text h1 {
+            font-size: 13pt;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-text p {
+            font-size: 7.2pt;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .doc-meta {
+            text-align: right;
+            font-size: 7.2pt;
+            color: #64748b;
+        }
+
+        .doc-meta strong {
+            color: #0f172a;
+        }
+
+        .badge-status {
+            display: inline-block;
+            background-color: #fef3c7;
+            color: #b45309;
+            border: 1px solid #fde68a;
+            padding: 2px 7px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 7.2pt;
+            margin-top: 2px;
+        }
+
+        .title-section {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #0284c7;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-bottom: 10px;
+        }
+
+        .title-section h2 {
+            font-size: 11pt;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 2px;
+        }
+
+        .title-section p {
+            font-size: 7.8pt;
+            color: #475569;
+        }
+
+        .section-title {
+            font-size: 9pt;
+            font-weight: 700;
+            color: #0f172a;
+            border-bottom: 1.5px solid #e2e8f0;
+            padding-bottom: 3px;
+            margin-top: 8px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 5px;
+            height: 10px;
+            background: #0284c7;
+            border-radius: 2px;
+        }
+
+        .block-card {
+            border-radius: 6px;
+            padding: 8px 10px;
+            margin-bottom: 8px;
+            font-size: 7.5pt;
+            border: 1px solid #e2e8f0;
+        }
+
+        .block-card.diag {
+            background: #fef2f2;
+            border-left: 4px solid #ef4444;
+        }
+
+        .block-card.queries {
+            background: #f0f9ff;
+            border-left: 4px solid #0284c7;
+        }
+
+        .code-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 6px 8px;
+            border-radius: 5px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 6.4pt;
+            line-height: 1.28;
+            margin-top: 4px;
+            border: 1px solid #334155;
+        }
+
+        .signature-box {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .signature-text h4 {
+            font-size: 8pt;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .signature-text p {
+            font-size: 7pt;
+            color: #475569;
+        }
+
+        .footer {
+            margin-top: 8px;
+            border-top: 1px solid #cbd5e1;
+            padding-top: 5px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 6.8pt;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="brand">
+            <div class="logo-box">K</div>
+            <div class="brand-text">
+                <h1>Kryon Systems</h1>
+                <p>Security & Multi-Tenant Audit Division</p>
+            </div>
+        </div>
+        <div class="doc-meta">
+            <div><strong>Documento:</strong> REL-DIAG-TENANTS-PROFILES-019</div>
+            <div><strong>Data:</strong> 03/09/2026 20:09 (UTC-3)</div>
+            <div class="badge-status">🔍 DIAGNÓSTICO READ-ONLY (ERRO 23503)</div>
+        </div>
+    </div>
+
+    <!-- Title Section -->
+    <div class="title-section">
+        <h2>Diagnóstico de Foreign Key: profiles.tenant_id vs tenants vs organizations</h2>
+        <p><strong>Incidente:</strong> <code>ERROR: 23503 (profiles_tenant_id_fkey): Key (tenant_id) is not present in table "tenants"</code></p>
+    </div>
+
+    <!-- 1. DIAGNÓSTICO DO ERRO -->
+    <div class="section-title">1. Causa Raiz do Erro de Foreign Key (23503)</div>
+    <div class="block-card diag">
+        <h4>🔴 O Que Ocorreu:</h4>
+        <p>1. O trigger <code>handle_new_organization_owner()</code> do V5.1 tentou executar: <code>UPDATE public.profiles SET tenant_id = NEW.id WHERE id = NEW.owner_id</code>.</p>
+        <p>2. No entanto, a coluna <code>public.profiles.tenant_id</code> possui uma foreign key legada (<code>profiles_tenant_id_fkey</code>) apontando para a tabela legada <code>public.tenants(id)</code> em vez de <code>public.organizations(id)</code>.</p>
+        <p>3. Como a nova organização foi criada em <code>public.organizations</code> e não existe em <code>public.tenants</code>, o PostgreSQL barrou a operação.</p>
+    </div>
+
+    <!-- 2. BATERIA DE 8 CONSULTAS SELECT-ONLY -->
+    <div class="section-title">2. Bateria de 8 Consultas de Diagnóstico (Somente Leitura)</div>
+    <div class="block-card queries">
+        <p>Para mapear com 100% de exatidão o estado das tabelas e chaves estrangeiras sem modificar nenhum registro, foi elaborado o script consolidado <code>diagnostico_tenants_organizations_profiles.sql</code>.</p>
+        <div class="code-box">
+-- 1. FK de profiles:
+SELECT tc.constraint_name, kcu.column_name, ccu.table_name AS foreign_table, ccu.column_name AS foreign_column
+FROM information_schema.table_constraints tc
+JOIN information_schema.key_column_usage kcu ON tc.constraint_name = kcu.constraint_name
+JOIN information_schema.constraint_column_usage ccu ON ccu.constraint_name = tc.constraint_name
+WHERE tc.table_name = 'profiles' AND tc.constraint_type = 'FOREIGN KEY';
+
+-- 2. Schema da tabela/view tenants:
+SELECT column_name, data_type, is_nullable FROM information_schema.columns WHERE table_name = 'tenants';
+
+-- 3. Contagem de registros:
+SELECT COUNT(*) FROM public.tenants;
+SELECT COUNT(*) FROM public.organizations;
+SELECT COUNT(*), COUNT(*) FILTER (WHERE tenant_id IS NOT NULL) FROM public.profiles;
+
+-- 4. Definição do trigger handle_new_organization_owner e tipo da relação tenants (r = BASE TABLE, v = VIEW):
+SELECT pg_get_functiondef(oid) FROM pg_proc WHERE proname = 'handle_new_organization_owner';
+SELECT relname, relkind FROM pg_class WHERE relname = 'tenants';
+        </div>
+    </div>
+
+    <!-- Signatures -->
+    <div class="signature-box">
+        <div class="signature-text">
+            <h4>Alinhamento Técnico Tripartite (Você + Antigravity + ChatGPT)</h4>
+            <p>Diagnóstico estruturado e seguro. Protocolo 100% somente leitura pronto para execução.</p>
+        </div>
+        <div style="text-align: right; font-size: 7pt; color: #0284c7; font-weight: 700;">
+            KRYON SYSTEMS &bull; PILOTO V5.1<br>
+            SECURITY DIVISION
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div>Kryon Systems &bull; Diagnóstico de Foreign Keys &bull; kryonsystems.com.br</div>
+        <div>Página 1 de 1 &bull; Gerado em 03/09/2026</div>
+    </div>
+
+</body>
+</html>

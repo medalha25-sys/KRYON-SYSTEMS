@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Execução Autorizada: Correção de Recursão RLS - Kryon Systems</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 12mm 14mm 14mm 14mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #1e293b;
+            font-size: 8.2pt;
+            line-height: 1.38;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #0284c7;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-box {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #0284c7 0%, #6366f1 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 12pt;
+        }
+
+        .brand-text h1 {
+            font-size: 13pt;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-text p {
+            font-size: 7.2pt;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .doc-meta {
+            text-align: right;
+            font-size: 7.2pt;
+            color: #64748b;
+        }
+
+        .doc-meta strong {
+            color: #0f172a;
+        }
+
+        .badge-status {
+            display: inline-block;
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 2px 7px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 7.2pt;
+            margin-top: 2px;
+        }
+
+        .title-section {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #0284c7;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-bottom: 10px;
+        }
+
+        .title-section h2 {
+            font-size: 11pt;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 2px;
+        }
+
+        .title-section p {
+            font-size: 7.8pt;
+            color: #475569;
+        }
+
+        .section-title {
+            font-size: 9pt;
+            font-weight: 700;
+            color: #0f172a;
+            border-bottom: 1.5px solid #e2e8f0;
+            padding-bottom: 3px;
+            margin-top: 8px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 5px;
+            height: 10px;
+            background: #0284c7;
+            border-radius: 2px;
+        }
+
+        .block-card {
+            border-radius: 6px;
+            padding: 8px 10px;
+            margin-bottom: 8px;
+            font-size: 7.5pt;
+            border: 1px solid #e2e8f0;
+        }
+
+        .block-card.exec {
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+        }
+
+        .block-card.step {
+            background: #f8fafc;
+            border-left: 4px solid #0284c7;
+        }
+
+        .code-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 6px 8px;
+            border-radius: 5px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 6.8pt;
+            line-height: 1.3;
+            margin-top: 4px;
+            border: 1px solid #334155;
+        }
+
+        .signature-box {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .signature-text h4 {
+            font-size: 8pt;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .signature-text p {
+            font-size: 7pt;
+            color: #475569;
+        }
+
+        .footer {
+            margin-top: 8px;
+            border-top: 1px solid #cbd5e1;
+            padding-top: 5px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 6.8pt;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="brand">
+            <div class="logo-box">K</div>
+            <div class="brand-text">
+                <h1>Kryon Systems</h1>
+                <p>Security & Multi-Tenant Audit Division</p>
+            </div>
+        </div>
+        <div class="doc-meta">
+            <div><strong>Documento:</strong> AUT-EXEC-FIX-009</div>
+            <div><strong>Data:</strong> 03/09/2026 18:18 (UTC-3)</div>
+            <div class="badge-status">🚀 EXECUÇÃO AUTORIZADA PELO ENGENHEIRO</div>
+        </div>
+    </div>
+
+    <!-- Title Section -->
+    <div class="title-section">
+        <h2>Guia de Execução & Validação Pós-Correção de Recursão RLS</h2>
+        <p><strong>Script:</strong> <code>correcao_recursao_rls_v5_1.sql</code> | <strong>Banco:</strong> Sistemas Kryon (<code>pgpobxvkojawrstadrel.supabase.co</code>)</p>
+    </div>
+
+    <!-- 1. STATUS DE AUTORIZAÇÃO -->
+    <div class="section-title">1. Status de Autorização & Escopo</div>
+    <div class="block-card exec">
+        <p>✔ <strong>Escopo Autorizado:</strong> Exclusivamente a aplicação do SQL de correção de recursão RLS 42P17.</p>
+        <p>✔ <strong>Arquivo Auditado:</strong> <code>correcao_recursao_rls_v5_1.sql</code> (119 linhas, sem alterações adicionais).</p>
+        <p>✔ <strong>Regra de Segurança:</strong> Zero exclusão de dados, RLS 100% ativo e teardown estritamente bloqueado.</p>
+    </div>
+
+    <!-- 2. INSTRUÇÃO DE APLICAÇÃO NO SUPABASE -->
+    <div class="section-title">2. Instruções de Aplicação no Supabase SQL Editor</div>
+    <div class="block-card step">
+        <p>Para aplicar a correção com total segurança no banco central <strong>Sistemas Kryon</strong>:</p>
+        <p>1. Acesse o <strong>Supabase SQL Editor</strong>: <code>https://supabase.com/dashboard/project/pgpobxvkojawrstadrel/sql</code></p>
+        <p>2. Cole e execute o conteúdo exato do arquivo: <code>correcao_recursao_rls_v5_1.sql</code></p>
+        <p>3. Após executar, confirme com <strong>"Success"</strong> ou informe eventual erro.</p>
+        <div class="code-box">
+-- Conteúdo do Script de Correção:
+CREATE OR REPLACE FUNCTION public.is_user_member_of_organization(target_organization_id UUID)
+RETURNS BOOLEAN AS $$
+    SELECT EXISTS (
+        SELECT 1 FROM public.organization_members
+        WHERE organization_id = target_organization_id AND user_id = auth.uid() AND status = 'active'
+    );
+$$ LANGUAGE sql SECURITY DEFINER STABLE SET search_path = public, pg_temp;
+
+REVOKE ALL ON FUNCTION public.is_user_member_of_organization(UUID) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.is_user_member_of_organization(UUID) TO authenticated;
+-- (Recriação idempotente das 9 policies em organization_members, organizations, subscriptions, services, customers, appointments e feedbacks)
+        </div>
+    </div>
+
+    <!-- 3. PROCEDIMENTO PÓS-EXECUÇÃO -->
+    <div class="section-title">3. Procedimento Pós-Execução (Validação Somente Leitura)</div>
+    <div class="block-card step">
+        <p>Assim que a execução retornar <strong>Success</strong>, executaremos o diagnóstico 100% somente leitura via <code>validacao_pos_correcao_recursao.sql</code> para certificar que:</p>
+        <p>• A função <code>is_user_member_of_organization</code> existe e está configurada como <code>SECURITY DEFINER</code>.</p>
+        <p>• Todas as 9 policies foram recriadas com sucesso.</p>
+        <p>• O RLS continua ativo nas 7 tabelas sem nenhuma perda de dados.</p>
+    </div>
+
+    <!-- Signatures -->
+    <div class="signature-box">
+        <div class="signature-text">
+            <h4>Alinhamento Técnico Tripartite (Você + Antigravity + ChatGPT)</h4>
+            <p>Execução autorizada. Protocolo pós-correção e script de validação somente leitura preparados.</p>
+        </div>
+        <div style="text-align: right; font-size: 7pt; color: #0284c7; font-weight: 700;">
+            KRYON SYSTEMS &bull; PILOTO V5.1<br>
+            SECURITY DIVISION
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div>Kryon Systems &bull; Execução de Correção RLS &bull; kryonsystems.com.br</div>
+        <div>Página 1 de 1 &bull; Gerado em 03/09/2026</div>
+    </div>
+
+</body>
+</html>

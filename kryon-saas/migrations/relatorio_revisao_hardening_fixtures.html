@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Revisão e Hardening das Fixtures Multitenant - Kryon Systems</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 10mm 12mm 12mm 12mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #1e293b;
+            font-size: 8pt;
+            line-height: 1.35;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #0284c7;
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-box {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #0284c7 0%, #6366f1 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 11pt;
+        }
+
+        .brand-text h1 {
+            font-size: 12pt;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-text p {
+            font-size: 7pt;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .doc-meta {
+            text-align: right;
+            font-size: 7pt;
+            color: #64748b;
+        }
+
+        .doc-meta strong {
+            color: #0f172a;
+        }
+
+        .badge-status {
+            display: inline-block;
+            background-color: #fef3c7;
+            color: #b45309;
+            border: 1px solid #fde68a;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 7pt;
+            margin-top: 2px;
+        }
+
+        .title-section {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #0284c7;
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin-bottom: 8px;
+        }
+
+        .title-section h2 {
+            font-size: 10.5pt;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 2px;
+        }
+
+        .title-section p {
+            font-size: 7.5pt;
+            color: #475569;
+        }
+
+        .section-title {
+            font-size: 8.5pt;
+            font-weight: 700;
+            color: #0f172a;
+            border-bottom: 1.5px solid #e2e8f0;
+            padding-bottom: 2px;
+            margin-top: 6px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 9px;
+            background: #0284c7;
+            border-radius: 2px;
+        }
+
+        .block-card {
+            border-radius: 6px;
+            padding: 6px 8px;
+            margin-bottom: 6px;
+            font-size: 7.3pt;
+            border: 1px solid #e2e8f0;
+        }
+
+        .block-card.guarantee {
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+        }
+
+        .block-card.code {
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+        }
+
+        .code-box {
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 6.3pt;
+            line-height: 1.25;
+            white-space: pre-wrap;
+        }
+
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 7pt;
+            margin-bottom: 6px;
+        }
+
+        table.data-table th {
+            background-color: #f1f5f9;
+            color: #334155;
+            text-align: left;
+            padding: 4px 6px;
+            font-weight: 700;
+            border: 1px solid #cbd5e1;
+        }
+
+        table.data-table td {
+            padding: 3px 6px;
+            border: 1px solid #e2e8f0;
+            color: #334155;
+        }
+
+        table.data-table tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        .badge-verified {
+            display: inline-block;
+            background-color: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+            padding: 1px 4px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 6.5pt;
+        }
+
+        .footer {
+            margin-top: 8px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 4px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 6.5pt;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="brand">
+            <div class="logo-box">K</div>
+            <div class="brand-text">
+                <h1>KRYON SYSTEMS</h1>
+                <p>Governança de Banco de Dados &bull; Engenharia de Software</p>
+            </div>
+        </div>
+        <div class="doc-meta">
+            <p><strong>DOCUMENTO:</strong> REL-FIX-HARDENING-001</p>
+            <p><strong>DATA:</strong> 03/09/2026 &bull; <strong>SISTEMA:</strong> Piloto Kryon Lava Rápido V5.1</p>
+            <div class="badge-status">STATUS: PROPOSTA TÉCNICA REVISADA (ZERO EXECUÇÃO)</div>
+        </div>
+    </div>
+
+    <div class="title-section">
+        <h2>Revisão e Hardening Rigoroso do SQL de Setup das Fixtures A/B</h2>
+        <p>Especificação de validações prévias de identidades, eliminação de UPSERT/ON CONFLICT, auditoria de integridade pós-setup e preservação estrita do Super Admin e constraints operacionais.</p>
+    </div>
+
+    <div class="section-title">1. Resumo dos Hardening e Regras de Segurança Implementadas</div>
+    <div class="block-card guarantee">
+        <p>✔ <strong>Validação Estrita de Identidades (auth.users & profiles):</strong> Validação determinística dos UUIDs dos usuários de teste (<code>teste_salinas_a</code>: <code>9e3f3003-08ac-4ee5-98fa-71a918fa16b5</code> e <code>teste_estetica_b</code>: <code>703d459c-b371-4d51-a9d2-c5e9e210eeae</code>). Em caso de divergência, aborta com <code>RAISE EXCEPTION</code>.</p>
+        <p>✔ <strong>Zero UPSERT / Sem Modificação em profiles:</strong> Não recria nem executa UPDATE nos profiles existentes dos usuários de teste. O trigger de organização é o único responsável pelo vínculo relacional.</p>
+        <p>✔ <strong>Eliminação de ON CONFLICT DO UPDATE:</strong> Substituído por verificação prévia anti-colisão de IDs/Slugs (com abort explícito) + <code>INSERT</code> puro para evitar qualquer sobrescrita acidental em caso de duplicidade.</p>
+        <p>✔ <strong>Preservação Integral do Super Admin:</strong> <code>medalha25@gmail.com</code> validado com <code>is_super_admin = true</code> e 100% isolado de qualquer alteração ou vínculo de teste.</p>
+        <p>✔ <strong>Auditoria Pós-Setup Automatizada:</strong> Validação final por contagem exata (2 organizações, 2 members 'owner', 2 serviços, 2 clientes e 2 agendamentos) antes de confirmar a transação.</p>
+    </div>
+
+    <div class="section-title">2. Mapeamento das Entidades das Fixtures A/B</div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Entidade</th>
+                <th>Empresa A (Lava Rápido Salinas)</th>
+                <th>Empresa B (Estética Automotiva VIP)</th>
+                <th>Validação</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>E-mail & UUID do Proprietário</strong></td>
+                <td><code>teste_salinas_a@...</code> (<code>9e3f3003-08ac-4ee5-98fa-71a918fa16b5</code>)</td>
+                <td><code>teste_estetica_b@...</code> (<code>703d459c-b371-4d51-a9d2-c5e9e210eeae</code>)</td>
+                <td><span class="badge-verified">IDENTIDADE REAL</span></td>
+            </tr>
+            <tr>
+                <td><strong>Organização (ID & Slug)</strong></td>
+                <td><code>a1111111-1111-1111-1111-111111111111</code> &bull; <code>teste-lava-rapido-salinas-a</code></td>
+                <td><code>b2222222-2222-2222-2222-222222222222</code> &bull; <code>teste-estetica-automotiva-vip-b</code></td>
+                <td><span class="badge-verified">DETERMINÍSTICO</span></td>
+            </tr>
+            <tr>
+                <td><strong>Serviço de Teste</strong></td>
+                <td><code>a3333333-3333-3333-3333-333333333333</code> &bull; [TESTE] Lavagem Completa A (R$ 50,00)</td>
+                <td><code>b4444444-4444-4444-4444-444444444444</code> &bull; [TESTE] Polimento Premium B (R$ 150,00)</td>
+                <td><span class="badge-verified">DETERMINÍSTICO</span></td>
+            </tr>
+            <tr>
+                <td><strong>Cliente de Teste</strong></td>
+                <td><code>a5555555-5555-5555-5555-555555555555</code> &bull; [TESTE] Cliente Salinas A (Placa ABC1A01)</td>
+                <td><code>b6666666-6666-6666-6666-666666666666</code> &bull; [TESTE] Cliente VIP B (Placa XYZ9Z99)</td>
+                <td><span class="badge-verified">DETERMINÍSTICO</span></td>
+            </tr>
+            <tr>
+                <td><strong>Agendamento de Teste</strong></td>
+                <td><code>a7777777-7777-7777-7777-777777777777</code> &bull; Status: PENDENTE &bull; R$ 50,00</td>
+                <td><code>b8888888-8888-8888-8888-888888888888</code> &bull; Status: PENDENTE &bull; R$ 150,00</td>
+                <td><span class="badge-verified">DETERMINÍSTICO</span></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="section-title">3. Inspeção de Constraints e Campos de public.appointments</div>
+    <div class="block-card">
+        <p>• <strong>Campos Obrigatórios (NOT NULL):</strong> <code>customer_name</code> (TEXT), <code>customer_phone</code> (TEXT), <code>scheduled_at</code> (TIMESTAMPTZ), <code>total_price</code> (DECIMAL(10,2)), <code>created_at</code> (TIMESTAMPTZ).</p>
+        <p>• <strong>Campos Opcionais:</strong> <code>customer_cpf</code> (TEXT), <code>vehicle_plate</code> (TEXT).</p>
+        <p>• <strong>Status e Validação:</strong> A coluna <code>status</code> é do tipo <code>TEXT</code> com valor padrão <code>'PENDENTE'</code>. Os agendamentos criados pela RPC oficial pública <code>create_public_appointment</code> utilizam expressamente <code>'PENDENTE'</code>. Nas fixtures, mantemos <code>'PENDENTE'</code> em total conformidade sem violar constraints.</p>
+        <p>• <strong>Comportamento do Trigger de Organização:</strong> O trigger <code>on_organization_owner_created</code> (<code>handle_new_organization_owner</code>) é disparado <code>AFTER INSERT ON public.organizations</code>, criando o vínculo em <code>public.organization_members</code> com <code>role = 'owner'</code> e atualizando <code>profiles.organization_id</code> e <code>profiles.role = 'ADMIN'</code> sem tentar escrever na coluna descontinuada <code>tenant_id</code>.</p>
+    </div>
+
+    <div class="section-title">4. Script SQL Final Endurecido (Pronto para Revisão)</div>
+    <div class="block-card code">
+        <div class="code-box">DO $$
+DECLARE
+    c_email_a CONSTANT TEXT := 'teste_salinas_a@kryonsystems.internal';
+    c_email_b CONSTANT TEXT := 'teste_estetica_b@kryonsystems.internal';
+    c_expected_user_a_id CONSTANT UUID := '9e3f3003-08ac-4ee5-98fa-71a918fa16b5'::uuid;
+    c_expected_user_b_id CONSTANT UUID := '703d459c-b371-4d51-a9d2-c5e9e210eeae'::uuid;
+
+    v_user_a_id UUID; v_user_b_id UUID;
+    v_org_a_id UUID := 'a1111111-1111-1111-1111-111111111111'::uuid;
+    v_org_b_id UUID := 'b2222222-2222-2222-2222-222222222222'::uuid;
+    v_slug_a CONSTANT TEXT := 'teste-lava-rapido-salinas-a';
+    v_slug_b CONSTANT TEXT := 'teste-estetica-automotiva-vip-b';
+    v_serv_a_id UUID := 'a3333333-3333-3333-3333-333333333333'::uuid;
+    v_serv_b_id UUID := 'b4444444-4444-4444-4444-444444444444'::uuid;
+    v_cust_a_id UUID := 'a5555555-5555-5555-5555-555555555555'::uuid;
+    v_cust_b_id UUID := 'b6666666-6666-6666-6666-666666666666'::uuid;
+    v_appt_a_id UUID := 'a7777777-7777-7777-7777-777777777777'::uuid;
+    v_appt_b_id UUID := 'b8888888-8888-8888-8888-888888888888'::uuid;
+    v_conflict_count INTEGER; v_val_orgs INTEGER; v_val_members INTEGER;
+    v_val_services INTEGER; v_val_customers INTEGER; v_val_appointments INTEGER;
+    v_prof_a_org UUID; v_prof_b_org UUID;
+BEGIN
+    -- 1. VALIDAÇÃO PRÉVIA DE IDENTIDADES
+    SELECT id INTO v_user_a_id FROM auth.users WHERE lower(email) = lower(c_email_a);
+    IF v_user_a_id IS NULL OR v_user_a_id != c_expected_user_a_id THEN
+        RAISE EXCEPTION 'DIVERGÊNCIA IDENTIDADE USER A: % (esperado %)', v_user_a_id, c_expected_user_a_id;
+    END IF;
+
+    SELECT id INTO v_user_b_id FROM auth.users WHERE lower(email) = lower(c_email_b);
+    IF v_user_b_id IS NULL OR v_user_b_id != c_expected_user_b_id THEN
+        RAISE EXCEPTION 'DIVERGÊNCIA IDENTIDADE USER B: % (esperado %)', v_user_b_id, c_expected_user_b_id;
+    END IF;
+
+    IF (SELECT COUNT(*) FROM public.profiles WHERE id = v_user_a_id AND is_super_admin = false) != 1 OR
+       (SELECT COUNT(*) FROM public.profiles WHERE id = v_user_b_id AND is_super_admin = false) != 1 THEN
+        RAISE EXCEPTION 'PROFILES DOS USUÁRIOS DE TESTE INVÁLIDOS OU AUSENTES.';
+    END IF;
+
+    IF (SELECT COUNT(*) FROM public.profiles WHERE is_super_admin = true AND id = 'd6902e70-ba2e-4aa7-ab77-727d59fd41ec'::uuid) != 1 THEN
+        RAISE EXCEPTION 'SUPER ADMIN NÃO ENCONTRADO OU DESCONFIGURADO.';
+    END IF;
+
+    -- 2. VERIFICAÇÃO ANTI-COLISÃO
+    SELECT COUNT(*) INTO v_conflict_count FROM public.organizations WHERE id IN (v_org_a_id, v_org_b_id) OR lower(slug) IN (lower(v_slug_a), lower(v_slug_b));
+    IF v_conflict_count > 0 THEN RAISE EXCEPTION 'CONFLITO EM ORGANIZATIONS'; END IF;
+
+    SELECT COUNT(*) INTO v_conflict_count FROM public.services WHERE id IN (v_serv_a_id, v_serv_b_id);
+    IF v_conflict_count > 0 THEN RAISE EXCEPTION 'CONFLITO EM SERVICES'; END IF;
+
+    SELECT COUNT(*) INTO v_conflict_count FROM public.customers WHERE id IN (v_cust_a_id, v_cust_b_id);
+    IF v_conflict_count > 0 THEN RAISE EXCEPTION 'CONFLITO EM CUSTOMERS'; END IF;
+
+    SELECT COUNT(*) INTO v_conflict_count FROM public.appointments WHERE id IN (v_appt_a_id, v_appt_b_id);
+    IF v_conflict_count > 0 THEN RAISE EXCEPTION 'CONFLITO EM APPOINTMENTS'; END IF;
+
+    -- 3. INSERÇÕES DETERMINÍSTICAS (ZERO ON CONFLICT DO UPDATE)
+    INSERT INTO public.organizations (id, name, slug, phone, address, owner_id, status)
+    VALUES (v_org_a_id, '[TESTE] Lava Rápido Salinas A', v_slug_a, '(38) 99999-0001', 'Rua A, 100 - Salinas', v_user_a_id, 'active'),
+           (v_org_b_id, '[TESTE] Estética Automotiva VIP B', v_slug_b, '(38) 99999-0002', 'Av B, 200 - Salinas', v_user_b_id, 'active');
+
+    INSERT INTO public.services (id, tenant_id, name, vehicle_type, price, duration_minutes, is_active)
+    VALUES (v_serv_a_id, v_org_a_id, '[TESTE] Lavagem Completa A', 'CARRO', 50.00, 45, true),
+           (v_serv_b_id, v_org_b_id, '[TESTE] Polimento Premium B', 'CARRO', 150.00, 90, true);
+
+    INSERT INTO public.customers (id, tenant_id, name, phone, vehicle_plate)
+    VALUES (v_cust_a_id, v_org_a_id, '[TESTE] Cliente Salinas A', '(38) 98888-0001', 'ABC1A01'),
+           (v_cust_b_id, v_org_b_id, '[TESTE] Cliente VIP B', '(38) 98888-0002', 'XYZ9Z99');
+
+    INSERT INTO public.appointments (id, tenant_id, service_id, customer_name, customer_phone, vehicle_plate, scheduled_at, status, total_price)
+    VALUES (v_appt_a_id, v_org_a_id, v_serv_a_id, '[TESTE] Cliente Salinas A', '(38) 98888-0001', 'ABC1A01', now() + interval '1 day', 'PENDENTE', 50.00),
+           (v_appt_b_id, v_org_b_id, v_serv_b_id, '[TESTE] Cliente VIP B', '(38) 98888-0002', 'XYZ9Z99', now() + interval '2 day', 'PENDENTE', 150.00);
+
+    -- 4. VALIDAÇÕES PÓS-SETUP
+    SELECT COUNT(*) INTO v_val_orgs FROM public.organizations WHERE id IN (v_org_a_id, v_org_b_id);
+    SELECT COUNT(*) INTO v_val_members FROM public.organization_members WHERE organization_id IN (v_org_a_id, v_org_b_id) AND role = 'owner';
+    SELECT organization_id INTO v_prof_a_org FROM public.profiles WHERE id = v_user_a_id;
+    SELECT organization_id INTO v_prof_b_org FROM public.profiles WHERE id = v_user_b_id;
+    SELECT COUNT(*) INTO v_val_services FROM public.services WHERE id IN (v_serv_a_id, v_serv_b_id);
+    SELECT COUNT(*) INTO v_val_customers FROM public.customers WHERE id IN (v_cust_a_id, v_cust_b_id);
+    SELECT COUNT(*) INTO v_val_appointments FROM public.appointments WHERE id IN (v_appt_a_id, v_appt_b_id);
+
+    IF v_val_orgs != 2 OR v_val_members != 2 OR v_val_services != 2 OR v_val_customers != 2 OR v_val_appointments != 2 OR v_prof_a_org != v_org_a_id OR v_prof_b_org != v_org_b_id THEN
+        RAISE EXCEPTION 'FALHA NA AUDITORIA PÓS-SETUP: Contagens divergentes.';
+    END IF;
+
+    RAISE NOTICE 'SUCESSO: Fixtures A/B configuradas e auditadas com êxito!';
+END $$;</div>
+    </div>
+
+    <div class="footer">
+        <span>Kryon Systems &bull; Governança de Banco de Dados</span>
+        <span>Aguardando revisão formal do ChatGPT e autorização do usuário</span>
+    </div>
+
+</body>
+</html>

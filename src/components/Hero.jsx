@@ -4,13 +4,13 @@ import { motion } from 'framer-motion';
 
 const Hero = () => {
     return (
-        <section className="relative min-h-[90vh] flex items-center pt-20 overflow-hidden" id="início">
+        <section className="relative min-h-[85vh] flex items-center pt-24 pb-12 sm:pt-28 sm:pb-20 overflow-hidden" id="início">
             {/* Ambient Background Elements */}
-            <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[120px] animate-pulse-slow" />
-            <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-purple-600/10 rounded-full blur-[100px] animate-pulse-slow" />
+            <div className="absolute top-[-10%] left-[-10%] w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] bg-blue-500/10 rounded-full blur-[100px] sm:blur-[120px] animate-pulse-slow pointer-events-none" />
+            <div className="absolute bottom-[-10%] right-[-10%] w-[250px] sm:w-[400px] h-[250px] sm:h-[400px] bg-purple-600/10 rounded-full blur-[80px] sm:blur-[100px] animate-pulse-slow pointer-events-none" />
             
             <div className="container-custom relative z-10">
-                <div className="grid lg:grid-cols-2 gap-16 items-center">
+                <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
                     
                     {/* Content Left */}
                     <motion.div
@@ -18,48 +18,48 @@ const Hero = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
                     >
-                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-blue-400 text-sm font-semibold mb-8 backdrop-blur-md">
-                            <Sparkles size={16} className="animate-pulse" />
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/5 border border-white/10 text-blue-400 text-xs sm:text-sm font-semibold mb-6 sm:mb-8 backdrop-blur-md">
+                            <Sparkles size={14} className="animate-pulse flex-shrink-0" />
                             <span>Transformação Digital de Ponta a Ponta</span>
                         </div>
                         
-                        <h1 className="text-5xl md:text-7xl font-extrabold leading-[1.1] mb-8">
+                        <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.12] mb-5 sm:mb-8 tracking-tight">
                             Sistemas <span className="text-gradient">inteligentes</span> <br />
                             para <span className="text-white">gestão, automação</span> <br />
                             e <span className="text-blue-400">crescimento.</span>
                         </h1>
                         
-                        <p className="text-xl md:text-2xl text-gray-400 mb-10 leading-relaxed max-w-xl">
+                        <p className="text-base sm:text-xl md:text-2xl text-gray-400 mb-8 sm:mb-10 leading-relaxed max-w-xl">
                             Desenvolvemos plataformas SaaS sob medida que organizam seu negócio e escalam sua operação com tecnologia de última geração.
                         </p>
                         
-                        <div className="flex flex-col sm:flex-row gap-5">
+                        <div className="flex flex-col sm:flex-row gap-3.5 sm:gap-5 w-full sm:w-auto">
                             <a 
                                 href="https://app.kryonsystems.com.br/trial" 
-                                className="btn-premium no-underline shadow-2xl shadow-blue-500/30"
+                                className="btn-premium no-underline shadow-2xl shadow-blue-500/30 text-center justify-center"
                             >
-                                <span className="flex items-center gap-3">
-                                    Testar 30 Dias Grátis <Rocket size={20} />
+                                <span className="flex items-center justify-center gap-2.5">
+                                    Testar 30 Dias Grátis <Rocket size={18} />
                                 </span>
                             </a>
                             <a 
                                 href="#sistemas" 
-                                className="inline-flex items-center justify-center px-8 py-4 font-bold text-white glass-card no-underline hover:shadow-white/5 active:scale-95"
+                                className="inline-flex items-center justify-center px-6 py-3.5 sm:px-8 sm:py-4 font-bold text-white text-sm sm:text-base glass-card no-underline hover:shadow-white/5 active:scale-95 text-center"
                             >
                                 Ver Soluções
                             </a>
                         </div>
                         
                         {/* Trust Badges */}
-                        <div className="mt-16 flex items-center gap-6 text-gray-500">
-                             <div className="flex -space-x-3">
+                        <div className="mt-10 sm:mt-16 flex items-center gap-3.5 sm:gap-6 text-gray-500 flex-wrap sm:flex-nowrap">
+                             <div className="flex -space-x-2.5 sm:-space-x-3 flex-shrink-0">
                                 {[1,2,3,4].map(i => (
-                                    <div key={i} className="w-10 h-10 rounded-full border-2 border-[#050507] bg-gray-800 flex items-center justify-center text-[10px] font-bold">
+                                    <div key={i} className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-[#050507] bg-gray-800 flex items-center justify-center text-[9px] sm:text-[10px] font-bold text-gray-300">
                                         UA
                                     </div>
                                 ))}
                              </div>
-                             <p className="text-sm font-medium italic">
+                             <p className="text-xs sm:text-sm font-medium italic text-gray-400">
                                 Junte-se a <span className="text-white font-bold">100+ empresas</span> que já escalam com a Kryon.
                              </p>
                         </div>

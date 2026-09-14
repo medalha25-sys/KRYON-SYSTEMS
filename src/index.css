@@ -42,38 +42,51 @@
 @layer components {
   /* Section & Container */
   .section {
-    padding: 6rem 0;
+    padding: 3.5rem 0;
     position: relative;
   }
 
-  .container {
-    width: 100%;
-    max-width: 1240px;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+  @media (min-width: 768px) {
+    .section {
+      padding: 6rem 0;
+    }
   }
 
+  .container,
   .container-custom {
     width: 100%;
     max-width: 1240px;
     margin-left: auto;
     margin-right: auto;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .container,
+    .container-custom {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
   }
 
   /* Cards */
   .card {
     background: rgba(18, 18, 26, 0.75);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
-    padding: 2rem;
+    border-radius: 16px;
+    padding: 1.25rem;
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
     transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  @media (min-width: 640px) {
+    .card {
+      border-radius: 20px;
+      padding: 2rem;
+    }
   }
 
   .card:hover {
@@ -87,8 +100,14 @@
     border: 1px solid rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border-radius: 24px;
+    border-radius: 18px;
     transition: all 0.3s ease;
+  }
+
+  @media (min-width: 640px) {
+    .glass-card {
+      border-radius: 24px;
+    }
   }
 
   .glass-card:hover {
@@ -99,18 +118,18 @@
 
   /* Typography */
   .title {
-    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    font-size: clamp(1.65rem, 4vw, 3.2rem);
     font-weight: 800;
     letter-spacing: -0.03em;
     line-height: 1.15;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
     color: #ffffff;
   }
 
   .subtitle {
-    font-size: clamp(1rem, 1.5vw, 1.15rem);
+    font-size: clamp(0.9rem, 1.5vw, 1.15rem);
     color: var(--text-muted);
-    line-height: 1.6;
+    line-height: 1.55;
     max-width: 650px;
   }
 
@@ -131,14 +150,21 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    padding: 0.85rem 1.75rem;
+    padding: 0.75rem 1.4rem;
     border-radius: 12px;
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     text-decoration: none;
     cursor: pointer;
     transition: all 0.25s ease;
     border: none;
+  }
+
+  @media (min-width: 640px) {
+    .btn {
+      padding: 0.85rem 1.75rem;
+      font-size: 0.95rem;
+    }
   }
 
   .btn-primary {
@@ -153,7 +179,7 @@
   }
 
   .btn-premium {
-    @apply relative inline-flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-300 rounded-2xl overflow-hidden;
+    @apply relative inline-flex items-center justify-center px-6 py-3.5 sm:px-8 sm:py-4 font-bold text-white text-sm sm:text-base transition-all duration-300 rounded-xl sm:rounded-2xl overflow-hidden;
     background: linear-gradient(135deg, #00f0ff 0%, #7000ff 100%);
   }
 

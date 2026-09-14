@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 const WhatsAppButton = () => {
     return (
         <motion.a
-            href="https://wa.me/5538984257511" // Real number
+            href="https://wa.me/5538984257511"
             target="_blank"
             rel="noopener noreferrer"
             initial={{ scale: 0 }}
@@ -13,43 +13,12 @@ const WhatsAppButton = () => {
             transition={{ delay: 1, type: 'spring' }}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            style={{
-                position: 'fixed',
-                bottom: '2rem',
-                right: '2rem',
-                backgroundColor: '#25D366',
-                color: 'white',
-                width: '60px',
-                height: '60px',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-                zIndex: 1000,
-                textDecoration: 'none',
-                border: '2px solid rgba(255,255,255,0.2)'
-            }}
+            aria-label="Atendimento no WhatsApp"
+            className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-12 h-12 sm:w-14 sm:h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-xl shadow-emerald-950/40 z-[1000] no-underline border-2 border-white/20 hover:border-white/40"
         >
-            <MessageCircle size={32} fill="white" color="white" />
+            <MessageCircle size={26} className="sm:w-7 sm:h-7" fill="white" color="white" />
             {/* Pulse Effect */}
-            <div style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                borderRadius: '50%',
-                border: '2px solid #25D366',
-                animation: 'pulse 2s infinite',
-                zIndex: -1
-            }} />
-            <style>{`
-        @keyframes pulse {
-          0% { transform: scale(1); opacity: 1; }
-          100% { transform: scale(1.5); opacity: 0; }
-        }
-      `}</style>
+            <div className="absolute inset-0 rounded-full border-2 border-[#25D366] animate-ping opacity-75 pointer-events-none -z-10" />
         </motion.a>
     );
 };

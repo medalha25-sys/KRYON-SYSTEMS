@@ -27,31 +27,21 @@ const reasons = [
 
 const WhyUs = () => {
     return (
-        <section className="section" style={{ background: 'var(--bg-secondary)', position: 'relative', overflow: 'hidden' }}>
+        <section className="section py-12 sm:py-16 md:py-24 bg-[#08080c] relative overflow-hidden">
             {/* Background decoration */}
-            <div style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                background: 'radial-gradient(circle at 10% 10%, rgba(112,0,255,0.05) 0%, rgba(0,0,0,0) 50%)',
-                pointerEvents: 'none'
-            }} />
+            <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_10%_10%,rgba(112,0,255,0.05)_0%,rgba(0,0,0,0)_50%)] pointer-events-none" />
 
-            <div className="container">
-                <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-                    <h2 className="title">Por que a <span className="gradient-text">Kryon Systems</span>?</h2>
-                    <p className="subtitle" style={{ margin: '0 auto' }}>
+            <div className="container-custom relative z-10">
+                <div className="text-center mb-8 sm:mb-16">
+                    <h2 className="title text-2xl sm:text-3xl md:text-5xl">
+                        Por que a <span className="gradient-text">Kryon Systems</span>?
+                    </h2>
+                    <p className="subtitle mx-auto text-sm sm:text-base md:text-lg mt-2 sm:mt-3 text-slate-400">
                         Não entregamos apenas código. Entregamos resultados.
                     </p>
                 </div>
 
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                    gap: '2rem'
-                }}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                     {reasons.map((item, index) => (
                         <motion.div
                             key={index}
@@ -59,30 +49,13 @@ const WhyUs = () => {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: index * 0.1 }}
-                            style={{
-                                background: 'var(--glass)',
-                                padding: '2rem',
-                                borderRadius: '16px',
-                                border: '1px solid var(--glass-border)',
-                                textAlign: 'center'
-                            }}
+                            className="card p-5 sm:p-6 text-center flex flex-col items-center justify-start hover:-translate-y-1 transition-all"
                         >
-                            <div style={{
-                                color: 'var(--primary)',
-                                marginBottom: '1rem',
-                                background: 'rgba(0, 240, 255, 0.1)',
-                                width: '60px',
-                                height: '60px',
-                                borderRadius: '50%',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                margin: '0 auto 1rem auto'
-                            }}>
+                            <div className="text-cyan-400 mb-4 bg-cyan-500/10 w-12 h-12 sm:w-14 sm:h-14 rounded-2xl border border-cyan-500/20 flex items-center justify-center flex-shrink-0">
                                 {item.icon}
                             </div>
-                            <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>{item.title}</h3>
-                            <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>{item.text}</p>
+                            <h3 className="text-base sm:text-lg font-bold text-white mb-2">{item.title}</h3>
+                            <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">{item.text}</p>
                         </motion.div>
                     ))}
                 </div>

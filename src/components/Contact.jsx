@@ -22,72 +22,72 @@ const Contact = () => {
     };
 
     return (
-        <section id="contato" className="section py-16 md:py-24 relative overflow-hidden">
+        <section id="contato" className="section py-12 sm:py-16 md:py-24 relative overflow-hidden">
             {/* Background Glow */}
-            <div className="absolute bottom-0 right-0 w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] bg-purple-600/10 rounded-full blur-[100px] pointer-events-none" />
+            <div className="absolute bottom-0 right-0 w-[250px] sm:w-[500px] h-[250px] sm:h-[500px] bg-purple-600/10 rounded-full blur-[80px] sm:blur-[100px] pointer-events-none" />
 
             <div className="container-custom relative z-10">
-                <div className="text-center mb-12 md:mb-16">
-                    <h2 className="title text-3xl sm:text-4xl md:text-5xl">
+                <div className="text-center mb-8 sm:mb-16">
+                    <h2 className="title text-2xl sm:text-3xl md:text-5xl">
                         Fale com um <span className="gradient-text">Especialista</span>
                     </h2>
-                    <p className="subtitle mx-auto text-base sm:text-lg mt-3 text-slate-400 max-w-2xl">
+                    <p className="subtitle mx-auto text-sm sm:text-base md:text-lg mt-2 sm:mt-3 text-slate-400 max-w-2xl">
                         Pronto para escalar seu negócio? Envie sua mensagem e nossa equipe entrará em contato imediatamente.
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-start">
                     {/* Contact Info */}
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                     >
-                        <h3 className="text-2xl sm:text-3xl font-bold text-white mb-4">Canais Diretos</h3>
-                        <p className="text-slate-400 text-sm sm:text-base leading-relaxed mb-8 max-w-lg">
+                        <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-3 sm:mb-4">Canais Diretos</h3>
+                        <p className="text-slate-400 text-xs sm:text-sm md:text-base leading-relaxed mb-6 sm:mb-8 max-w-lg">
                             Nossa equipe está pronta para entender sua necessidade e propor a melhor solução tecnológica para a sua empresa.
                         </p>
 
-                        <div className="space-y-6">
-                            <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-emerald-500/30 transition-all">
-                                <div className="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20 flex-shrink-0">
-                                    <MessageSquare size={24} />
+                        <div className="space-y-3.5 sm:space-y-5">
+                            <div className="flex items-center gap-3.5 sm:gap-4 p-3.5 sm:p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-emerald-500/30 transition-all">
+                                <div className="p-2.5 sm:p-3 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20 flex-shrink-0">
+                                    <MessageSquare size={20} className="sm:w-6 sm:h-6" />
                                 </div>
                                 <div className="min-w-0">
-                                    <h4 className="text-sm font-semibold text-slate-300">WhatsApp Comercial</h4>
+                                    <h4 className="text-xs sm:text-sm font-semibold text-slate-400">WhatsApp Comercial</h4>
                                     <a 
                                         href="https://wa.me/5538984257511" 
                                         target="_blank" 
                                         rel="noopener noreferrer" 
-                                        className="text-base sm:text-lg font-bold text-emerald-400 hover:text-emerald-300 transition-colors no-underline"
+                                        className="text-sm sm:text-base md:text-lg font-bold text-emerald-400 hover:text-emerald-300 transition-colors no-underline"
                                     >
                                         (38) 98425-7511
                                     </a>
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-cyan-500/30 transition-all">
-                                <div className="p-3 bg-cyan-500/10 text-cyan-400 rounded-xl border border-cyan-500/20 flex-shrink-0">
-                                    <Mail size={24} />
+                            <div className="flex items-center gap-3.5 sm:gap-4 p-3.5 sm:p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-cyan-500/30 transition-all">
+                                <div className="p-2.5 sm:p-3 bg-cyan-500/10 text-cyan-400 rounded-xl border border-cyan-500/20 flex-shrink-0">
+                                    <Mail size={20} className="sm:w-6 sm:h-6" />
                                 </div>
                                 <div className="min-w-0">
-                                    <h4 className="text-sm font-semibold text-slate-300">E-mail</h4>
+                                    <h4 className="text-xs sm:text-sm font-semibold text-slate-400">E-mail</h4>
                                     <a 
                                         href="mailto:contato@kryonsystems.com.br"
-                                        className="text-base sm:text-lg font-bold text-white hover:text-cyan-400 transition-colors no-underline truncate block"
+                                        className="text-sm sm:text-base md:text-lg font-bold text-white hover:text-cyan-400 transition-colors no-underline truncate block"
                                     >
                                         contato@kryonsystems.com.br
                                     </a>
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-purple-500/30 transition-all">
-                                <div className="p-3 bg-purple-500/10 text-purple-400 rounded-xl border border-purple-500/20 flex-shrink-0">
-                                    <MapPin size={24} />
+                            <div className="flex items-center gap-3.5 sm:gap-4 p-3.5 sm:p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-purple-500/30 transition-all">
+                                <div className="p-2.5 sm:p-3 bg-purple-500/10 text-purple-400 rounded-xl border border-purple-500/20 flex-shrink-0">
+                                    <MapPin size={20} className="sm:w-6 sm:h-6" />
                                 </div>
                                 <div className="min-w-0">
-                                    <h4 className="text-sm font-semibold text-slate-300">Localização</h4>
-                                    <p className="text-sm sm:text-base font-medium text-slate-300">Minas Gerais, Brasil - Atendimento Global</p>
+                                    <h4 className="text-xs sm:text-sm font-semibold text-slate-400">Localização</h4>
+                                    <p className="text-xs sm:text-sm md:text-base font-medium text-slate-300">Minas Gerais, Brasil - Atendimento Global</p>
                                 </div>
                             </div>
                         </div>
@@ -98,7 +98,7 @@ const Contact = () => {
                         initial={{ opacity: 0, x: 20 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
-                        className="card p-6 sm:p-10"
+                        className="card p-5 sm:p-8"
                     >
                         <form onSubmit={handleSubmit} className="space-y-5">
                             <div>

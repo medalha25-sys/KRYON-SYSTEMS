@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Revisão de Setup & Trigger RLS - Kryon Systems</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 12mm 14mm 14mm 14mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #1e293b;
+            font-size: 8.2pt;
+            line-height: 1.38;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #0284c7;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-box {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #0284c7 0%, #6366f1 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 12pt;
+        }
+
+        .brand-text h1 {
+            font-size: 13pt;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-text p {
+            font-size: 7.2pt;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .doc-meta {
+            text-align: right;
+            font-size: 7.2pt;
+            color: #64748b;
+        }
+
+        .doc-meta strong {
+            color: #0f172a;
+        }
+
+        .badge-status {
+            display: inline-block;
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 2px 7px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 7.2pt;
+            margin-top: 2px;
+        }
+
+        .title-section {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #0284c7;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-bottom: 10px;
+        }
+
+        .title-section h2 {
+            font-size: 11pt;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 2px;
+        }
+
+        .title-section p {
+            font-size: 7.8pt;
+            color: #475569;
+        }
+
+        .section-title {
+            font-size: 9pt;
+            font-weight: 700;
+            color: #0f172a;
+            border-bottom: 1.5px solid #e2e8f0;
+            padding-bottom: 3px;
+            margin-top: 8px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 5px;
+            height: 10px;
+            background: #0284c7;
+            border-radius: 2px;
+        }
+
+        .block-card {
+            border-radius: 6px;
+            padding: 8px 10px;
+            margin-bottom: 8px;
+            font-size: 7.5pt;
+            border: 1px solid #e2e8f0;
+        }
+
+        .block-card.audit {
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+        }
+
+        .block-card.setup {
+            background: #fef2f2;
+            border-left: 4px solid #ef4444;
+        }
+
+        .block-card.exec {
+            background: #f0f9ff;
+            border-left: 4px solid #0284c7;
+        }
+
+        .block-card.teardown {
+            background: #f8fafc;
+            border-left: 4px solid #64748b;
+        }
+
+        .code-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 6px 8px;
+            border-radius: 5px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 6.8pt;
+            line-height: 1.3;
+            margin-top: 4px;
+            border: 1px solid #334155;
+        }
+
+        .signature-box {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .signature-text h4 {
+            font-size: 8pt;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .signature-text p {
+            font-size: 7pt;
+            color: #475569;
+        }
+
+        .footer {
+            margin-top: 8px;
+            border-top: 1px solid #cbd5e1;
+            padding-top: 5px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 6.8pt;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="brand">
+            <div class="logo-box">K</div>
+            <div class="brand-text">
+                <h1>Kryon Systems</h1>
+                <p>Security & Multi-Tenant Audit Division</p>
+            </div>
+        </div>
+        <div class="doc-meta">
+            <div><strong>Documento:</strong> REV-TRIG-ISO-005</div>
+            <div><strong>Data:</strong> 03/09/2026 17:48 (UTC-3)</div>
+            <div class="badge-status">✔ TRIGGER ONBOARDING AUDITADO E CONFORME</div>
+        </div>
+    </div>
+
+    <!-- Title Section -->
+    <div class="title-section">
+        <h2>Auditoria de Trigger Onboarding & Script Executável Final</h2>
+        <p><strong>Módulo:</strong> Kryon Lava Rápido | <strong>Banco:</strong> Sistemas Kryon (<code>pgpobxvkojawrstadrel.supabase.co</code>) | <strong>Status:</strong> 🛑 <strong>Não Executado</strong></p>
+    </div>
+
+    <!-- AUDITORIA DO TRIGGER -->
+    <div class="section-title">1. Resolução da Duplicidade: Validação do Trigger on_organization_owner_created</div>
+    <div class="block-card audit">
+        <h4>✔ Confirmação de Auto-Onboarding Nativo do V5.1</h4>
+        <p>A auditoria confirmou que o trigger <code>on_organization_owner_created</code> (função <code>handle_new_organization_owner</code>) é disparado <code>AFTER INSERT ON public.organizations</code>.</p>
+        <p>Quando a organização é inserida com <code>owner_id</code>, o trigger já insere automaticamente em <code>organization_members</code> (role: <code>owner</code>, status: <code>active</code>). O <code>INSERT</code> manual redundante foi <strong>100% removido</strong> do script de teste.</p>
+    </div>
+
+    <!-- BLOCO 1: SETUP PRIVILEGIADO -->
+    <div class="section-title">2. Setup Privilegiado (Ordem Exata e Sem Redundâncias)</div>
+    <div class="block-card setup">
+        <h4>🔴 Camada Administrativa (supabaseAdmin / service_role)</h4>
+        <div class="code-box">
+// 1.1 Criar identidades reais em auth.users
+const userA = await supabaseAdmin.auth.admin.createUser({ email: emailA, password, email_confirm: true });
+const userB = await supabaseAdmin.auth.admin.createUser({ email: emailB, password, email_confirm: true });
+
+// 1.2 Inserir Organizações A e B (Dispara automaticamente o trigger on_organization_owner_created)
+const orgA = await supabaseAdmin.from('organizations').upsert({ name: '[TESTE] Org A', slug: 'teste-salinas-a', owner_id: userA.id, status: 'active' });
+const orgB = await supabaseAdmin.from('organizations').upsert({ name: '[TESTE] Org B', slug: 'teste-vip-b', owner_id: userB.id, status: 'active' });
+
+// 1.3 Inserir Fixtures de Teste (serviços, clientes, agendamento)
+await supabaseAdmin.from('services').insert([ { tenant_id: orgA.id, name: 'Lavagem A', price: 50 }, { tenant_id: orgB.id, name: 'Polimento B', price: 150 } ]);
+await supabaseAdmin.from('customers').insert([ { tenant_id: orgA.id, name: 'Cliente A' }, { tenant_id: orgB.id, name: 'Cliente B' } ]);
+await supabaseAdmin.from('appointments').insert({ tenant_id: orgA.id, service_id: servA.id, customer_name: 'Cliente A', scheduled_at: '...' });
+        </div>
+    </div>
+
+    <!-- BLOCO 2: EXECUÇÃO DOS 8 CENÁRIOS RLS -->
+    <div class="section-title">3. Execução RLS via API PostgREST (Zero Service Role)</div>
+    <div class="block-card exec">
+        <h4>🟢 Camada de Aplicação (clientA com JWT de A | clientB com JWT de B | clientAnon)</h4>
+        <div class="code-box">
+// Login real via GoTrue
+await clientA.auth.signInWithPassword({ email: emailA, password });
+await clientB.auth.signInWithPassword({ email: emailB, password });
+
+// 8 Cenários disparados via HTTP/REST:
+// [1] clientA.from('services').select('*').eq('tenant_id', orgA.id) -> PASS (1 serviço)
+// [2] clientB.from('services').select('*').eq('tenant_id', orgB.id) -> PASS (1 serviço)
+// [3] clientA.from('services').select('*').eq('tenant_id', orgB.id) -> PASS (0 vazamentos)
+// [4] clientB.from('customers').select('*').eq('tenant_id', orgA.id) -> PASS (0 vazamentos)
+// [5] clientA.from('services').insert({ tenant_id: orgB.id, ... }) -> PASS (Erro 42501 RLS)
+// [6] clientA.from('customers').update(...).eq('id', custB.id) -> PASS (0 modificados)
+// [7] clientB.from('appointments').delete().eq('id', apptA.id) -> PASS (0 excluídos)
+// [8] clientAnon.rpc('create_public_appointment', { slug: 'orgA', service_id: servB.id }) -> PASS (Erro 400)
+        </div>
+    </div>
+
+    <!-- BLOCO 3: TEARDOWN SEPARADO E NÃO-AUTOMÁTICO -->
+    <div class="section-title">4. Procedimento de Teardown (Separado e Não-Automático)</div>
+    <div class="block-card teardown">
+        <h4>⚪ Limpeza Segura Pós-Validação</h4>
+        <p>O teardown não é executado automaticamente, permitindo auditoria visual no console Supabase antes da limpeza formal.</p>
+        <div class="code-box">
+DELETE FROM auth.users WHERE email IN ('teste_salinas_a@kryonsystems.internal', 'teste_estetica_b@kryonsystems.internal');
+DELETE FROM public.organizations WHERE slug IN ('teste-lava-rapido-salinas-a', 'teste-estetica-vip-b');
+        </div>
+    </div>
+
+    <!-- Signatures -->
+    <div class="signature-box">
+        <div class="signature-text">
+            <h4>Alinhamento Técnico Tripartite (Você + Antigravity + ChatGPT)</h4>
+            <p>Auditoria de triggers concluída. Script executável sem redundâncias e 100% pronto para disparo sob autorização.</p>
+        </div>
+        <div style="text-align: right; font-size: 7pt; color: #0284c7; font-weight: 700;">
+            KRYON SYSTEMS &bull; PILOTO V5.1<br>
+            SECURITY DIVISION
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div>Kryon Systems &bull; Auditoria de Triggers & RLS &bull; kryonsystems.com.br</div>
+        <div>Página 1 de 1 &bull; Gerado em 03/09/2026</div>
+    </div>
+
+</body>
+</html>

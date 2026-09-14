@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmação das Fixtures A/B: Kryon Lava Rápido - Kryon Systems</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 10mm 12mm 12mm 12mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #1e293b;
+            font-size: 8pt;
+            line-height: 1.35;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #059669;
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-box {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #059669 0%, #0284c7 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 11pt;
+        }
+
+        .brand-text h1 {
+            font-size: 12pt;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-text p {
+            font-size: 7pt;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .doc-meta {
+            text-align: right;
+            font-size: 7pt;
+            color: #64748b;
+        }
+
+        .doc-meta strong {
+            color: #0f172a;
+        }
+
+        .badge-success {
+            display: inline-block;
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 7pt;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .section {
+            margin-bottom: 8px;
+        }
+
+        .section-title {
+            font-size: 9pt;
+            font-weight: 700;
+            color: #0f172a;
+            border-left: 3px solid #059669;
+            padding-left: 6px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 5px 6px;
+            text-align: center;
+        }
+
+        .card-label {
+            font-size: 6pt;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .card-value {
+            font-size: 9pt;
+            font-weight: 800;
+            color: #059669;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 7pt;
+            margin-top: 3px;
+            margin-bottom: 6px;
+        }
+
+        th {
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            text-align: left;
+            padding: 4px 6px;
+            border-bottom: 1px solid #cbd5e1;
+            font-size: 6.5pt;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 4px 6px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #334155;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) td {
+            background: #f8fafc;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-size: 6pt;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-pass { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+
+        .callout-box {
+            background: #f0fdf4;
+            border-left: 3px solid #10b981;
+            padding: 5px 8px;
+            border-radius: 0 4px 4px 0;
+            font-size: 7pt;
+            margin: 5px 0;
+            color: #065f46;
+        }
+
+        .callout-box strong {
+            color: #047857;
+        }
+
+        .footer {
+            margin-top: 8px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 4px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 6.5pt;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="brand">
+            <div class="logo-box">K</div>
+            <div class="brand-text">
+                <h1>KRYON SYSTEMS SAAS &mdash; CONFIRMAÇÃO DE FIXTURES A/B</h1>
+                <p>Auditoria 100% Read-Only: Contagem e Validação de Dados Inseridos</p>
+            </div>
+        </div>
+        <div class="doc-meta">
+            <div>Data: <strong>05/09/2026</strong></div>
+            <div>Ambiente: <strong>Produção Supabase</strong></div>
+            <div class="badge-success">100% SETUP CONCLUÍDO</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="info-grid">
+            <div class="card">
+                <div class="card-label">Organizations</div>
+                <div class="card-value">2</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Members</div>
+                <div class="card-value">2</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Services</div>
+                <div class="card-value">2</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Customers</div>
+                <div class="card-value">2</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Appointments</div>
+                <div class="card-value">2</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">1. Resultado da Consulta SELECT de Contagem</div>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 25%;">Tabela Auditada</th>
+                    <th style="width: 20%;">Total de Linhas (Fixtures)</th>
+                    <th style="width: 35%;">IDs / Entidades Identificadas</th>
+                    <th style="width: 20%;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>public.organizations</strong></td>
+                    <td><strong style="color: #059669; font-size: 8pt;">2</strong></td>
+                    <td><code>a1111111-...</code> (Salinas A) &bull; <code>b2222222-...</code> (VIP B)</td>
+                    <td><span class="status-badge status-pass">CONFIRMADO</span></td>
+                </tr>
+                <tr>
+                    <td><strong>public.organization_members</strong></td>
+                    <td><strong style="color: #059669; font-size: 8pt;">2</strong></td>
+                    <td>User A (owner Org A) &bull; User B (owner Org B)</td>
+                    <td><span class="status-badge status-pass">CONFIRMADO</span></td>
+                </tr>
+                <tr>
+                    <td><strong>public.services</strong></td>
+                    <td><strong style="color: #059669; font-size: 8pt;">2</strong></td>
+                    <td><code>a3333333-...</code> (Lavagem Completa A) &bull; <code>b4444444-...</code> (Polimento VIP B)</td>
+                    <td><span class="status-badge status-pass">CONFIRMADO</span></td>
+                </tr>
+                <tr>
+                    <td><strong>public.customers</strong></td>
+                    <td><strong style="color: #059669; font-size: 8pt;">2</strong></td>
+                    <td><code>a5555555-...</code> (Cliente Salinas A) &bull; <code>b6666666-...</code> (Cliente VIP B)</td>
+                    <td><span class="status-badge status-pass">CONFIRMADO</span></td>
+                </tr>
+                <tr>
+                    <td><strong>public.appointments</strong></td>
+                    <td><strong style="color: #059669; font-size: 8pt;">2</strong></td>
+                    <td><code>a7777777-...</code> (Agendamento A) &bull; <code>b8888888-...</code> (Agendamento B)</td>
+                    <td><span class="status-badge status-pass">CONFIRMADO</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="callout-box">
+        <strong>Diagnóstico de Homologação Multi-Tenant:</strong><br>
+        O setup de fixtures A/B foi executado com sucesso absoluto no PostgreSQL do Supabase. Todas as 5 tabelas possuem exatamente 2 registros correspondentes aos tenants isolados A e B. As identidades, vínculos de membros e referências de chave estrangeira estão 100% íntegros. O ambiente está perfeitamente preparado para a rodada final dos <strong>8 testes automatizados de isolamento de API real</strong>.
+    </div>
+
+    <div class="footer">
+        <div>Kryon Systems &bull; Confirmação de Fixtures A/B</div>
+        <div>Página 1 de 1 &bull; 100% Read-Only Verification</div>
+    </div>
+
+</body>
+</html>

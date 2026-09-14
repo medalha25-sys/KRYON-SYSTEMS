@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Auditoria Detalhada: Funções, Policies e Dependências de Shops - Kryon Systems</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 10mm 12mm 12mm 12mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #1e293b;
+            font-size: 8pt;
+            line-height: 1.35;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #0284c7;
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-box {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #0284c7 0%, #6366f1 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 11pt;
+        }
+
+        .brand-text h1 {
+            font-size: 12pt;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-text p {
+            font-size: 7pt;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .doc-meta {
+            text-align: right;
+            font-size: 7pt;
+            color: #64748b;
+        }
+
+        .doc-meta strong {
+            color: #0f172a;
+        }
+
+        .badge-read-only {
+            display: inline-block;
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 7pt;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .section {
+            margin-bottom: 8px;
+        }
+
+        .section-title {
+            font-size: 9pt;
+            font-weight: 700;
+            color: #0f172a;
+            border-left: 3px solid #0284c7;
+            padding-left: 6px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 5px 7px;
+        }
+
+        .card-label {
+            font-size: 6.5pt;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .card-value {
+            font-size: 8pt;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .card-value.highlight {
+            color: #0284c7;
+        }
+
+        .card-value.success {
+            color: #059669;
+        }
+
+        .card-value.danger {
+            color: #dc2626;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 7pt;
+            margin-top: 3px;
+            margin-bottom: 6px;
+        }
+
+        th {
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            text-align: left;
+            padding: 4px 6px;
+            border-bottom: 1px solid #cbd5e1;
+            font-size: 6.5pt;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 3.5px 6px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #334155;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) td {
+            background: #f8fafc;
+        }
+
+        .code-box {
+            background: #0f172a;
+            color: #f8fafc;
+            padding: 6px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 6.5pt;
+            line-height: 1.3;
+            overflow-x: auto;
+            margin: 4px 0 6px 0;
+            border: 1px solid #334155;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-size: 6pt;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-preserve { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+        .status-migrate { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        .status-remove { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+
+        .callout-box {
+            background: #eff6ff;
+            border-left: 3px solid #3b82f6;
+            padding: 5px 8px;
+            border-radius: 0 4px 4px 0;
+            font-size: 7pt;
+            margin: 5px 0;
+            color: #1e3a8a;
+        }
+
+        .callout-box strong {
+            color: #1d4ed8;
+        }
+
+        .footer {
+            margin-top: 8px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 4px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 6.5pt;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="brand">
+            <div class="logo-box">K</div>
+            <div class="brand-text">
+                <h1>KRYON SYSTEMS SAAS &mdash; AUDITORIA DETALHADA</h1>
+                <p>Auditoria 100% Read-Only: Funções, Policies, Colunas shop_id e Dados</p>
+            </div>
+        </div>
+        <div class="doc-meta">
+            <div>Data: <strong>05/09/2026</strong></div>
+            <div>Ambiente: <strong>Produção Supabase</strong></div>
+            <div class="badge-read-only">100% SELECT (Zero Mutações)</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="info-grid">
+            <div class="card">
+                <div class="card-label">Funções com 'shop'</div>
+                <div class="card-value highlight">2 Mapeadas</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Policies com 'shop'</div>
+                <div class="card-value highlight">28 Policies</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Colunas shop_id</div>
+                <div class="card-value highlight">13 Tabelas</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Registros em public.shops</div>
+                <div class="card-value success">0 Linhas (Vazia)</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">1. Definições das 2 Funções que Mencionam 'shop'</div>
+        
+        <table style="margin-bottom: 4px;">
+            <thead>
+                <tr>
+                    <th style="width: 25%;">Função / Assinatura</th>
+                    <th style="width: 25%;">Dependência Real</th>
+                    <th style="width: 25%;">Diagnóstico Técnico</th>
+                    <th style="width: 25%;">Classificação Proposta</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>public.get_admin_users_data()</strong><br><code>RETURNS TABLE(...)</code></td>
+                    <td><code>LEFT JOIN public.shops s ON s.owner_id = au.id</code></td>
+                    <td>RPC de listagem admin. Lê <code>shops.name</code>. Deve ser refatorada para ler <code>organizations</code>.</td>
+                    <td><span class="status-badge status-migrate">Migrar para Organizations</span></td>
+                </tr>
+                <tr>
+                    <td><strong>public.seed_financial_categories(user_id)</strong><br><code>RETURNS void</code></td>
+                    <td><strong>Nenhuma</strong> (Apenas texto <code>'shopping_bag'</code>)</td>
+                    <td><strong>Falso Positivo</strong>. O match de texto ocorreu pelo ícone Material Icons <code>shopping_bag</code>. Tabela usa <code>tenant_id</code>.</td>
+                    <td><span class="status-badge status-preserve">Preservar (Inofensiva)</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="code-box">-- 1.1 DEFINIÇÃO: public.get_admin_users_data()
+CREATE OR REPLACE FUNCTION public.get_admin_users_data()
+RETURNS TABLE (id UUID, email VARCHAR, name TEXT, shop_name TEXT, shop_cnpj TEXT, joined_at TIMESTAMPTZ, sub_status TEXT, sub_product TEXT)
+SECURITY DEFINER SET search_path = public, auth AS $$
+BEGIN
+  RETURN QUERY
+  SELECT au.id, au.email::VARCHAR, COALESCE(p.name, 'Usuário sem Nome'), COALESCE(s.name, 'Sem Loja'), NULL::TEXT, au.created_at, COALESCE(sub.status, 'inactive'), COALESCE(sub.product_slug, '-')
+  FROM auth.users au
+  LEFT JOIN public.profiles p ON p.id = au.id
+  LEFT JOIN public.shops s ON s.owner_id = au.id
+  LEFT JOIN public.subscriptions sub ON sub.user_id = au.id
+  ORDER BY au.created_at DESC;
+END; $$ LANGUAGE plpgsql;</div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">2. Mapeamento Consolidado das 28 Policies com 'shop'</div>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 20%;">Tabela</th>
+                    <th style="width: 30%;">Nome da Policy</th>
+                    <th style="width: 10%;">Comando</th>
+                    <th style="width: 25%;">Expressão / Condição (QUAL / CHECK)</th>
+                    <th style="width: 15%;">Classificação</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>public.customers</strong></td>
+                    <td>Owners can manage their customers</td>
+                    <td>ALL</td>
+                    <td><code>shop_id IN (SELECT id FROM shops WHERE owner_id = auth.uid())</code></td>
+                    <td><span class="status-badge status-remove">Legado a Remover</span></td>
+                </tr>
+                <tr>
+                    <td><strong>public.shops</strong> (4 policies)</td>
+                    <td>Users can view / insert / update / delete own shops</td>
+                    <td>SELECT, INSERT, UPDATE, DELETE</td>
+                    <td><code>auth.uid() = owner_id</code></td>
+                    <td><span class="status-badge status-migrate">Módulo Legado</span></td>
+                </tr>
+                <tr>
+                    <td><strong>public.fashion_*</strong> (12 policies)</td>
+                    <td>Policies de produtos, clientes, vendas, categorias e funcionários</td>
+                    <td>ALL, SELECT, INSERT, UPDATE</td>
+                    <td><code>shop_id IN (SELECT id FROM shops WHERE owner_id = auth.uid())</code></td>
+                    <td><span class="status-badge status-migrate">Legado Fashion</span></td>
+                </tr>
+                <tr>
+                    <td><strong>public.sales / sale_items</strong> (4 policies)</td>
+                    <td>Enable read / insert access based on shop_id</td>
+                    <td>SELECT, INSERT</td>
+                    <td><code>shop_id IN (SELECT id FROM shops WHERE owner_id = auth.uid())</code></td>
+                    <td><span class="status-badge status-migrate">Legado Sales</span></td>
+                </tr>
+                <tr>
+                    <td><strong>public.service_orders</strong> (2 policies)</td>
+                    <td>Shop owners view / manage OS</td>
+                    <td>SELECT, ALL</td>
+                    <td><code>shop_id IN (SELECT id FROM shops WHERE owner_id = auth.uid())</code></td>
+                    <td><span class="status-badge status-migrate">Legado OS</span></td>
+                </tr>
+                <tr>
+                    <td><strong>public.inventory_items</strong> (4 policies)</td>
+                    <td>Shop owners view / insert / update / delete inventory</td>
+                    <td>SELECT, INSERT, UPDATE, DELETE</td>
+                    <td><code>shop_id IN (SELECT id FROM shops WHERE owner_id = auth.uid())</code></td>
+                    <td><span class="status-badge status-migrate">Legado Estoque</span></td>
+                </tr>
+                <tr>
+                    <td><strong>public.register_sessions</strong> (1 policy)</td>
+                    <td>Owners can manage their register sessions</td>
+                    <td>ALL</td>
+                    <td><code>shop_id IN (SELECT id FROM shops WHERE owner_id = auth.uid())</code></td>
+                    <td><span class="status-badge status-migrate">Legado Caixa</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">3. Inventário das 13 Colunas shop_id e Contagens de Linhas</div>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 25%;">Tabela</th>
+                    <th style="width: 15%;">Tipo de Dado</th>
+                    <th style="width: 15%;">Nullable?</th>
+                    <th style="width: 15%;">Total de Linhas</th>
+                    <th style="width: 30%;">Impacto no Lava Rápido V5.1</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="background: #fef2f2;">
+                    <td><strong>public.customers</strong></td>
+                    <td>UUID</td>
+                    <td><strong style="color: #dc2626;">NO (Obrigatório)</strong></td>
+                    <td><strong>0</strong></td>
+                    <td><strong style="color: #dc2626;">BLOQUEANTE: Impede inserts das Fixtures</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>public.profiles</strong></td>
+                    <td>UUID</td>
+                    <td>YES (Opcional)</td>
+                    <td>3 (Admins/Fixtures)</td>
+                    <td>Neutro (Coluna nula nos novos usuários)</td>
+                </tr>
+                <tr>
+                    <td><strong>public.subscriptions</strong></td>
+                    <td>UUID</td>
+                    <td>YES (Opcional)</td>
+                    <td>0</td>
+                    <td>Neutro (Subscrições modernas usam organizations)</td>
+                </tr>
+                <tr>
+                    <td><strong>public.fashion_*</strong> (5 tabelas)</td>
+                    <td>UUID</td>
+                    <td>NO</td>
+                    <td>0</td>
+                    <td>Isolado no módulo Fashion</td>
+                </tr>
+                <tr>
+                    <td><strong>public.sales / sale_items</strong></td>
+                    <td>UUID</td>
+                    <td>NO / YES</td>
+                    <td>0</td>
+                    <td>Isolado no módulo de Vendas PDV</td>
+                </tr>
+                <tr>
+                    <td><strong>public.service_orders</strong></td>
+                    <td>UUID</td>
+                    <td>NO</td>
+                    <td>0</td>
+                    <td>Isolado no módulo de Ordens de Serviço legadas</td>
+                </tr>
+                <tr>
+                    <td><strong>public.inventory_items</strong></td>
+                    <td>UUID</td>
+                    <td>YES</td>
+                    <td>0</td>
+                    <td>Isolado no módulo de Inventário legado</td>
+                </tr>
+                <tr>
+                    <td><strong>public.register_sessions</strong></td>
+                    <td>UUID</td>
+                    <td>NO</td>
+                    <td>0</td>
+                    <td>Isolado no módulo de Caixa legado</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="callout-box">
+        <strong>Conclusão Técnica & Próximo Passo Recomendado:</strong><br>
+        A única dependência ativa impeditiva para a execução das Fixtures A/B do Kryon Lava Rápido é a coluna <code>customers.shop_id</code> (NOT NULL e FK para <code>shops</code>). As tabelas <code>customers</code> e <code>shops</code> possuem 0 registros. A ação cirúrgica recomendada consiste em dropar a constraint/coluna <code>shop_id</code> e a policy legada de <code>customers</code>, mantendo a integridade total do banco e liberando o setup multi-tenant.
+    </div>
+
+    <div class="footer">
+        <div>Kryon Systems &bull; Auditoria Técnica Tripartite</div>
+        <div>Página 1 de 1 &bull; 100% Read-Only Verification</div>
+    </div>
+
+</body>
+</html>
