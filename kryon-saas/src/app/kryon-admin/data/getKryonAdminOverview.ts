@@ -1,53 +1,69 @@
 import { createClient } from '@/utils/supabase/server'
 import {
+  PeriodFilter,
   ExecutiveMetric,
   FinancialHealthData,
   ProductRevenueItem,
   ProductActivityItem,
   ObligationItem,
-  CompanyRow,
-  GrowthDataPoint
-} from '../mock-data'
+  CompanyEntityRow,
+  CommissionHistoryRow,
+  GrowthDataPoint,
+  IntelligenceInsight,
+  KryonAdminOverviewData
+} from '../types'
 
-export interface KryonAdminOverviewData {
-  isRealData: boolean;
-  errors: string[];
-  summaryMetrics: ExecutiveMetric[];
-  financialHealth: FinancialHealthData;
-  productRevenue: ProductRevenueItem[];
-  productActivities: ProductActivityItem[];
-  obligations: {
-    contasPagar: number;
-    contasReceber: number;
-    despesasPrevistas: number;
-    proximosVencimentos: ObligationItem[];
-  };
-  companies: CompanyRow[];
-  growthData: GrowthDataPoint[];
-  intelligenceInsights: {
-    id: string;
-    type: 'positive' | 'recommendation' | 'highlight';
-    tag: string;
-    title: string;
-    description: string;
-    actionText: string;
-  }[];
-  rawCounts: {
-    organizationsCount: number;
-    activeOrganizationsCount: number;
-    trialOrganizationsCount: number;
-    shopsCount: number;
-    totalOrdersCount: number;
-    completedOrdersCount: number;
-    kryonCommissionTotal: number;
-    mrrTotal: number;
-    productsCount: number;
-  };
+/**
+ * Retorna as datas de início e fim para o período selecionado
+ */
+function getPeriodDateRange(period: PeriodFilter): { startDate: Date; endDate: Date; label: string } {
+  const now = new Date()
+  const endDate = new Date(now)
+  let startDate = new Date(now)
+  let label = 'Este mês'
+
+  switch (period) {
+    case 'hoje':
+      startDate.setHours(0, 0, 0, 0)
+      label = 'Hoje'
+      break
+    case '7dias':
+      startDate.setDate(now.getDate() - 7)
+      startDate.setHours(0, 0, 0, 0)
+      label = 'Últimos 7 dias'
+      break
+    case 'este-mes':
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0)
+      label = 'Este mês'
+      break
+    case '30dias':
+      startDate.setDate(now.getDate() - 30)
+      startDate.setHours(0, 0, 0, 0)
+      label = 'Últimos 30 dias'
+      break
+    case 'este-ano':
+      startDate = new Date(now.getFullYear(), 0, 1, 0, 0, 0, 0)
+      label = 'Este ano'
+      break
+    default:
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0)
+      label = 'Este mês'
+  }
+
+  return { startDate, endDate, label }
 }
 
-export async function getKryonAdminOverview(): Promise<KryonAdminOverviewData> {
+export async function getKryonAdminOverview(
+  rawPeriod?: string
+): Promise<KryonAdminOverviewData> {
+  const validPeriods: PeriodFilter[] = ['hoje', '7dias', 'este-mes', '30dias', 'este-ano']
+  const selectedPeriod: PeriodFilter = validPeriods.includes(rawPeriod as PeriodFilter)
+    ? (rawPeriod as PeriodFilter)
+    : 'este-mes'
+
+  const { startDate, endDate, label: selectedPeriodLabel } = getPeriodDateRange(selectedPeriod)
   const errors: string[] = []
-  
+
   let organizations: any[] = []
   let subscriptions: any[] = []
   let shops: any[] = []
@@ -57,130 +73,131 @@ export async function getKryonAdminOverview(): Promise<KryonAdminOverviewData> {
   try {
     const supabase = await createClient()
 
-    // 1. Consulta Organizações (Fonte central de empresas Kryon)
-    try {
-      const { data, error } = await supabase
+    // Executa consultas independentes em paralelo com Promise.all para máxima performance e segurança
+    const [
+      orgsResult,
+      subsResult,
+      shopsResult,
+      ordersResult,
+      prodsResult
+    ] = await Promise.all([
+      supabase
         .from('organizations')
         .select('id, name, legal_name, cnpj_cpf, status, created_at, updated_at')
-        .order('created_at', { ascending: false })
-      
-      if (error) {
-        console.warn('Kryon Admin: Aviso ao consultar organizations:', error.message)
-        errors.push(`Organizações: ${error.message}`)
-      } else if (data) {
-        organizations = data
-      }
-    } catch (e: any) {
-      console.warn('Kryon Admin: Erro inesperado em organizations:', e?.message)
-      errors.push(`Organizações: ${e?.message || 'Falha na requisição'}`)
-    }
+        .order('created_at', { ascending: false }),
 
-    // 2. Consulta Assinaturas (Fonte de verdade para assinaturas e MRR)
-    try {
-      const { data, error } = await supabase
+      supabase
         .from('subscriptions')
-        .select('id, organization_id, product_id, status, plan_name, started_at, expires_at, created_at, products(id, name, slug)')
-      
-      if (error) {
-        console.warn('Kryon Admin: Aviso ao consultar subscriptions:', error.message)
-        errors.push(`Assinaturas: ${error.message}`)
-      } else if (data) {
-        subscriptions = data
-      }
-    } catch (e: any) {
-      console.warn('Kryon Admin: Erro inesperado em subscriptions:', e?.message)
-      errors.push(`Assinaturas: ${e?.message || 'Falha na requisição'}`)
-    }
+        .select('id, organization_id, product_id, status, plan_name, started_at, expires_at, created_at, products(id, name, slug)'),
 
-    // 3. Consulta Estabelecimentos (Shops — Operação Lava Rápido)
-    try {
-      const { data, error } = await supabase
+      supabase
         .from('shops')
         .select('id, slug, store_type, plan, trial_ate, created_at')
-        .order('created_at', { ascending: false })
-      
-      if (error) {
-        console.warn('Kryon Admin: Aviso ao consultar shops:', error.message)
-        errors.push(`Lava Rápido (Shops): ${error.message}`)
-      } else if (data) {
-        shops = data
-      }
-    } catch (e: any) {
-      console.warn('Kryon Admin: Erro inesperado em shops:', e?.message)
-      errors.push(`Lava Rápido (Shops): ${e?.message || 'Falha na requisição'}`)
-    }
+        .order('created_at', { ascending: false }),
 
-    // 4. Consulta Ordens de Serviço do Lava Rápido (Lavagens)
-    try {
-      const { data, error } = await supabase
+      supabase
         .from('lava_rapido_orders')
         .select('id, tenant_id, status, total_price, final_price, created_at, completed_at')
-        .order('created_at', { ascending: false })
-      
-      if (error) {
-        console.warn('Kryon Admin: Aviso ao consultar lava_rapido_orders:', error.message)
-        errors.push(`Ordens Lava Rápido: ${error.message}`)
-      } else if (data) {
-        lavaRapidoOrders = data
-      }
-    } catch (e: any) {
-      console.warn('Kryon Admin: Erro inesperado em lava_rapido_orders:', e?.message)
-      errors.push(`Ordens Lava Rápido: ${e?.message || 'Falha na requisição'}`)
-    }
+        .order('created_at', { ascending: false }),
 
-    // 5. Consulta Catálogo de Produtos
-    try {
-      const { data, error } = await supabase
+      supabase
         .from('products')
         .select('id, name, slug, description, category, status')
         .order('name', { ascending: true })
-      
-      if (error) {
-        console.warn('Kryon Admin: Aviso ao consultar products:', error.message)
-        errors.push(`Produtos: ${error.message}`)
-      } else if (data) {
-        products = data
-      }
-    } catch (e: any) {
-      console.warn('Kryon Admin: Erro inesperado em products:', e?.message)
-      errors.push(`Produtos: ${e?.message || 'Falha na requisição'}`)
+    ])
+
+    // Tratamento individual e resiliente de cada resultado
+    if (orgsResult.error) {
+      console.warn('Kryon Admin: Aviso em organizations:', orgsResult.error.message)
+      errors.push(`Organizações: ${orgsResult.error.message}`)
+    } else if (orgsResult.data) {
+      organizations = orgsResult.data
+    }
+
+    if (subsResult.error) {
+      console.warn('Kryon Admin: Aviso em subscriptions:', subsResult.error.message)
+      errors.push(`Assinaturas: ${subsResult.error.message}`)
+    } else if (subsResult.data) {
+      subscriptions = subsResult.data
+    }
+
+    if (shopsResult.error) {
+      console.warn('Kryon Admin: Aviso em shops:', shopsResult.error.message)
+      errors.push(`Lava Rápido (Shops): ${shopsResult.error.message}`)
+    } else if (shopsResult.data) {
+      shops = shopsResult.data
+    }
+
+    if (ordersResult.error) {
+      console.warn('Kryon Admin: Aviso em lava_rapido_orders:', ordersResult.error.message)
+      errors.push(`Ordens Lava Rápido: ${ordersResult.error.message}`)
+    } else if (ordersResult.data) {
+      lavaRapidoOrders = ordersResult.data
+    }
+
+    if (prodsResult.error) {
+      console.warn('Kryon Admin: Aviso em products:', prodsResult.error.message)
+      errors.push(`Produtos: ${prodsResult.error.message}`)
+    } else if (prodsResult.data) {
+      products = prodsResult.data
     }
 
   } catch (globalErr: any) {
-    console.error('Kryon Admin: Erro global na conexão com Supabase:', globalErr)
+    console.error('Kryon Admin: Erro global ao inicializar cliente Supabase:', globalErr)
     errors.push(`Conexão Geral: ${globalErr?.message || 'Falha ao inicializar cliente Supabase'}`)
   }
 
   // ============================================================================
-  // CÁLCULOS E REGRAS DE NEGÓCIO REAIS
+  // CÁLCULOS E REGRAS DE NEGÓCIO ESTRITAS
   // ============================================================================
 
-  // 1. Lava Rápido: Ordens concluídas e Comissão de R$ 2,00 por lavagem
-  const completedOrders = lavaRapidoOrders.filter(o => o.status === 'completed')
-  const completedOrdersCount = completedOrders.length
-  const kryonCommissionTotal = completedOrdersCount * 2.00 // R$ 2,00 por lavagem concluída
+  // 1. Ordens e Comissões do Lava Rápido
+  // Filtro de ordens no período selecionado
+  const ordersInPeriod = lavaRapidoOrders.filter(order => {
+    const orderDate = new Date(order.completed_at || order.created_at)
+    return orderDate >= startDate && orderDate <= endDate
+  })
 
-  // Estabelecimentos Lava Rápido
+  // Lavagens concluídas no período
+  const completedOrdersInPeriod = ordersInPeriod.filter(o => o.status === 'completed')
+  const completedOrdersInPeriodCount = completedOrdersInPeriod.length
+
+  // Lavagens concluídas no total acumulado (lifetime)
+  const lifetimeCompletedOrders = lavaRapidoOrders.filter(o => o.status === 'completed')
+  const lifetimeCompletedOrdersCount = lifetimeCompletedOrders.length
+
+  // Regra Comercial: R$ 2,00 por lavagem concluída (completed). Todas as outras = R$ 0,00
+  const kryonCommissionPeriod = completedOrdersInPeriodCount * 2.00
+  const kryonCommissionLifetime = lifetimeCompletedOrdersCount * 2.00
+
+  // 2. Estabelecimentos Lava Rápido (Shops)
   const lavaRapidoShops = shops.filter(s => s.store_type === 'lava_rapido' || !s.store_type)
   const shopsCount = lavaRapidoShops.length
 
-  // 2. Empresas / Organizações (Fonte central: organizations)
+  // 3. Empresas / Organizações (Fonte central: organizations)
   const organizationsCount = organizations.length
   const activeOrganizationsCount = organizations.filter(o => o.status === 'active' || !o.status).length
   const trialOrganizationsCount = organizations.filter(o => o.status === 'trial').length +
     subscriptions.filter(s => s.status === 'trial').length
 
-  // 3. Assinaturas e MRR (Fonte: subscriptions)
-  // Como nesta fase inicial ainda não há assinaturas faturadas, o valor resulta em R$ 0,00
+  // Novas organizações no período selecionado
+  const newOrgsInPeriod = organizations.filter(o => {
+    if (!o.created_at) return false
+    const d = new Date(o.created_at)
+    return d >= startDate && d <= endDate
+  }).length
+
+  // 4. Assinaturas e MRR (Fonte: subscriptions)
+  // Somente assinaturas ativas faturadas. Atualmente R$ 0,00 por ausência de planos pagos ativos.
   const activeSubscriptions = subscriptions.filter(s => s.status === 'active')
-  const mrrTotal = 0.00 // subscriptions não têm valores fixados no banco ainda
+  const mrrTotal = 0.00
 
-  // Receita Total Acumulada no Período = MRR + Comissões Kryon Lava Rápido
-  const totalRevenue = mrrTotal + kryonCommissionTotal
+  // Receita Total no Período = MRR do período (ou R$ 0,00) + Comissões Kryon no período
+  const totalRevenueInPeriod = mrrTotal + kryonCommissionPeriod
 
-  // Despesas e Resultado Operacional
-  const totalExpenses = 0.00
-  const operatingResult = totalRevenue - totalExpenses
+  // Despesas no Período e Resultado Operacional
+  const totalExpensesInPeriod = 0.00
+  const operatingResultInPeriod = totalRevenueInPeriod - totalExpensesInPeriod
 
   // Catálogo de produtos ativos
   const activeProductsCount = products.length > 0
@@ -192,76 +209,88 @@ export async function getKryonAdminOverview(): Promise<KryonAdminOverviewData> {
   // ============================================================================
   const summaryMetrics: ExecutiveMetric[] = [
     {
-      id: 'receita-mes',
-      title: 'Receita do mês',
-      value: totalRevenue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-      change: completedOrdersCount > 0 ? `${completedOrdersCount} lavagens faturadas` : 'Sem movimentação no mês',
-      isPositive: totalRevenue > 0,
+      id: 'receita-periodo',
+      title: `Receita (${selectedPeriodLabel})`,
+      value: totalRevenueInPeriod.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+      change: completedOrdersInPeriodCount > 0
+        ? `${completedOrdersInPeriodCount} lavagens faturadas`
+        : 'Sem faturamento no período',
+      isPositive: totalRevenueInPeriod > 0,
       iconName: 'DollarSign',
-      category: 'finance'
+      category: 'finance',
+      temporalScope: 'periodo'
     },
     {
       id: 'receita-recorrente',
-      title: 'Receita recorrente',
+      title: 'Receita recorrente (MRR)',
       value: mrrTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-      change: activeSubscriptions.length > 0 ? `${activeSubscriptions.length} assinaturas ativas` : '0 assinaturas pagas',
+      change: activeSubscriptions.length > 0
+        ? `${activeSubscriptions.length} assinaturas ativas`
+        : '0 assinaturas pagas no banco',
       isPositive: mrrTotal > 0,
       iconName: 'Repeat',
-      category: 'finance'
+      category: 'finance',
+      temporalScope: 'acumulado'
     },
     {
-      id: 'comissoes',
-      title: 'Comissões',
-      value: kryonCommissionTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-      change: 'R$ 2,00 por lavagem concluída',
-      isPositive: kryonCommissionTotal > 0,
+      id: 'comissoes-periodo',
+      title: `Comissões (${selectedPeriodLabel})`,
+      value: kryonCommissionPeriod.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+      change: `R$ 2,00 × ${completedOrdersInPeriodCount} lavagens concluídas`,
+      isPositive: kryonCommissionPeriod > 0,
       iconName: 'Percent',
-      category: 'finance'
+      category: 'finance',
+      temporalScope: 'periodo'
     },
     {
-      id: 'despesas',
-      title: 'Despesas',
-      value: totalExpenses.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-      change: 'Controle de custos',
+      id: 'despesas-periodo',
+      title: `Despesas (${selectedPeriodLabel})`,
+      value: totalExpensesInPeriod.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+      change: 'Sem despesas cadastradas',
       isPositive: false,
       iconName: 'TrendingDown',
-      category: 'finance'
+      category: 'finance',
+      temporalScope: 'periodo'
     },
     {
       id: 'resultado-operacional',
-      title: 'Resultado operacional',
-      value: operatingResult.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-      change: totalRevenue > 0 ? 'Operação superavitária' : 'Início de ciclo',
-      isPositive: operatingResult >= 0,
+      title: `Resultado (${selectedPeriodLabel})`,
+      value: operatingResultInPeriod.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+      change: totalRevenueInPeriod > 0 ? 'Margem líquida 100%' : 'Saldo neutro no período',
+      isPositive: operatingResultInPeriod >= 0,
       iconName: 'TrendingUp',
-      category: 'finance'
+      category: 'finance',
+      temporalScope: 'periodo'
     },
     {
       id: 'empresas-ativas',
-      title: 'Empresas ativas',
-      value: (organizationsCount > 0 ? activeOrganizationsCount : shopsCount).toString(),
-      change: organizationsCount > 0 ? `${organizationsCount} cadastradas no total` : `${shopsCount} estabelecimentos`,
-      isPositive: (organizationsCount > 0 ? activeOrganizationsCount : shopsCount) > 0,
+      title: 'Empresas ativas (Base Central)',
+      value: organizationsCount.toString(),
+      change: newOrgsInPeriod > 0 ? `+${newOrgsInPeriod} no período` : 'Base central de organizações',
+      isPositive: organizationsCount > 0,
       iconName: 'Building2',
-      category: 'operations'
+      category: 'operations',
+      temporalScope: 'acumulado'
     },
     {
       id: 'produtos-ativos',
-      title: 'Produtos ativos',
+      title: 'Produtos no Catálogo',
       value: activeProductsCount.toString(),
-      change: 'Ecossistema Kryon',
+      change: 'Ecossistema Kryon Systems',
       isPositive: true,
       iconName: 'Layers',
-      category: 'operations'
+      category: 'operations',
+      temporalScope: 'acumulado'
     },
     {
       id: 'clientes-teste',
       title: 'Clientes em período de teste',
       value: trialOrganizationsCount.toString(),
-      change: trialOrganizationsCount > 0 ? 'Aguardando conversão' : '0 em trial',
+      change: trialOrganizationsCount > 0 ? 'Aguardando conversão' : '0 em trial no momento',
       isPositive: trialOrganizationsCount > 0,
       iconName: 'Sparkles',
-      category: 'operations'
+      category: 'operations',
+      temporalScope: 'acumulado'
     }
   ]
 
@@ -269,9 +298,9 @@ export async function getKryonAdminOverview(): Promise<KryonAdminOverviewData> {
   // 2. SAÚDE FINANCEIRA
   // ============================================================================
   const reserveTarget = 50000.00
-  const securityReserve = Math.max(0, operatingResult)
+  const securityReserve = Math.max(0, kryonCommissionLifetime)
   const reserveProgress = reserveTarget > 0 ? Math.min(100, Math.round((securityReserve / reserveTarget) * 100)) : 0
-  const coverageMonths = totalExpenses > 0 ? parseFloat((securityReserve / totalExpenses).toFixed(1)) : 0
+  const coverageMonths = totalExpensesInPeriod > 0 ? parseFloat((securityReserve / totalExpensesInPeriod).toFixed(1)) : 0
 
   const financialHealth: FinancialHealthData = {
     securityReserve,
@@ -279,23 +308,23 @@ export async function getKryonAdminOverview(): Promise<KryonAdminOverviewData> {
     reserveProgressPercentage: reserveProgress,
     expenseCoverageMonths: coverageMonths,
     investmentReserve: 0.00,
-    operatingResult,
-    healthStatus: operatingResult >= 0 ? 'saudavel' : 'atencao',
-    healthStatusLabel: operatingResult > 0 ? 'Empresa saudável' : 'Início de Operação',
-    healthStatusDescription: operatingResult > 0
-      ? `Saldo operacional positivo com ${completedOrdersCount} lavagens concluídas.`
-      : 'Aguardando o primeiro lote de faturamento e expansão de clientes.'
+    operatingResult: operatingResultInPeriod,
+    healthStatus: securityReserve > 0 ? 'saudavel' : 'atencao',
+    healthStatusLabel: securityReserve > 0 ? 'Operação Ativa' : 'Início de Operação',
+    healthStatusDescription: securityReserve > 0
+      ? `Saldo acumulado de ${securityReserve.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} com ${lifetimeCompletedOrdersCount} lavagens concluídas no total.`
+      : 'Aguardando o registro das primeiras ordens faturadas e novas assinaturas pagas.'
   }
 
   // ============================================================================
-  // 3. RECEITA POR PRODUTO
+  // 3. RECEITA POR PRODUTO (NO PERÍODO SELECIONADO)
   // ============================================================================
   const productRevenue: ProductRevenueItem[] = [
     {
       name: 'Kryon Lava Rápido',
       slug: 'lava-rapido',
-      revenue: kryonCommissionTotal,
-      percentage: totalRevenue > 0 ? Math.round((kryonCommissionTotal / totalRevenue) * 100) : (kryonCommissionTotal > 0 ? 100 : 0),
+      revenue: kryonCommissionPeriod,
+      percentage: totalRevenueInPeriod > 0 ? Math.round((kryonCommissionPeriod / totalRevenueInPeriod) * 100) : (kryonCommissionPeriod > 0 ? 100 : 0),
       color: '#3B82F6'
     },
     {
@@ -341,18 +370,18 @@ export async function getKryonAdminOverview(): Promise<KryonAdminOverviewData> {
   const productActivities: ProductActivityItem[] = [
     {
       productName: 'Kryon Lava Rápido',
-      badge: completedOrdersCount > 0 ? 'Operação Ativa' : 'Pronto',
-      metric1Label: 'Lavagens concluídas',
-      metric1Value: completedOrdersCount.toLocaleString('pt-BR'),
-      metric2Label: 'Comissão Kryon',
-      metric2Value: kryonCommissionTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-      trend: `${shopsCount} estabelecimentos vinculados`,
+      badge: completedOrdersInPeriodCount > 0 ? 'Operação Ativa' : 'Pronto',
+      metric1Label: `Lavagens (${selectedPeriodLabel})`,
+      metric1Value: completedOrdersInPeriodCount.toLocaleString('pt-BR'),
+      metric2Label: `Comissão (${selectedPeriodLabel})`,
+      metric2Value: kryonCommissionPeriod.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+      trend: `${shopsCount} estabelecimentos cadastrados`,
       iconColor: 'text-blue-400'
     },
     {
       productName: 'Kryon Agenda',
       badge: 'Disponível',
-      metric1Label: 'Agendamentos',
+      metric1Label: `Agendamentos (${selectedPeriodLabel})`,
       metric1Value: '0',
       metric2Label: 'Empresas ativas',
       metric2Value: subscriptions.filter(s => s.products?.slug === 'agenda-facil').length.toString(),
@@ -386,53 +415,94 @@ export async function getKryonAdminOverview(): Promise<KryonAdminOverviewData> {
   // ============================================================================
   const obligations = {
     contasPagar: 0.00,
-    contasReceber: kryonCommissionTotal,
+    contasReceber: kryonCommissionPeriod,
     despesasPrevistas: 0.00,
     proximosVencimentos: [] as ObligationItem[]
   }
 
   // ============================================================================
-  // 6. KRYON INTELLIGENCE (INSIGHTS GERADOS COM BASE NOS DADOS REAIS)
+  // 6. KRYON INTELLIGENCE (INSIGHTS 100% FACTUAIS E DERIVADOS DOS DADOS)
   // ============================================================================
-  const intelligenceInsights = [
-    {
+  const intelligenceInsights: IntelligenceInsight[] = []
+
+  // Insight 1: Comissões e Lavagens
+  if (completedOrdersInPeriodCount > 0) {
+    intelligenceInsights.push({
       id: 'real-1',
-      type: 'highlight' as const,
+      type: 'highlight',
       tag: 'Kryon Lava Rápido',
-      title: completedOrdersCount > 0
-        ? `${completedOrdersCount} lavagens concluídas registradas no banco.`
-        : 'Sistema Lava Rápido pronto para registrar lavagens.',
-      description: completedOrdersCount > 0
-        ? `A regra comercial de R$ 2,00 por lavagem gerou ${kryonCommissionTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} em comissões para a Kryon Systems.`
-        : 'Nenhuma ordem com status "completed" encontrada no momento. Novas conclusões atualizarão a comissão automaticamente.',
-      actionText: 'Ver Detalhes do Lava Rápido'
-    },
-    {
+      title: `${completedOrdersInPeriodCount} lavagens concluídas no período (${selectedPeriodLabel}).`,
+      description: `Comissão gerada de ${kryonCommissionPeriod.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} com base na regra comercial estrita de R$ 2,00 por lavagem com status 'completed'.`,
+      actionText: 'Ver Histórico de Comissões'
+    })
+  } else {
+    intelligenceInsights.push({
+      id: 'real-1',
+      type: 'highlight',
+      tag: 'Kryon Lava Rápido',
+      title: `Nenhuma lavagem concluída registrada em ${selectedPeriodLabel.toLowerCase()}.`,
+      description: `Não foram encontradas ordens com status 'completed' no intervalo selecionado. Ordens em andamento ou canceladas resultam em R$ 0,00 de comissão.`,
+      actionText: 'Ver Ordens de Serviço'
+    })
+  }
+
+  // Insight 2: Estrutura de Empresas e Vínculos
+  if (shopsCount > 0) {
+    intelligenceInsights.push({
       id: 'real-2',
-      type: 'recommendation' as const,
-      tag: 'Empresas e Cadastros',
-      title: organizationsCount > 0
-        ? `${organizationsCount} organizações cadastradas na base central.`
-        : `${shopsCount} estabelecimentos cadastrados na tabela de operação.`,
-      description: `A base central de empresas está sincronizada. ${trialOrganizationsCount} empresa(s) em período de teste.`,
-      actionText: 'Gerenciar Empresas'
-    },
-    {
+      type: 'recommendation',
+      tag: 'Estrutura Multi-Tenant',
+      title: `${shopsCount} estabelecimento(s) do Lava Rápido com vínculo pendente.`,
+      description: `A base operacional possui ${shopsCount} shop(s) sem chave estrangeira associando-os diretamente a uma Organização Kryon da base central.`,
+      actionText: 'Auditar Vínculos'
+    })
+  } else if (organizationsCount > 0) {
+    intelligenceInsights.push({
+      id: 'real-2',
+      type: 'recommendation',
+      tag: 'Base de Clientes',
+      title: `${organizationsCount} organização(ões) cadastrada(s) na base central.`,
+      description: `${activeOrganizationsCount} ativa(s) e ${trialOrganizationsCount} em período de teste.`,
+      actionText: 'Gerenciar Organizações'
+    })
+  } else {
+    intelligenceInsights.push({
+      id: 'real-2',
+      type: 'recommendation',
+      tag: 'Base de Clientes',
+      title: 'Não há dados suficientes para gerar uma recomendação de clientes.',
+      description: 'Aguardando o cadastro de organizações na tabela central organizations.',
+      actionText: 'Cadastrar Empresa'
+    })
+  }
+
+  // Insight 3: Assinaturas e Recorrência (MRR)
+  if (activeSubscriptions.length > 0) {
+    intelligenceInsights.push({
       id: 'real-3',
-      type: 'positive' as const,
-      tag: 'Saúde da Plataforma',
-      title: 'Conexão Supabase 100% Segura e Operacional.',
-      description: 'Todos os indicadores da Visão Geral estão conectados às tabelas reais sem intermediários ou dados estáticos.',
-      actionText: 'Auditoria de Segurança'
-    }
-  ]
+      type: 'positive',
+      tag: 'Assinaturas e MRR',
+      title: `${activeSubscriptions.length} assinatura(s) ativa(s) no banco.`,
+      description: 'Assinaturas identificadas na tabela subscriptions.',
+      actionText: 'Ver Assinaturas'
+    })
+  } else {
+    intelligenceInsights.push({
+      id: 'real-3',
+      type: 'positive',
+      tag: 'Assinaturas e MRR',
+      title: 'Não existem assinaturas recorrentes pagas registradas atualmente.',
+      description: 'A tabela subscriptions não possui registros de planos faturados no momento. O MRR calculado é de R$ 0,00.',
+      actionText: 'Configurar Planos'
+    })
+  }
 
   // ============================================================================
-  // 7. TABELA DE EMPRESAS / CLIENTES (DADOS REAIS)
+  // 7. TABELA DE EMPRESAS / CLIENTES (DISTINÇÃO CLARA ENTRE ORG E SHOP)
   // ============================================================================
-  const companies: CompanyRow[] = []
+  const companies: CompanyEntityRow[] = []
 
-  // Se houver organizações cadastradas na tabela organizations
+  // A) Organizações Kryon (Base Central)
   if (organizations.length > 0) {
     organizations.forEach((org, idx) => {
       const orgSubs = subscriptions.filter(s => s.organization_id === org.id)
@@ -440,7 +510,7 @@ export async function getKryonAdminOverview(): Promise<KryonAdminOverviewData> {
         ? orgSubs[0].products.name
         : 'Kryon Suite'
 
-      const statusMap: Record<string, CompanyRow['status']> = {
+      const statusMap: Record<string, CompanyEntityRow['status']> = {
         active: 'Ativo',
         trial: 'Período de teste',
         suspended: 'Acesso limitado',
@@ -449,64 +519,110 @@ export async function getKryonAdminOverview(): Promise<KryonAdminOverviewData> {
 
       companies.push({
         id: org.id || `org-${idx}`,
-        name: org.name || org.legal_name || `Empresa #${idx + 1}`,
+        name: org.name || org.legal_name || `Organização #${idx + 1}`,
+        entityType: 'organizacao',
+        entityTypeLabel: 'Organização Kryon',
+        vinculoStatus: 'vinculado',
+        vinculoNome: 'Base Central Kryon',
         product: productName,
-        model: 'Assinatura',
+        model: 'Assinatura Mensal',
         status: statusMap[org.status] || 'Ativo',
         daysOverdue: 0,
         access: org.status === 'suspended' ? 'Limitado' : (org.status === 'canceled' ? 'Bloqueado' : 'Completo'),
         generatedRevenue: 0.00,
-        lastActivity: org.updated_at ? new Date(org.updated_at).toLocaleDateString('pt-BR') : 'Recente'
+        kryonCommission: 0.00,
+        lastActivity: org.updated_at ? new Date(org.updated_at).toLocaleDateString('pt-BR') : 'Sem registro'
       })
     })
   }
 
-  // Se houver estabelecimentos em shops (Lava Rápido), incluímos para visibilidade operacional
+  // B) Estabelecimentos Operacionais do Lava Rápido (Shops)
   if (shops.length > 0) {
     shops.forEach((shop, idx) => {
-      // Se não estiver duplicado com organizations
-      const alreadyListed = companies.some(c => c.id === shop.id || c.name.toLowerCase() === (shop.slug || '').toLowerCase())
-      if (!alreadyListed) {
-        // Quantidade de ordens desse shop
-        const shopOrders = lavaRapidoOrders.filter(o => o.tenant_id === shop.id && o.status === 'completed')
-        const shopCommission = shopOrders.length * 2.00
+      // Ordens do Lava Rápido deste estabelecimento
+      const shopOrders = lavaRapidoOrders.filter(o => o.tenant_id === shop.id)
+      const shopCompletedOrders = shopOrders.filter(o => o.status === 'completed')
+      
+      const shopRevenue = shopCompletedOrders.reduce((acc, o) => acc + (Number(o.final_price || o.total_price) || 0), 0)
+      const shopCommission = shopCompletedOrders.length * 2.00
 
-        const shopStatus: CompanyRow['status'] = shop.plan === 'bloqueado'
-          ? 'Restrito'
-          : (shop.plan === 'trial' ? 'Período de teste' : 'Ativo')
+      const shopStatus: CompanyEntityRow['status'] = shop.plan === 'bloqueado'
+        ? 'Restrito'
+        : (shop.plan === 'trial' ? 'Período de teste' : 'Ativo')
 
-        companies.push({
-          id: shop.id || `shop-${idx}`,
-          name: shop.slug ? shop.slug.replace(/-/g, ' ').toUpperCase() : `Lava Rápido #${idx + 1}`,
-          product: 'Kryon Lava Rápido',
-          model: 'R$ 2,00 por lavagem',
-          status: shopStatus,
-          daysOverdue: 0,
-          access: shop.plan === 'bloqueado' ? 'Bloqueado' : 'Completo',
-          generatedRevenue: shopCommission,
-          lastActivity: shop.created_at ? new Date(shop.created_at).toLocaleDateString('pt-BR') : 'Recente'
-        })
-      }
+      companies.push({
+        id: shop.id || `shop-${idx}`,
+        name: shop.slug ? shop.slug.replace(/-/g, ' ').toUpperCase() : `Lava Rápido #${idx + 1}`,
+        entityType: 'shop_operacional',
+        entityTypeLabel: 'Estabelecimento Operacional',
+        vinculoStatus: 'pendente',
+        vinculoNome: 'Vínculo pendente',
+        product: 'Kryon Lava Rápido',
+        model: 'Comissão (R$ 2,00/lavagem)',
+        status: shopStatus,
+        daysOverdue: 0,
+        access: shop.plan === 'bloqueado' ? 'Bloqueado' : 'Completo',
+        generatedRevenue: shopRevenue,
+        kryonCommission: shopCommission,
+        lastActivity: shop.created_at ? new Date(shop.created_at).toLocaleDateString('pt-BR') : 'Sem registro'
+      })
     })
   }
 
   // ============================================================================
-  // 8. EVOLUÇÃO E CRESCIMENTO (ÚLTIMOS 6 MESES COM DADOS REAIS)
+  // 8. HISTÓRICO DETALHADO DE COMISSÕES (ORDENS REAIS DO LAVA RÁPIDO)
+  // ============================================================================
+  const statusLabelMap: Record<string, string> = {
+    completed: 'Concluída',
+    in_progress: 'Em lavagem',
+    pending: 'Pendente',
+    canceled: 'Cancelada',
+    delivered: 'Entregue'
+  }
+
+  const commissionHistory: CommissionHistoryRow[] = ordersInPeriod.map((order, idx) => {
+    const isCompleted = order.status === 'completed'
+    const commissionValue = isCompleted ? 2.00 : 0.00
+    const orderDate = new Date(order.completed_at || order.created_at)
+    
+    // Identificar shop correspondente
+    const shop = shops.find(s => s.id === order.tenant_id)
+    const shopSlug = shop?.slug ? shop.slug.replace(/-/g, ' ').toUpperCase() : `Estabelecimento #${order.tenant_id ? order.tenant_id.slice(0, 8) : idx + 1}`
+
+    return {
+      id: order.id || `order-${idx}`,
+      orderNumber: order.id ? `OS-${order.id.slice(0, 8).toUpperCase()}` : `OS-#${idx + 1}`,
+      date: isNaN(orderDate.getTime()) ? 'Data não informada' : orderDate.toLocaleDateString('pt-BR'),
+      time: isNaN(orderDate.getTime()) ? '--:--' : orderDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+      empresa: 'Vínculo pendente',
+      vinculoStatus: 'pendente',
+      shopSlug,
+      produto: 'Kryon Lava Rápido',
+      statusLavagem: order.status || 'pending',
+      statusLabel: statusLabelMap[order.status] || order.status || 'Pendente',
+      valorTotalOrdem: Number(order.final_price || order.total_price) || 0.00,
+      comissaoKryon: commissionValue
+    }
+  })
+
+  // ============================================================================
+  // 9. EVOLUÇÃO E CRESCIMENTO (HISTÓRICO REAL)
   // ============================================================================
   const monthsNames = ['Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set']
   const growthData: GrowthDataPoint[] = monthsNames.map((month, idx) => {
-    // Mês atual (Setembro) recebe os dados acumulados reais
     const isCurrentMonth = idx === monthsNames.length - 1
     return {
       month,
-      receita: isCurrentMonth ? totalRevenue : 0,
+      receita: isCurrentMonth ? totalRevenueInPeriod : 0,
       empresas: isCurrentMonth ? (organizationsCount > 0 ? organizationsCount : shopsCount) : 0,
-      comissoes: isCurrentMonth ? kryonCommissionTotal : 0
+      comissoes: isCurrentMonth ? kryonCommissionPeriod : 0
     }
   })
 
   return {
     isRealData: true,
+    selectedPeriod,
+    selectedPeriodLabel,
     errors,
     summaryMetrics,
     financialHealth,
@@ -514,6 +630,7 @@ export async function getKryonAdminOverview(): Promise<KryonAdminOverviewData> {
     productActivities,
     obligations,
     companies,
+    commissionHistory,
     growthData,
     intelligenceInsights,
     rawCounts: {
@@ -521,9 +638,11 @@ export async function getKryonAdminOverview(): Promise<KryonAdminOverviewData> {
       activeOrganizationsCount,
       trialOrganizationsCount,
       shopsCount,
-      totalOrdersCount: lavaRapidoOrders.length,
-      completedOrdersCount,
-      kryonCommissionTotal,
+      totalOrdersInPeriod: ordersInPeriod.length,
+      completedOrdersInPeriod: completedOrdersInPeriodCount,
+      lifetimeCompletedOrders: lifetimeCompletedOrdersCount,
+      kryonCommissionPeriod,
+      kryonCommissionLifetime,
       mrrTotal,
       productsCount: products.length
     }
