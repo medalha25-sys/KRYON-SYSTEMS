@@ -1,11 +1,29 @@
-﻿'use client'
+'use client'
 
 import React from 'react'
-import { TrendingUp, BarChart3, Users, DollarSign, Percent } from 'lucide-react'
-import { mockGrowthData } from '../mock-data'
+import { TrendingUp, Users, DollarSign, Percent } from 'lucide-react'
+import { GrowthDataPoint, mockGrowthData } from '../mock-data'
 
-export function GrowthChart() {
-  const maxRevenue = Math.max(...mockGrowthData.map(d => d.receita))
+interface GrowthChartProps {
+  data?: GrowthDataPoint[]
+  isLoading?: boolean
+}
+
+export function GrowthChart({
+  data = mockGrowthData,
+  isLoading = false
+}: GrowthChartProps) {
+  const maxRevenue = Math.max(...data.map(d => d.receita), 1000)
+  const currentMonthData = data[data.length - 1] || { receita: 0, empresas: 0, comissoes: 0 }
+
+  if (isLoading) {
+    return (
+      <section className="p-5 sm:p-6 rounded-3xl bg-[#0B0F19] border border-white/[0.08] animate-pulse space-y-4">
+        <div className="h-6 w-48 bg-white/10 rounded"></div>
+        <div className="h-48 w-full bg-white/5 rounded-2xl"></div>
+      </section>
+    )
+  }
 
   return (
     <section className="p-5 sm:p-6 rounded-3xl bg-[#0B0F19] border border-white/[0.08] relative overflow-hidden shadow-xl shadow-black/40 space-y-6">
@@ -39,14 +57,14 @@ export function GrowthChart() {
 
       {/* Bar Chart Visualization */}
       <div className="grid grid-cols-6 gap-2 sm:gap-4 items-end h-56 pt-6 pb-2 border-b border-white/[0.05]">
-        {mockGrowthData.map((d) => {
-          const heightPercent = Math.round((d.receita / maxRevenue) * 100)
+        {data.map((d) => {
+          const heightPercent = d.receita > 0 ? Math.max(8, Math.round((d.receita / maxRevenue) * 100)) : 4
 
           return (
             <div key={d.month} className="flex flex-col items-center gap-2 h-full justify-end group">
               {/* Tooltip on hover */}
               <div className="text-center opacity-0 group-hover:opacity-100 transition-opacity bg-slate-900 border border-white/10 px-2 py-1 rounded-lg text-[10px] text-white shadow-xl pointer-events-none mb-1">
-                <p className="font-bold text-blue-400">R$ {(d.receita / 1000).toFixed(1)}k</p>
+                <p className="font-bold text-blue-400">{d.receita.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
                 <p className="text-purple-300">{d.empresas} empresas</p>
               </div>
 
@@ -72,17 +90,21 @@ export function GrowthChart() {
         <div className="p-3 rounded-2xl bg-white/[0.02] border border-white/[0.05] flex items-center justify-between">
           <div className="flex items-center gap-2 text-xs text-slate-400">
             <DollarSign size={14} className="text-blue-400" />
-            <span>Crescimento de Receita</span>
+            <span>Receita do Período</span>
           </div>
-          <span className="text-xs font-black text-emerald-400">+98.9% no semestre</span>
+          <span className="text-xs font-black text-emerald-400">
+            {currentMonthData.receita.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+          </span>
         </div>
 
         <div className="p-3 rounded-2xl bg-white/[0.02] border border-white/[0.05] flex items-center justify-between">
           <div className="flex items-center gap-2 text-xs text-slate-400">
             <Users size={14} className="text-purple-400" />
-            <span>Expansão de Clientes</span>
+            <span>Empresas Registradas</span>
           </div>
-          <span className="text-xs font-black text-purple-300">12 → 24 Empresas</span>
+          <span className="text-xs font-black text-purple-300">
+            {currentMonthData.empresas} Empresas
+          </span>
         </div>
 
         <div className="p-3 rounded-2xl bg-white/[0.02] border border-white/[0.05] flex items-center justify-between">
@@ -90,7 +112,9 @@ export function GrowthChart() {
             <Percent size={14} className="text-emerald-400" />
             <span>Comissões Operacionais</span>
           </div>
-          <span className="text-xs font-black text-white">R$ 7.450,00</span>
+          <span className="text-xs font-black text-white">
+            {currentMonthData.comissoes.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+          </span>
         </div>
       </div>
     </section>

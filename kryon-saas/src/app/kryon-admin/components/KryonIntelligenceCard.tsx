@@ -1,11 +1,41 @@
-﻿'use client'
+'use client'
 
 import React, { useState } from 'react'
-import { BrainCircuit, Sparkles, ArrowRight, Lightbulb, TrendingUp, ShieldAlert, X, ChevronRight, Zap } from 'lucide-react'
+import { BrainCircuit, Sparkles, ArrowRight, X, ChevronRight } from 'lucide-react'
 import { mockIntelligenceInsights } from '../mock-data'
 
-export function KryonIntelligenceCard() {
+interface InsightItem {
+  id: string
+  type: 'positive' | 'recommendation' | 'highlight'
+  tag: string
+  title: string
+  description: string
+  actionText: string
+}
+
+interface KryonIntelligenceCardProps {
+  insights?: InsightItem[]
+  isLoading?: boolean
+}
+
+export function KryonIntelligenceCard({
+  insights = mockIntelligenceInsights,
+  isLoading = false
+}: KryonIntelligenceCardProps) {
   const [modalOpen, setModalOpen] = useState(false)
+
+  if (isLoading) {
+    return (
+      <section className="p-6 sm:p-8 rounded-3xl bg-[#0C111D] border border-blue-500/20 animate-pulse space-y-4">
+        <div className="h-8 w-64 bg-white/10 rounded"></div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="h-28 bg-white/5 rounded-2xl"></div>
+          ))}
+        </div>
+      </section>
+    )
+  }
 
   return (
     <>
@@ -31,7 +61,7 @@ export function KryonIntelligenceCard() {
                   </span>
                 </div>
                 <p className="text-xs sm:text-sm text-blue-300/80 font-medium italic mt-0.5">
-                  &ldquo;Dados que viram decisões.&rdquo;
+                  &ldquo;Dados reais que viram decisões.&rdquo;
                 </p>
               </div>
             </div>
@@ -47,7 +77,7 @@ export function KryonIntelligenceCard() {
 
           {/* Insights Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 pt-2">
-            {mockIntelligenceInsights.map((insight) => (
+            {insights.map((insight) => (
               <div
                 key={insight.id}
                 className="p-4 rounded-2xl bg-white/[0.04] border border-white/[0.08] hover:border-blue-400/40 transition-all duration-300 space-y-2 flex flex-col justify-between group"
@@ -76,12 +106,12 @@ export function KryonIntelligenceCard() {
           </div>
 
           <p className="text-[10px] text-slate-500 text-center sm:text-left">
-            * Recomendações e simulações com dados demonstrativos nesta etapa de estruturação visual.
+            * Análises dinâmicas calculadas em tempo real com base nos registros do Supabase.
           </p>
         </div>
       </section>
 
-      {/* Modal Demonstrativo de Análises */}
+      {/* Modal de Análises */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in">
           <div className="relative w-full max-w-2xl bg-[#0C111D] border border-blue-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
@@ -92,7 +122,7 @@ export function KryonIntelligenceCard() {
                 </div>
                 <div>
                   <h2 className="text-lg font-black text-white">Central de Inteligência Kryon</h2>
-                  <p className="text-xs text-slate-400">Relatório Analítico Consolidado (Demonstrativo)</p>
+                  <p className="text-xs text-slate-400">Relatório Analítico Consolidado em Tempo Real</p>
                 </div>
               </div>
               <button
@@ -103,34 +133,24 @@ export function KryonIntelligenceCard() {
               </button>
             </div>
 
-            <div className="space-y-4 text-xs text-slate-300 leading-relaxed">
-              <div className="p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 space-y-1">
-                <div className="flex items-center gap-2 font-bold text-blue-300 text-sm">
-                  <Zap size={16} />
-                  <span>Resumo do Algoritmo de Crescimento</span>
+            <div className="space-y-4 text-xs text-slate-300">
+              {insights.map((ins, i) => (
+                <div key={i} className="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.08] space-y-1.5">
+                  <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-blue-500/15 text-blue-300">
+                    {ins.tag}
+                  </span>
+                  <h4 className="text-sm font-bold text-white mt-1">{ins.title}</h4>
+                  <p className="text-slate-400 leading-relaxed">{ins.description}</p>
                 </div>
-                <p className="text-slate-300">
-                  Com base no histórico dos últimos 6 meses, a vertical de maior tração operacional é o <strong>Kryon Lava Rápido</strong>, respondendo por 30.3% do faturamento global e alta taxa de engajamento diário.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-purple-500/10 border border-purple-500/20 space-y-1">
-                <div className="flex items-center gap-2 font-bold text-purple-300 text-sm">
-                  <Lightbulb size={16} />
-                  <span>Plano de Alocação de Capital Recomendado</span>
-                </div>
-                <p className="text-slate-300">
-                  Destinar <strong>40% do superávit operacional</strong> para reforço contínuo da Reserva de Segurança até atingir R$ 120.000,00 (meta de 12 meses de cobertura).
-                </p>
-              </div>
+              ))}
             </div>
 
-            <div className="pt-2 flex justify-end">
+            <div className="pt-4 border-t border-white/[0.08] flex justify-end">
               <button
                 onClick={() => setModalOpen(false)}
-                className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition"
+                className="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition"
               >
-                Entendido
+                Fechar
               </button>
             </div>
           </div>

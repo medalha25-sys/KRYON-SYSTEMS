@@ -1,13 +1,35 @@
-﻿'use client'
+'use client'
 
 import React, { useState } from 'react'
-import { FileText, ArrowDownRight, ArrowUpRight, Calendar, AlertCircle, CheckCircle2, Clock } from 'lucide-react'
-import { mockObligations } from '../mock-data'
+import { FileText, ArrowDownRight, ArrowUpRight, Calendar, Clock, CheckCircle2 } from 'lucide-react'
+import { ObligationItem, mockObligations } from '../mock-data'
 
-export function ObligationsSection() {
+interface ObligationsSectionProps {
+  obligations?: {
+    contasPagar: number
+    contasReceber: number
+    despesasPrevistas: number
+    proximosVencimentos: ObligationItem[]
+  }
+  isLoading?: boolean
+}
+
+export function ObligationsSection({
+  obligations = mockObligations,
+  isLoading = false
+}: ObligationsSectionProps) {
   const [filter, setFilter] = useState<'all' | 'payable' | 'receivable'>('all')
 
-  const items = mockObligations.proximosVencimentos.filter(item => {
+  if (isLoading) {
+    return (
+      <section className="p-5 sm:p-6 rounded-3xl bg-[#0B0F19] border border-white/[0.08] animate-pulse space-y-4">
+        <div className="h-6 w-48 bg-white/10 rounded"></div>
+        <div className="h-20 w-full bg-white/5 rounded-2xl"></div>
+      </section>
+    )
+  }
+
+  const items = obligations.proximosVencimentos.filter(item => {
     if (filter === 'all') return true
     return item.type === filter
   })
@@ -33,7 +55,7 @@ export function ObligationsSection() {
             <div>
               <p className="text-[10px] uppercase font-bold text-rose-400/80">Contas a Pagar</p>
               <p className="text-xs font-black">
-                {mockObligations.contasPagar.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                {obligations.contasPagar.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               </p>
             </div>
           </div>
@@ -43,7 +65,7 @@ export function ObligationsSection() {
             <div>
               <p className="text-[10px] uppercase font-bold text-emerald-400/80">Contas a Receber</p>
               <p className="text-xs font-black">
-                {mockObligations.contasReceber.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                {obligations.contasReceber.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               </p>
             </div>
           </div>
@@ -53,7 +75,7 @@ export function ObligationsSection() {
             <div>
               <p className="text-[10px] uppercase font-bold text-slate-400">Despesas Previstas</p>
               <p className="text-xs font-black">
-                {mockObligations.despesasPrevistas.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                {obligations.despesasPrevistas.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               </p>
             </div>
           </div>
@@ -99,35 +121,37 @@ export function ObligationsSection() {
             return (
               <div
                 key={item.id}
-                className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:border-white/10 transition-colors flex items-center justify-between gap-4"
+                className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:border-white/10 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3"
               >
-                <div className="flex items-center gap-3 min-w-0">
+                <div className="flex items-center gap-3">
                   <div
                     className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
-                      isReceivable ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'
+                      isReceivable
+                        ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                        : 'bg-rose-500/15 text-rose-400 border border-rose-500/30'
                     }`}
                   >
                     {isReceivable ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-xs font-bold text-white truncate">{item.description}</p>
-                    <div className="flex items-center gap-2 text-[11px] text-slate-400">
+                  <div>
+                    <p className="text-xs font-bold text-white">{item.description}</p>
+                    <div className="flex items-center gap-2 mt-0.5 text-[10px] text-slate-500">
                       <span className="flex items-center gap-1">
-                        <Calendar size={11} /> Vencimento: {item.dueDate}
+                        <Calendar size={11} />
+                        Vencimento: {item.dueDate}
                       </span>
-                      <span>•</span>
-                      <span className="capitalize">{item.status.replace('_', ' ')}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="text-right shrink-0">
+                <div className="flex items-center justify-between sm:justify-end gap-3 self-end sm:self-auto w-full sm:w-auto">
                   <span
                     className={`text-xs font-black ${
-                      isReceivable ? 'text-emerald-400' : 'text-rose-400'
+                      isReceivable ? 'text-emerald-400' : 'text-slate-200'
                     }`}
                   >
-                    {isReceivable ? '+' : '-'} {item.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                    {isReceivable ? '+' : '-'}{' '}
+                    {item.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                   </span>
                 </div>
               </div>
@@ -135,13 +159,10 @@ export function ObligationsSection() {
           })}
         </div>
       ) : (
-        /* Empty State */
-        <div className="p-8 rounded-2xl bg-white/[0.01] border border-dashed border-white/10 text-center space-y-2">
-          <CheckCircle2 size={28} className="text-emerald-400 mx-auto" />
-          <h3 className="text-xs font-bold text-white">Tudo em dia!</h3>
-          <p className="text-[11px] text-slate-500 max-w-sm mx-auto">
-            Nenhum compromisso ou vencimento pendente para o filtro selecionado.
-          </p>
+        <div className="p-8 rounded-2xl bg-white/[0.01] border border-white/[0.04] text-center space-y-2">
+          <CheckCircle2 size={28} className="mx-auto text-emerald-400/80" />
+          <p className="text-xs font-bold text-slate-300">Nenhuma obrigação pendente no período</p>
+          <p className="text-[11px] text-slate-500">Todas as contas e recebíveis estão em dia ou não há lançamentos futuros programados.</p>
         </div>
       )}
     </section>
