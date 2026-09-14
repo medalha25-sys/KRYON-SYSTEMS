@@ -88,13 +88,16 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
   if (user && !isFlowPage && !isPublicPath) {
-    // 3. Fetch Profile (Fixed: Separate queries to avoid ambiguous relationship joins in production)
+    // 3. Fetch Profile
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('organization_id, role, is_super_admin, shop_id')
       .eq('id', user.id)
       .maybeSingle();
-    
+
+    const hardcodedAdmins = ['medalha25@gmail.com', process.env.ADMIN_EMAIL].filter(Boolean);
+    const isSuperAdmin = profile?.is_super_admin === true || (user.email && hardcodedAdmins.includes(user.email));
+
     // Fetch Shop separately if shop_id exists
     let shop = null;
     if (profile?.shop_id) {
@@ -104,44 +107,37 @@ export async function updateSession(request: NextRequest) {
             .eq('id', profile.shop_id)
             .maybeSingle();
         shop = shopData;
-    } else {
-        // If no shop_id, create a new shop for the user
-        const { data: newShop, error: newShopError } = await supabase
-            .from('shops')
-            .insert({
-                slug: `shop-${user.id.slice(0, 8)}`,
-                store_type: user.user_metadata?.product_slug === 'lava-rapido' ? 'lava_rapido' : 'agenda_facil_ai',
-                plan: 'trial'
-            })
-            .select('id, plan, trial_ate, store_type')
-            .single();
+    } else if (!isSuperAdmin) {
+        // If no shop_id and not a super admin, create a new shop for the user
+        try {
+            const { data: newShop, error: newShopError } = await supabase
+                .from('shops')
+                .insert({
+                    slug: `shop-${user.id.slice(0, 8)}`,
+                    store_type: user.user_metadata?.product_slug === 'lava-rapido' ? 'lava_rapido' : 'agenda_facil_ai',
+                    plan: 'trial'
+                })
+                .select('id, plan, trial_ate, store_type')
+                .single();
 
-        if (newShopError) {
-            console.error('MIDDLEWARE ERROR: Failed to create new shop:', newShopError.message);
-            // Handle error, maybe redirect to an error page or login
-            const url = request.nextUrl.clone();
-            url.pathname = '/login';
-            url.searchParams.set('message', 'Erro ao criar loja. Tente novamente.');
-            return NextResponse.redirect(url);
+            if (!newShopError && newShop) {
+                await supabase
+                    .from('profiles')
+                    .update({ shop_id: newShop.id })
+                    .eq('id', user.id);
+                shop = newShop;
+            }
+        } catch (e) {
+            console.error('MIDDLEWARE: Non-blocking error creating shop:', e);
         }
-
-        // Update the user's profile with the new shop_id
-        await supabase
-            .from('profiles')
-            .update({ shop_id: newShop.id })
-            .eq('id', user.id);
-        
-        shop = newShop;
     }
 
     if (profileError) {
         console.error('MIDDLEWARE ERROR: Failed to fetch profile:', profileError.message);
-        // If there's a DB error (like recursion), don't redirect to a flow page that might loop
-        // Instead, try to proceed or send to a safe error/login page
         return supabaseResponse; 
     }
 
-    if (!profile && !isFlowPage) {
+    if (!profile && !isSuperAdmin && !isFlowPage) {
         console.warn('MIDDLEWARE: No profile found for user', user.id);
         const url = request.nextUrl.clone();
         url.pathname = '/login';
@@ -149,14 +145,11 @@ export async function updateSession(request: NextRequest) {
         return NextResponse.redirect(url);
     }
 
-    const hardcodedAdmins = ['medalha25@gmail.com', process.env.ADMIN_EMAIL].filter(Boolean);
-    const isSuperAdmin = profile?.is_super_admin === true || (user.email && hardcodedAdmins.includes(user.email));
-
-    // 3.1. Organization Context Protection
+    // 3.1. Organization Context Protection (Ignored for Super Admins)
     const orgIdCookie = request.cookies.get('org_id')?.value;
     const organizationId = profile?.organization_id || orgIdCookie;
 
-    if (!organizationId) {
+    if (!organizationId && !isSuperAdmin && !request.nextUrl.pathname.startsWith('/select-organization')) {
         const url = request.nextUrl.clone();
         url.pathname = '/select-organization';
         return NextResponse.redirect(url);
@@ -165,7 +158,7 @@ export async function updateSession(request: NextRequest) {
     // 3.2. System/Root Redirection
     if (request.nextUrl.pathname === '/') {
         const url = request.nextUrl.clone();
-        url.pathname = '/select-system';
+        url.pathname = isSuperAdmin ? '/super-admin' : '/select-system';
         return NextResponse.redirect(url);
     }
 

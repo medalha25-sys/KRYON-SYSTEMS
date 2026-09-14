@@ -15,45 +15,61 @@ async function handlePostLogin(user: User, supabase: SupabaseClient) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  if (!url || !serviceRoleKey) {
-    console.error('DEBUG LOGIN: Missing Admin Environment Variables for handlePostLogin');
-    return { error: 'Erro interno ao processar sua conta. Por favor, tente novamente.' };
+  const hardcodedAdmins = ['medalha25@gmail.com', process.env.ADMIN_EMAIL].filter(Boolean);
+
+  // 1. Super Admin instant bypass by Email
+  if (user.email && hardcodedAdmins.includes(user.email)) {
+    console.log('DEBUG LOGIN: Super Admin detected by email. Redirecting to /select-system');
+    return { success: true, redirect: '/select-system' };
   }
 
-  const supabaseAdmin = createClientSSR(
-    url,
-    serviceRoleKey,
-    {
-      cookies: {
-        getAll() { return [] },
-        setAll(cookiesToSet: any) {}
-      }
-    }
-  )
+  const supabaseAdmin = (url && serviceRoleKey)
+    ? createClientSSR(
+        url,
+        serviceRoleKey,
+        {
+          cookies: {
+            getAll() { return [] },
+            setAll(cookiesToSet: any) {}
+          }
+        }
+      )
+    : null;
 
   try {
-    console.log('DEBUG LOGIN: Starting post-login for:', user.email, 'ID:', user.id)
+    console.log('DEBUG LOGIN: Starting post-login for:', user.email, 'ID:', user.id);
 
     // 1. Buscar Perfil para obter Contexto de Organização e Loja
-    const { data: profile, error: profileError } = await supabase
+    let profile: any = null;
+    const { data: userProfile, error: profileError } = await supabase
       .from('profiles')
       .select('organization_id, shop_id, role, is_super_admin')
       .eq('id', user.id)
-      .maybeSingle()
+      .maybeSingle();
 
     if (profileError) {
-      console.error('DEBUG LOGIN: Profile Error:', profileError)
+      console.error('DEBUG LOGIN: Profile Error:', profileError);
+    }
+    profile = userProfile;
+
+    if (!profile && supabaseAdmin) {
+      const { data: adminProf } = await supabaseAdmin
+        .from('profiles')
+        .select('organization_id, shop_id, role, is_super_admin')
+        .eq('id', user.id)
+        .maybeSingle();
+      if (adminProf) profile = adminProf;
     }
 
-    const orgId = profile?.organization_id
-    const shopIdFromProfile = profile?.shop_id
+    const orgId = profile?.organization_id;
+    const shopIdFromProfile = profile?.shop_id;
 
-    console.log('DEBUG LOGIN: Contexto - Org:', orgId, 'Shop (Profile):', shopIdFromProfile, 'Role:', profile?.role)
+    console.log('DEBUG LOGIN: Contexto - Org:', orgId, 'Shop (Profile):', shopIdFromProfile, 'Role:', profile?.role);
 
-    // 1.5 Super Admin bypass
+    // 1.5 Super Admin bypass por perfil
     if (profile?.is_super_admin) {
-      console.log('DEBUG LOGIN: Super Admin detected. Redirecting to /select-system')
-      return { success: true, redirect: '/select-system' }
+      console.log('DEBUG LOGIN: Super Admin detected by profile. Redirecting to /select-system');
+      return { success: true, redirect: '/select-system' };
     }
 
     // 2. Buscar Shop pelo owner_id ou shop_id do profile
@@ -61,16 +77,17 @@ async function handlePostLogin(user: User, supabase: SupabaseClient) {
       .from('shops')
       .select('*')
       .or(`owner_id.eq.${user.id},id.eq.${shopIdFromProfile || '00000000-0000-0000-0000-000000000000'}`)
-      .maybeSingle()
+      .maybeSingle();
 
     if (shopError) {
-      console.error('DEBUG LOGIN: Shop Fetch Error:', shopError)
+      console.error('DEBUG LOGIN: Shop Fetch Error:', shopError);
     }
 
-    // Onboarding: Se não existe shop, cria um padrão
+    // Onboarding: Se não existe shop, cria um padrão ou prossegue
     if (!shop) {
-      console.log('DEBUG LOGIN: No shop found. Creating default onboarding shop.')
-      const { data: newShop, error: createError } = await supabaseAdmin
+      console.log('DEBUG LOGIN: No shop found. Creating default onboarding shop.');
+      const clientToUse = supabaseAdmin || supabase;
+      const { data: newShop, error: createError } = await clientToUse
         .from('shops')
         .insert({
           owner_id: user.id,
@@ -80,22 +97,22 @@ async function handlePostLogin(user: User, supabase: SupabaseClient) {
           plan: 'trial'
         })
         .select()
-        .single()
+        .single();
 
       if (createError) {
-        console.error('DEBUG LOGIN: Error creating initial shop:', createError)
-        return { error: 'Erro ao configurar sua conta inicial.' }
+        console.error('DEBUG LOGIN: Warning creating initial shop, continuing to select-system:', createError);
+        return { success: true, redirect: '/select-system' };
       }
       
-      console.log('DEBUG LOGIN: New shop created:', newShop.id)
+      console.log('DEBUG LOGIN: New shop created:', newShop.id);
 
       // Update the profile to link the new shop
-      await supabaseAdmin
+      await clientToUse
         .from('profiles')
         .update({ shop_id: newShop.id })
-        .eq('id', user.id)
+        .eq('id', user.id);
 
-      return { success: true, redirect: user.user_metadata?.product_slug === 'lava-rapido' ? '/products/lava-rapido' : '/products/agenda-facil' }
+      return { success: true, redirect: user.user_metadata?.product_slug === 'lava-rapido' ? '/products/lava-rapido' : '/products/agenda-facil' };
     }
 
     console.log('DEBUG LOGIN: Shop Found:', shop.id, 'StoreType:', shop.store_type)

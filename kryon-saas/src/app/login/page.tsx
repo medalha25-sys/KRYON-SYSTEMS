@@ -207,17 +207,6 @@ function LoginForm() {
                           </>
                       )}
                   </button>
-
-                  <div className="text-center pt-2">
-                      <p className="text-sm text-slate-400">
-                          Ainda não tem conta?{' '}
-                          <Link href="/register" className="font-bold text-blue-400 hover:text-blue-300 transition-colors">
-                              Crie sua conta para testar
-                          </Link>
-                      </p>
-                  </div>
-
-
               </form>
             </div>
           </div>
