@@ -17,34 +17,27 @@ export async function checkSuperAdmin() {
       return false
   }
 
-  // Use Standard Admin Client to bypass RLS issues in Super Admin area
-  const { createClient: createAdminClient } = await import('@supabase/supabase-js')
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-  
-  const supabaseAdmin = createAdminClient(url, serviceRoleKey, {
-      auth: { autoRefreshToken: false, persistSession: false }
-  })
-
-  const { data: profile, error } = await supabaseAdmin
-    .from('profiles')
-    .select('is_super_admin')
-    .eq('id', user.id)
-    .single()
-
-  if (error) {
-    console.error('SUPER ADMIN CHECK ERROR (Admin Query):', error)
+  const hardcodedAdmins = ['medalha25@gmail.com', process.env.ADMIN_EMAIL].filter(Boolean)
+  if (user.email && hardcodedAdmins.includes(user.email)) {
+      console.log('SUPER ADMIN CHECK: Recognized super admin by email:', user.email)
+      return true
   }
-  
-  const isSuper = profile?.is_super_admin === true
-  console.log('SUPER ADMIN CHECK RESULT:', { 
-    userId: user.id, 
-    email: user.email,
-    isSuperResult: isSuper,
-    profileFound: !!profile
-  })
 
-  return isSuper
+  try {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('is_super_admin')
+      .eq('id', user.id)
+      .maybeSingle()
+
+    if (profile?.is_super_admin === true) {
+      return true
+    }
+  } catch (err) {
+    console.error('SUPER ADMIN CHECK ERROR:', err)
+  }
+
+  return false
 }
 
 /**
