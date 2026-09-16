@@ -4,6 +4,7 @@ import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { Appointment } from '@/types/agenda'
 import { translateSupabaseError } from '@/utils/error_handling'
+import { sendAppointmentNotification } from '@/lib/notifications/dispatcher'
 
 export async function createAppointment(formData: FormData) {
   const supabase = await createClient()
@@ -102,7 +103,7 @@ export async function createAppointment(formData: FormData) {
   }
 
   // 2. Create Appointment
-  const { error } = await supabase.from('agenda_appointments').insert({
+  const { data: newAppt, error } = await supabase.from('agenda_appointments').insert({
     organization_id: orgId,
     product_slug: 'agenda-facil',
     client_id,
@@ -112,11 +113,52 @@ export async function createAppointment(formData: FormData) {
     end_time: end_time.toISOString(),
     status: 'scheduled',
     session_price: session_price
-  })
+  }).select('id').single()
 
   if (error) {
     console.error('Create Appointment Error:', error)
     return { error: translateSupabaseError(error) }
+  }
+
+  // 3. Dispatch Notification Asynchronously
+  try {
+    const { data: apptDetails } = await supabase
+      .from('agenda_appointments')
+      .select(`
+        id,
+        start_time,
+        organizations (id, name, logo_url),
+        clients:client_id (name, email, phone),
+        agenda_services:service_id (name, price),
+        agenda_professionals:professional_id (name)
+      `)
+      .eq('id', newAppt.id)
+      .single()
+
+    if (apptDetails) {
+      const org = apptDetails.organizations as any
+      const client = apptDetails.clients as any
+      const serv = apptDetails.agenda_services as any
+      const prof = apptDetails.agenda_professionals as any
+
+      if (client?.email) {
+        sendAppointmentNotification('booking_created', {
+          appointmentId: newAppt.id,
+          organizationId: org?.id || orgId,
+          organizationName: org?.name || 'Clínica',
+          organizationLogo: org?.logo_url,
+          clientName: client?.name || 'Paciente',
+          clientEmail: client?.email,
+          clientPhone: client?.phone,
+          professionalName: prof?.name || 'Profissional',
+          serviceName: serv?.name || 'Consulta',
+          servicePrice: session_price,
+          startTime: start_time
+        }).catch(e => console.error('Notification dispatch error:', e))
+      }
+    }
+  } catch (notifErr) {
+    console.error('Non-blocking notification error:', notifErr)
   }
 
   revalidatePath('/products/agenda-facil')
@@ -192,7 +234,7 @@ export async function getAgendaData(date: string, view: 'day' | 'week' = 'day') 
             agenda_services:service_id (name, duration_minutes),
             agenda_professionals:professional_id (name, color)
         `)
-        .eq('tenant_id', user.id)
+        .eq('organization_id', orgId)
         .gte('start_time', startDateTime)
         .lte('start_time', endDateTime)
         .neq('status', 'canceled')
@@ -481,6 +523,21 @@ export async function cancelAppointment(appointmentId: string) {
     if (!profile || !profile.organization_id) return { error: 'Unauthorized' }
     const orgId = profile.organization_id
 
+    // Fetch appointment details before cancellation for notification
+    const { data: apptDetails } = await supabase
+        .from('agenda_appointments')
+        .select(`
+            id,
+            start_time,
+            organizations (id, name, logo_url),
+            clients:client_id (name, email, phone),
+            agenda_services:service_id (name),
+            agenda_professionals:professional_id (name)
+        `)
+        .eq('id', appointmentId)
+        .eq('organization_id', orgId)
+        .maybeSingle()
+
     const { error } = await supabase
         .from('agenda_appointments')
         .update({ status: 'canceled' })
@@ -490,6 +547,29 @@ export async function cancelAppointment(appointmentId: string) {
     if (error) {
         console.error('Error canceling appointment:', error)
         return { error: translateSupabaseError(error) }
+    }
+
+    // Dispatch Cancellation Notification Asynchronously
+    if (apptDetails) {
+        const client = apptDetails.clients as any
+        const org = apptDetails.organizations as any
+        const serv = apptDetails.agenda_services as any
+        const prof = apptDetails.agenda_professionals as any
+
+        if (client?.email) {
+            sendAppointmentNotification('booking_canceled', {
+                appointmentId,
+                organizationId: org?.id || orgId,
+                organizationName: org?.name || 'Clínica',
+                organizationLogo: org?.logo_url,
+                clientName: client?.name || 'Paciente',
+                clientEmail: client?.email,
+                clientPhone: client?.phone,
+                professionalName: prof?.name || 'Profissional',
+                serviceName: serv?.name || 'Consulta',
+                startTime: apptDetails.start_time
+            }).catch(e => console.error('Cancel notification error:', e))
+        }
     }
 
     revalidatePath('/products/agenda-facil')
@@ -523,6 +603,16 @@ export async function updateAppointment(appointmentId: string, formData: FormDat
 
     const start_time = new Date(`${date}T${time}:00`)
     const end_time = new Date(start_time.getTime() + duration * 60000)
+
+    // 0. Fetch previous appointment details for rescheduling notification
+    const { data: previousAppt } = await supabase
+        .from('agenda_appointments')
+        .select('start_time')
+        .eq('id', appointmentId)
+        .eq('organization_id', orgId)
+        .maybeSingle()
+
+    const previousStartTime = previousAppt?.start_time || null
 
     // 1. Validate Work Schedule
     const weekday = start_time.getDay()
@@ -581,6 +671,55 @@ export async function updateAppointment(appointmentId: string, formData: FormDat
     if (error) {
         console.error('Update Appointment Error:', error)
         return { error: translateSupabaseError(error) }
+    }
+
+    // 4. Dispatch Rescheduling Notification Asynchronously (ONLY IF TIME CHANGED)
+    try {
+        const isTimeChanged = previousStartTime
+            ? new Date(previousStartTime).getTime() !== start_time.getTime()
+            : true;
+
+        if (isTimeChanged) {
+            const { data: updatedDetails } = await supabase
+                .from('agenda_appointments')
+                .select(`
+                    id,
+                    start_time,
+                    organizations (id, name, logo_url),
+                    clients:client_id (name, email, phone),
+                    agenda_services:service_id (name),
+                    agenda_professionals:professional_id (name)
+                `)
+                .eq('id', appointmentId)
+                .single()
+
+            if (updatedDetails) {
+                const client = updatedDetails.clients as any
+                const org = updatedDetails.organizations as any
+                const serv = updatedDetails.agenda_services as any
+                const prof = updatedDetails.agenda_professionals as any
+
+                if (client?.email) {
+                    sendAppointmentNotification('booking_rescheduled', {
+                        appointmentId,
+                        organizationId: org?.id || orgId,
+                        organizationName: org?.name || 'Clínica',
+                        organizationLogo: org?.logo_url,
+                        clientName: client?.name || 'Paciente',
+                        clientEmail: client?.email,
+                        clientPhone: client?.phone,
+                        professionalName: prof?.name || 'Profissional',
+                        serviceName: serv?.name || 'Consulta',
+                        startTime: start_time,
+                        previousStartTime
+                    }).catch(e => console.error('Reschedule notification error:', e))
+                }
+            }
+        } else {
+            console.log(`[AGENDA] Appointment ${appointmentId} updated without time change. Rescheduling notification skipped.`);
+        }
+    } catch (notifErr) {
+        console.error('Non-blocking reschedule notification error:', notifErr)
     }
 
     revalidatePath('/products/agenda-facil')

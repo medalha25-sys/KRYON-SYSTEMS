@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import Link from 'next/link'
 import { Activity, Car, Calendar, PawPrint, Smartphone, ArrowUpRight } from 'lucide-react'
 import { ProductActivityItem, mockProductActivities } from '../mock-data'
 
@@ -45,6 +46,8 @@ export function ProductActivityCards({
         ) : (
           activities.map((product) => {
             const Icon = productIcons[product.productName] || Activity
+            const isLavaRapido = product.productName.includes('Lava Rápido')
+            const href = isLavaRapido ? '/kryon-admin/produtos/lava-rapido' : '/kryon-admin/produtos'
 
             return (
               <div
@@ -85,10 +88,13 @@ export function ProductActivityCards({
                 </div>
 
                 {/* Trend Footer */}
-                <div className="pt-3 flex items-center justify-between text-[11px] font-medium text-slate-400">
+                <Link
+                  href={href}
+                  className="pt-3 flex items-center justify-between text-[11px] font-medium text-slate-400 hover:text-white transition-colors"
+                >
                   <span className="text-emerald-400 font-semibold truncate pr-1">{product.trend}</span>
                   <ArrowUpRight size={13} className="text-slate-500 group-hover:text-purple-400 transition-colors shrink-0" />
-                </div>
+                </Link>
               </div>
             )
           })

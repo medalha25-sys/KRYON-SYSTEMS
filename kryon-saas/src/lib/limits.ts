@@ -4,7 +4,7 @@ import { checkAccess } from './checkAccess'
 const FREE_PATIENTS_LIMIT = 20
 const FREE_CALENDARS_LIMIT = 1
 
-export async function checkLimits(resource: 'patients' | 'calendars') {
+export async function checkLimits(resource: 'patients' | 'calendars' | 'clients' | 'professionals') {
   const { status } = await checkAccess()
   
   // Premium users have no limits
@@ -18,11 +18,24 @@ export async function checkLimits(resource: 'patients' | 'calendars') {
   
   if (!user) return { allowed: false }
 
-  if (resource === 'patients') {
+  // Get Organization Context from profile
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('organization_id')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile?.organization_id) {
+    return { allowed: false, message: 'Nenhuma organização selecionada.' }
+  }
+
+  const orgId = profile.organization_id
+
+  if (resource === 'patients' || resource === 'clients') {
     const { count } = await supabase
-      .from('patients') // Assuming 'patients' table
+      .from('agenda_clients')
       .select('id', { count: 'exact', head: true })
-      .eq('user_id', user.id)
+      .eq('organization_id', orgId)
     
     if ((count || 0) >= FREE_PATIENTS_LIMIT) {
        return { 
@@ -33,11 +46,11 @@ export async function checkLimits(resource: 'patients' | 'calendars') {
     }
   }
 
-  if (resource === 'calendars') {
+  if (resource === 'calendars' || resource === 'professionals') {
     const { count } = await supabase
-      .from('calendars') // Assuming 'calendars' table or similar
+      .from('agenda_professionals')
       .select('id', { count: 'exact', head: true })
-      .eq('user_id', user.id)
+      .eq('organization_id', orgId)
       .eq('active', true)
 
     if ((count || 0) >= FREE_CALENDARS_LIMIT) {

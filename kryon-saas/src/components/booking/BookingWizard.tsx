@@ -179,24 +179,31 @@ export default function BookingWizard({ organization, services }: BookingWizardP
   if (step === 'service') {
     return (
         <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">Selecione o Serviço</h3>
-            <div className="grid gap-3">
-                {services.map(service => (
-                    <button
-                        key={service.id}
-                        onClick={() => handleSelectService(service)}
-                        className="p-4 bg-white border border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition text-left flex justify-between items-center group"
-                    >
-                        <div>
-                            <div className="font-medium text-gray-900 group-hover:text-blue-600 transition">{service.name}</div>
-                            <div className="text-sm text-gray-500">{service.duration_minutes} min</div>
-                        </div>
-                        <div className="font-semibold text-gray-900">
-                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(service.price)}
-                        </div>
-                    </button>
-                ))}
-            </div>
+            <h3 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-white mb-2">1. Selecione o Serviço</h3>
+            {services.length > 0 ? (
+                <div className="grid gap-3">
+                    {services.map(service => (
+                        <button
+                            key={service.id}
+                            onClick={() => handleSelectService(service)}
+                            className="p-4 bg-white dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-blue-500 dark:hover:border-blue-400 hover:shadow-md transition text-left flex justify-between items-center group cursor-pointer"
+                        >
+                            <div>
+                                <div className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition">{service.name}</div>
+                                <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-0.5">{service.duration_minutes} min</div>
+                            </div>
+                            <div className="font-bold text-gray-900 dark:text-white text-base">
+                                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(service.price)}
+                            </div>
+                        </button>
+                    ))}
+                </div>
+            ) : (
+                <div className="text-center py-10 px-4 bg-gray-50 dark:bg-gray-800/40 rounded-xl border border-dashed border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400">
+                    <span className="material-symbols-outlined text-4xl text-gray-400 mb-2 block">medical_services</span>
+                    Nenhum serviço ativo disponível para agendamento online no momento.
+                </div>
+            )}
         </div>
     )
   }
@@ -204,21 +211,27 @@ export default function BookingWizard({ organization, services }: BookingWizardP
   if (step === 'professional') {
       return (
           <div className="space-y-4">
-              <button onClick={() => setStep('service')} className="text-sm text-gray-500 hover:underline mb-2">← Voltar</button>
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Escolha o Profissional</h3>
+              <button 
+                onClick={() => setStep('service')} 
+                className="text-xs sm:text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 mb-2 cursor-pointer"
+              >
+                ← Voltar aos serviços
+              </button>
+              <h3 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-white mb-2">2. Escolha o Profissional</h3>
               <div className="grid gap-3">
                   {professionals.map(prof => (
                       <button
                           key={prof.id}
                           onClick={() => handleSelectProfessional(prof)}
-                          className="p-4 bg-white border border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition text-left"
+                          className="p-4 bg-white dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-blue-500 dark:hover:border-blue-400 hover:shadow-md transition text-left flex items-center justify-between group cursor-pointer"
                       >
-                          <div className="font-medium text-gray-900">{prof.name}</div>
+                          <div className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400">{prof.name}</div>
+                          <span className="material-symbols-outlined text-gray-400 group-hover:text-blue-500 transition">chevron_right</span>
                       </button>
                   ))}
                   {professionals.length === 0 && (
-                      <div className="text-center py-8 text-gray-500">
-                          Carregando profissionais...
+                      <div className="text-center py-8 text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/40 rounded-xl">
+                          Buscando profissionais disponíveis...
                       </div>
                   )}
               </div>
@@ -228,29 +241,39 @@ export default function BookingWizard({ organization, services }: BookingWizardP
 
   if (step === 'datetime') {
       const days = []
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 7; i++) {
           days.push(addDays(new Date(), i))
       }
 
+      const primaryColor = organization.primary_color || '#2563eb'
+
       return (
           <div className="space-y-4">
-              <button onClick={() => setStep('professional')} className="text-sm text-gray-500 hover:underline mb-2">← Voltar</button>
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Data e Horário</h3>
+              <button 
+                onClick={() => setStep('professional')} 
+                className="text-xs sm:text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 mb-2 cursor-pointer"
+              >
+                ← Voltar aos profissionais
+              </button>
+              <h3 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-white mb-2">3. Data e Horário</h3>
               
-              {/* Date Picker (Simple Horizontal List) */}
-              <div className="flex gap-2 overflow-x-auto pb-2">
+              {/* Date Picker (Horizontal Scroll) */}
+              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin">
                   {days.map(day => {
                       const isSelected = isSameDay(day, selectedDate)
-                      const primaryColor = organization.primary_color || '#2563eb'
                       return (
                           <button
                             key={day.toISOString()}
                             onClick={() => setSelectedDate(day)}
-                            className={`flex flex-col items-center min-w-[4rem] p-2 rounded-lg border transition ${isSelected ? 'text-white' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'}`}
+                            className={`flex flex-col items-center min-w-[4.25rem] p-2.5 rounded-xl border transition cursor-pointer ${
+                              isSelected 
+                                ? 'text-white shadow-md' 
+                                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-gray-300'
+                            }`}
                             style={isSelected ? { backgroundColor: primaryColor, borderColor: primaryColor } : {}}
                           >
-                              <span className="text-xs uppercase">{format(day, 'EEE', { locale: ptBR })}</span>
-                              <span className="text-lg font-bold">{format(day, 'd')}</span>
+                              <span className="text-[11px] uppercase font-medium">{format(day, 'EEE', { locale: ptBR })}</span>
+                              <span className="text-lg font-bold mt-0.5">{format(day, 'd')}</span>
                           </button>
                       )
                   })}
@@ -258,20 +281,27 @@ export default function BookingWizard({ organization, services }: BookingWizardP
 
               {/* Slots Grid */}
               <div className="mt-6">
-                  <h4 className="text-sm font-medium text-gray-700 mb-3">Horários Disponíveis em {format(selectedDate, "d 'de' MMMM", { locale: ptBR })}</h4>
+                  <h4 className="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                    Horários Disponíveis em {format(selectedDate, "d 'de' MMMM", { locale: ptBR })}
+                  </h4>
                   {loadingSlots ? (
-                      <div className="text-center py-8 text-gray-500">Buscando horários...</div>
+                      <div className="text-center py-8 text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/40 rounded-xl">
+                        Buscando horários disponíveis...
+                      </div>
                   ) : availableSlots.length > 0 ? (
                       <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                           {availableSlots.map(time => {
                               const isSelected = selectedTime === time
-                              const primaryColor = organization.primary_color || '#2563eb'
                               return (
                               <button
                                 key={time}
                                 onClick={() => handleTimeSelect(time)}
-                                className={`px-3 py-2 text-sm font-medium rounded border transition ${isSelected ? 'text-white' : 'bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-100'}`}
-                                style={isSelected ? { backgroundColor: primaryColor, borderColor: primaryColor } : { color: primaryColor, borderColor: `${primaryColor}30`, backgroundColor: `${primaryColor}10` }}
+                                className={`px-3 py-2 text-sm font-medium rounded-lg border transition cursor-pointer ${
+                                  isSelected 
+                                    ? 'text-white shadow-sm' 
+                                    : 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 hover:bg-blue-100 border-blue-100 dark:border-blue-900/50'
+                                }`}
+                                style={isSelected ? { backgroundColor: primaryColor, borderColor: primaryColor } : {}}
                               >
                                   {time}
                               </button>
@@ -279,7 +309,7 @@ export default function BookingWizard({ organization, services }: BookingWizardP
                           })}
                       </div>
                   ) : (
-                      <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-lg">
+                      <div className="text-center py-8 text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/40 rounded-xl border border-dashed border-gray-200 dark:border-gray-700">
                           Nenhum horário disponível nesta data.
                       </div>
                   )}
@@ -291,54 +321,61 @@ export default function BookingWizard({ organization, services }: BookingWizardP
   if (step === 'client') {
       return (
           <div className="space-y-4">
-              <button onClick={() => setStep('datetime')} className="text-sm text-gray-500 hover:underline mb-2">← Voltar</button>
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Seus Dados</h3>
+              <button 
+                onClick={() => setStep('datetime')} 
+                className="text-xs sm:text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 mb-2 cursor-pointer"
+              >
+                ← Voltar aos horários
+              </button>
+              <h3 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-white mb-2">4. Seus Dados de Contato</h3>
               
-              <div className="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 mb-4">
-                  <p><strong className="text-gray-900">Serviço:</strong> {selectedService?.name}</p>
-                  <p><strong className="text-gray-900">Profissional:</strong> {selectedProfessional?.name}</p>
-                  <p><strong className="text-gray-900">Data:</strong> {format(selectedDate, "d 'de' MMMM", { locale: ptBR })} às {selectedTime}</p>
+              <div className="bg-gray-50 dark:bg-gray-900/60 p-4 rounded-xl text-xs sm:text-sm text-gray-600 dark:text-gray-300 border border-gray-200/80 dark:border-gray-700 space-y-1 mb-4">
+                  <p><strong className="text-gray-900 dark:text-white">Serviço:</strong> {selectedService?.name}</p>
+                  <p><strong className="text-gray-900 dark:text-white">Profissional:</strong> {selectedProfessional?.name}</p>
+                  <p><strong className="text-gray-900 dark:text-white">Data e Hora:</strong> {format(selectedDate, "d 'de' MMMM", { locale: ptBR })} às {selectedTime}</p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Nome Completo</label>
+                      <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nome Completo</label>
                       <input 
                         type="text" 
                         required 
                         value={clientName}
                         onChange={e => setClientName(e.target.value)}
-                        className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                        placeholder="Ex: Maria da Silva"
+                        className="w-full px-3.5 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
                       />
                   </div>
                   <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Telefone (WhatsApp)</label>
+                      <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Telefone (WhatsApp)</label>
                       <input 
                         type="tel" 
                         required 
                         value={clientPhone}
                         onChange={e => setClientPhone(e.target.value)}
-                        className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                        className="w-full px-3.5 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
                         placeholder="(00) 00000-0000"
                       />
                   </div>
                   <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                      <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">E-mail (opcional)</label>
                       <input 
                         type="email" 
                         value={clientEmail}
                         onChange={e => setClientEmail(e.target.value)}
-                        className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                        placeholder="seuemail@exemplo.com"
+                        className="w-full px-3.5 py-2.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
                       />
                   </div>
 
                   <button 
                     type="submit" 
                     disabled={isSubmitting}
-                    className="w-full py-3 text-white font-semibold rounded-lg hover:opacity-90 transition disabled:opacity-70 disabled:cursor-not-allowed mt-4"
+                    className="w-full py-3 text-white font-bold text-sm sm:text-base rounded-xl hover:opacity-95 transition disabled:opacity-70 disabled:cursor-not-allowed mt-4 shadow-md cursor-pointer"
                     style={{ backgroundColor: organization.primary_color || '#2563eb' }}
                   >
-                      {isSubmitting ? 'Confirmando...' : 'Confirmar Agendamento'}
+                      {isSubmitting ? 'Confirmando Agendamento...' : 'Confirmar Agendamento'}
                   </button>
               </form>
           </div>
@@ -347,19 +384,19 @@ export default function BookingWizard({ organization, services }: BookingWizardP
 
   if (step === 'success') {
       return (
-          <div className="text-center py-12">
-              <div className="h-16 w-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span className="text-3xl">✓</span>
+          <div className="text-center py-8 sm:py-10">
+              <div className="h-16 w-16 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-5 shadow-sm">
+                  <span className="material-symbols-outlined text-3xl">check</span>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Agendamento Solicitado!</h2>
-              <p className="text-gray-600 mb-8">
-                  Recebemos seu pedido de agendamento. Em breve entraremos em contato para confirmar.
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">Agendamento Solicitado!</h2>
+              <p className="text-sm text-gray-600 dark:text-gray-300 max-w-sm mx-auto mb-6">
+                  Recebemos seu pedido com sucesso. Em breve você receberá a confirmação no WhatsApp.
               </p>
               <button 
                 onClick={() => window.location.reload()}
-                className="text-blue-600 hover:text-blue-800 font-medium"
+                className="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
               >
-                  Novo Agendamento
+                  Realizar outro agendamento
               </button>
           </div>
       )
@@ -367,3 +404,4 @@ export default function BookingWizard({ organization, services }: BookingWizardP
 
   return null
 }
+

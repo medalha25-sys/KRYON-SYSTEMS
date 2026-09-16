@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { addMinutes, parseISO, setHours, setMinutes } from 'date-fns'
+import { sendAppointmentNotification } from '@/lib/notifications/dispatcher'
 
 export const dynamic = 'force-dynamic'
 
@@ -18,11 +19,11 @@ export async function POST(request: NextRequest) {
     // 1. Get Organization
     const { data: org } = await supabase
       .from('organizations')
-      .select('id, public_booking_enabled')
+      .select('*')
       .eq('slug', slug)
       .single()
 
-    if (!org || !org.public_booking_enabled) {
+    if (!org || org.public_booking_enabled === false) {
       return NextResponse.json({ error: 'Agendamentos desativados' }, { status: 403 })
     }
 
@@ -85,7 +86,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 6. Create Appointment
-    const { error: apptError } = await supabase
+    const { data: newAppt, error: apptError } = await supabase
         .from('agenda_appointments')
         .insert({
             organization_id: org.id,
@@ -97,9 +98,37 @@ export async function POST(request: NextRequest) {
             status: 'requested',
             notes: 'Agendamento Online'
         })
+        .select('id')
+        .single()
 
-    if (apptError) {
+    if (apptError || !newAppt) {
         return NextResponse.json({ error: 'Erro ao criar agendamento' }, { status: 500 })
+    }
+
+    // 7. Dispatch Confirmation Notification Asynchronously
+    if (clientEmail) {
+      try {
+        const { data: prof } = await supabase
+          .from('agenda_professionals')
+          .select('name')
+          .eq('id', professionalId)
+          .maybeSingle()
+
+        sendAppointmentNotification('booking_created', {
+          appointmentId: newAppt.id,
+          organizationId: org.id,
+          organizationName: org.name || 'Clínica',
+          organizationLogo: org.logo_url,
+          clientName: clientName,
+          clientEmail: clientEmail,
+          clientPhone: clientPhone,
+          professionalName: prof?.name || 'Profissional',
+          serviceName: service.name || 'Consulta',
+          startTime: startDate
+        }).catch(err => console.error('Public booking notification error:', err))
+      } catch (notifErr) {
+        console.error('Non-blocking public booking notification error:', notifErr)
+      }
     }
 
     return NextResponse.json({ success: true })

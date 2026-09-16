@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
   // 1. Get Organization & Validate Public Booking
   const { data: org, error: orgError } = await supabase
     .from('organizations')
-    .select('id, public_booking_enabled')
+    .select('*')
     .eq('slug', slug)
     .single()
 
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Organização não encontrada' }, { status: 404 })
   }
 
-  if (!org.public_booking_enabled) {
+  if (org.public_booking_enabled === false) {
     return NextResponse.json({ error: 'Agendamento online desativado para esta organização' }, { status: 403 })
   }
 
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
   // 3. Get Professionals (Filter by ID if provided)
   let query = supabase
     .from('agenda_professionals')
-    .select('id, name, public_booking_enabled')
+    .select('*')
     .eq('organization_id', org.id)
     .eq('active', true)
 
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Nenhum profissional disponível' }, { status: 404 })
   }
 
-  const availableProfessionals = professionals.filter(p => p.public_booking_enabled)
+  const availableProfessionals = professionals.filter(p => p.public_booking_enabled !== false)
 
   if (availableProfessionals.length === 0) {
     return NextResponse.json({ error: 'Profissional selecionado não aceita agendamentos online' }, { status: 403 })

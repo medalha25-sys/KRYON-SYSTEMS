@@ -12,7 +12,7 @@ export async function getOrganizationDetails() {
 
   const { data: profile, error } = await supabase
     .from('profiles')
-    .select('organization_id, organizations(id, name, logo_url, white_label_enabled)')
+    .select('organization_id, organizations(id, name, logo_url, slug, white_label_enabled, public_booking_enabled, primary_color, secondary_color, welcome_message)')
     .eq('id', user.id)
     .single()
 
@@ -106,8 +106,7 @@ export async function getOrganizationDetails() {
             })
         }
         
-        console.log('DEBUG ORG: Self-repair successful. Fetching new org...')
-        const { data: repairedOrg } = await adminClient.from('organizations').select('id, name, logo_url, white_label_enabled').eq('id', newOrg.id).single()
+        const { data: repairedOrg } = await adminClient.from('organizations').select('id, name, logo_url, slug, white_label_enabled, public_booking_enabled, primary_color, secondary_color, welcome_message').eq('id', newOrg.id).single()
         return repairedOrg
 
       } catch (err) {

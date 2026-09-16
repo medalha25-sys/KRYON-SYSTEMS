@@ -1,50 +1,71 @@
-import { getPublicShopData } from './actions'
-import { notFound } from 'next/navigation'
-import Link from 'next/link'
-import PublicBooking from '@/components/agenda/PublicBooking'
+import { createClient } from '@/utils/supabase/server'
+import { notFound, redirect } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
 
-export default async function PublicSchedulingPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function LegacyPublicSchedulingPage({ 
+  params 
+}: { 
+  params: Promise<{ slug: string }> 
+}) {
   const { slug } = await params
-  const shopData = await getPublicShopData(slug)
 
-  if (!shopData) {
+  if (!slug) {
     return notFound()
   }
 
-  const { shop, professionals, services, tenant_id } = shopData
+  const supabase = await createClient()
 
-  return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
-        <div className="text-center">
-            {shop.logo_url ? (
-                <img src={shop.logo_url} alt={shop.name} className="mx-auto h-24 w-24 rounded-full object-cover mb-4 ring-4 ring-primary/20" />
-            ) : (
-                 <div className="mx-auto h-24 w-24 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-3xl font-bold mb-4 ring-4 ring-blue-50">
-                    {shop.name ? shop.name[0] : 'A'}
-                 </div>
-            )}
-            <h2 className="mt-2 text-3xl font-extrabold text-gray-900 dark:text-white">
-                {shop.name || 'Agendamento'}
-            </h2>
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                Agende seu horário online
-            </p>
-        </div>
+  // 1. Check if slug matches an organization slug
+  const { data: orgBySlug } = await supabase
+    .from('organizations')
+    .select('id, slug, public_booking_enabled')
+    .eq('slug', slug)
+    .maybeSingle()
 
-        <PublicBooking 
-            tenant_id={tenant_id} 
-            shop={shop} 
-            professionals={professionals} 
-            services={services} 
-        />
-        
-        <div className="mt-8 text-center text-xs text-gray-400">
-            Powered by <Link href="/" className="font-bold hover:text-primary">Kryon Systems</Link>
-        </div>
-      </div>
-    </div>
-  )
+  if (orgBySlug?.slug) {
+    redirect(`/book/${orgBySlug.slug}`)
+  }
+
+  // 2. Check if slug is an organization UUID
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug)
+  if (isUuid) {
+    const { data: orgById } = await supabase
+      .from('organizations')
+      .select('id, slug')
+      .eq('id', slug)
+      .maybeSingle()
+
+    if (orgById?.slug) {
+      redirect(`/book/${orgById.slug}`)
+    }
+
+    // 3. Check if slug is a profile ID with linked organization
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('organization_id, organizations(slug)')
+      .eq('id', slug)
+      .maybeSingle()
+
+    const profileOrgSlug = (profile?.organizations as any)?.slug
+    if (profileOrgSlug) {
+      redirect(`/book/${profileOrgSlug}`)
+    }
+
+    // 4. Check if slug is a legacy shop ID with linked organization
+    const { data: shop } = await supabase
+      .from('shops')
+      .select('organization_id, organizations(slug)')
+      .eq('id', slug)
+      .maybeSingle()
+
+    const shopOrgSlug = (shop?.organizations as any)?.slug
+    if (shopOrgSlug) {
+      redirect(`/book/${shopOrgSlug}`)
+    }
+  }
+
+  // If no matching active organization was found, return 404
+  return notFound()
 }
+

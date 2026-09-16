@@ -56,6 +56,8 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname.startsWith('/agenda-facil') ||
     request.nextUrl.pathname.startsWith('/agendar-lavagem') ||
     request.nextUrl.pathname.startsWith('/agendar') ||
+    request.nextUrl.pathname.startsWith('/book') ||
+    request.nextUrl.pathname.startsWith('/api/public') ||
     request.nextUrl.pathname.startsWith('/kryon-admin');
 
   const isFlowPage = 

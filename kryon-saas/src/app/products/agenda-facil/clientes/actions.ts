@@ -67,7 +67,16 @@ export async function getPatientAppointments(clientId: string) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return []
 
-    // RLS handles security (Professional sees only linked, Secretary sees all)
+    // Get Organization ID
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('organization_id')
+        .eq('id', user.id)
+        .single()
+
+    if (!profile || !profile.organization_id) return []
+    const orgId = profile.organization_id
+
     const { data, error } = await supabase
         .from('agenda_appointments')
         .select(`
@@ -75,8 +84,8 @@ export async function getPatientAppointments(clientId: string) {
             professionals:professional_id(name),
             services:service_id(name, duration_minutes, price)
         `)
+        .eq('organization_id', orgId)
         .eq('client_id', clientId)
-        .order('date', { ascending: false })
         .order('start_time', { ascending: false })
     
     if (error) {
@@ -91,18 +100,27 @@ export async function getPatientRecords(clientId: string) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return []
 
+    // Get Organization ID
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('organization_id')
+        .eq('id', user.id)
+        .single()
+
+    if (!profile || !profile.organization_id) return []
+    const orgId = profile.organization_id
+
     const { data, error } = await supabase
         .from('clinical_records')
         .select(`
             *,
             professional:professional_id(name)
         `)
+        .eq('organization_id', orgId)
         .eq('client_id', clientId)
         .order('created_at', { ascending: false })
 
     if (error) {
-        // If RLS denies access (Secretary), it might return error or empty.
-        // We should handle it gracefully.
         console.error('Error fetching records:', error)
         return []
     }

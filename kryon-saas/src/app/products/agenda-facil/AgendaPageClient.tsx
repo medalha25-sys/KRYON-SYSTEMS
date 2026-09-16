@@ -55,6 +55,10 @@ export default function AgendaPageClient({ date, agendaData, dashboardData, admi
           router.push('/products/agenda-facil/clientes')
           return
       }
+      if (viewId === 'notifications') {
+          router.push('/products/agenda-facil/notificacoes')
+          return
+      }
       setMainView(viewId)
       router.push(`/products/agenda-facil?view=${viewId}`)
   }
@@ -76,11 +80,14 @@ export default function AgendaPageClient({ date, agendaData, dashboardData, admi
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-
             {mainView === 'dashboard' && (
                 <div className="flex-1 overflow-auto">
-                     {/* Share Link logic: Check if shopId exists and NO admin dashboard (since admins assume diff role view) */}
-                     {agendaData.shopId && !adminDashboardData && <div className="mb-6 mx-8 mt-8"><ShareLink shopId={agendaData.shopId} /></div>}
+                     {/* Share Link logic: Check if organization.slug exists and NO admin dashboard */}
+                     {organization?.slug && !adminDashboardData && (
+                       <div className="mb-6 mx-8 mt-8">
+                         <ShareLink slug={organization.slug} />
+                       </div>
+                     )}
                      
                      {adminDashboardData ? (
                         <AdminDashboard data={adminDashboardData} organizationName={organization?.name} />

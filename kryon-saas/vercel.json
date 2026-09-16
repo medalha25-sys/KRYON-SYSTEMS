@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/send-grace-emails",
       "schedule": "0 10 * * *"
+    },
+    {
+      "path": "/api/cron/agenda-reminders",
+      "schedule": "*/15 * * * *"
     }
   ]
 }

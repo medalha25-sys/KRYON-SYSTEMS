@@ -18,6 +18,7 @@ export default function AgendaSidebar({ currentView, onChangeView, userName, use
     { id: 'agenda', label: 'Agenda', icon: 'calendar_month' },
     { id: 'clients', label: 'Pacientes', icon: 'groups' },
     { id: 'finance', label: 'Financeiro', icon: 'payments' },
+    { id: 'notifications', label: 'Notificações', icon: 'notifications' },
     { id: 'settings', label: 'Configurações', icon: 'settings' },
   ]
 
